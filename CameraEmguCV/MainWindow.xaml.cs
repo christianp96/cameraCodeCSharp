@@ -16,7 +16,6 @@ namespace CameraEmguCV
     {
         private Capture capture;
         DispatcherTimer timer;
-        private bool mousePressed;
         private Point first_corner = new Point();
         private Point second_corner = new Point();
 
@@ -24,6 +23,9 @@ namespace CameraEmguCV
         {
             InitializeComponent();
         }
+
+
+
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -67,22 +69,8 @@ namespace CameraEmguCV
             }
         }
 
-        private void Image1_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            Rectangle rect = new Rectangle();
-            rect.Height = 50;
-            rect.Width = 50;
-            rect.StrokeThickness = 2;
-            rect.Stroke = new SolidColorBrush(Colors.AliceBlue);
-            mainCanvas.Children.Add(rect);
-            Canvas.SetLeft(rect,Mouse.GetPosition(mainCanvas).X);
-            Canvas.SetTop(rect, Mouse.GetPosition(mainCanvas).Y);
-
-        }
-
         private void MainCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            mousePressed = true;
             first_corner = Mouse.GetPosition(mainCanvas);
            
         }
@@ -128,7 +116,7 @@ namespace CameraEmguCV
             pts2[3] = new System.Drawing.PointF(200, (int)(200 / r));
 
             Mat M = CvInvoke.GetPerspectiveTransform(pts1, pts2);
-            Mat screen = new Mat();
+            Mat screen = new Mat(M.Size,Emgu.CV.CvEnum.DepthType.Cv8U,3);
             CvInvoke.WarpPerspective(image, screen, M, new System.Drawing.Size(200, (int)(200 / r)));
 
             return screen;
@@ -137,7 +125,7 @@ namespace CameraEmguCV
         private Mat ApplyBlur(Mat img)
         {
             int stdev = 0, kernelSize = 3;
-            Mat blurred = new Mat();
+            Mat blurred = new Mat(img.Size, Emgu.CV.CvEnum.DepthType.Cv8U, 3);
             CvInvoke.GaussianBlur(img, blurred, new System.Drawing.Size(kernelSize, kernelSize), stdev);
 
             return blurred;
@@ -146,7 +134,8 @@ namespace CameraEmguCV
         private Mat CannyEdgeDetection(Mat img)
         {
             int lowThreshold = 30, highThreshold = 200;
-            Mat canny = new Mat();
+            Mat canny = new Mat(img.Size, Emgu.CV.CvEnum.DepthType.Cv8U, 3);
+            
             CvInvoke.Canny(img, canny, lowThreshold, highThreshold);
            
             return canny;
@@ -166,11 +155,11 @@ namespace CameraEmguCV
         private Mat AddLines(LineSegment2D[] lines)
         {
             double r = 1.298;
-            Mat output = new Mat(new System.Drawing.Size((int)(200/r),200),Emgu.CV.CvEnum.DepthType.Cv8U,3);
-            //Mat output = new Mat();
+            Mat output = new Mat(new System.Drawing.Size(200,(int)(200/r)),Emgu.CV.CvEnum.DepthType.Cv8U,3);
+            output.SetTo(new MCvScalar(0));
 
             //output.
-            MCvScalar color = new MCvScalar(255, 0, 0);
+            MCvScalar color = new MCvScalar(0, 0, 255);
             int thickness = 2;
             foreach( LineSegment2D line in lines )
             {
@@ -178,10 +167,7 @@ namespace CameraEmguCV
                 System.Drawing.Point p2 = line.P2;
                 CvInvoke.Line(output, p1, p2, color, thickness);
             }
-
-
             return output;
-
         }
 
         private void BtnShowImage_Click(object sender, RoutedEventArgs e)
@@ -195,7 +181,6 @@ namespace CameraEmguCV
             Mat img = CvInvoke.Imread("4.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
             
             image2.Source = ToBitmapSource(WarpPerspective(img).ToImage<Bgr, byte>());
-            
            
         }
 
@@ -206,9 +191,9 @@ namespace CameraEmguCV
             img = WarpPerspective(img);
             img = ApplyBlur(img);
             img = CannyEdgeDetection(img);
-           // LineSegment2D[] lines = HoughLines(img);
-            //Mat output = AddLines(lines);
-            image2.Source = ToBitmapSource(img.ToImage<Bgr, byte>());
+           LineSegment2D[] lines = HoughLines(img);
+            Mat output = AddLines(lines);
+            image2.Source = ToBitmapSource(output.ToImage<Bgr, byte>());
         }
     }
 }
