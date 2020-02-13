@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace CameraApp.Properties
+namespace CameraEmguCV.Properties
 {
 
 
