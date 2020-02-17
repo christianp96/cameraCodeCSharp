@@ -5,14 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CameraEmguCV"
         mc:Ignorable="d"
-        Title="MainWindow" Height="532" Width="955" Loaded="Window_Loaded">
-    <Grid>
+        Title="MainWindow" Height="659.2" Width="955" Loaded="Window_Loaded">
+    <Grid Height="613" Margin="0,0,-0.2,0" VerticalAlignment="Top">
         <Canvas Name="mainCanvas" Margin="0,0,562.8,178.4" Panel.ZIndex="1" MouseLeftButtonDown="MainCanvas_MouseLeftButtonDown" MouseLeftButtonUp="MainCanvas_MouseUp">
             <Image Name="image1" Stretch="Fill"  Height="324" Width="386" Panel.ZIndex="0"/>
         </Canvas>
         <Image Name="image2" Stretch="Uniform" Margin="482,10,9.8,154.4"/>
         <Button Name="btnShowImage" Content="Show image" Height="40" Width="100" Margin="513,330,180.6,50" Click="BtnShowImage_Click" />
-        <Button Name="btnWarp" Content="Warp perspective" Margin="708,371,114.8,91.4" Click="BtnWarp_Click" />
+        <Button Name="btnWarp" Content="Warp perspective" Margin="708,426,115,147" Click="BtnWarp_Click" />
         <Button Name="btnHough" Content="Show hough lines" Height="40" Width="100" Margin="513,375,180.6,5" Click="BtnHough_Click"/>
+        <Button Name="btnAddMarkers" Content="Add Markers" Margin="708,471,115,102" Click="BtnAddMarkers_Click"/>
     </Grid>
 </Window>

@@ -9,6 +9,7 @@ using System.Windows.Threading;
 using Emgu.CV.Structure;
 using Emgu.CV;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 namespace CameraEmguCV
 {
@@ -17,8 +18,12 @@ namespace CameraEmguCV
         private Capture capture;
         DispatcherTimer timer;
         private Point first_corner = new Point();
-        private Point second_corner = new Point();
-
+        //private Point second_corner = new Point();
+        private bool add_markers = false;
+        private bool set_markers_done = false;
+        private int num_of_clicks = 0;
+        List<Point> markers = new List<Point>();
+        Mat roi = null;
         public MainWindow()
         {
             InitializeComponent();
@@ -42,9 +47,23 @@ namespace CameraEmguCV
 
             if (currentFrame != null)
             {
-                Image<Gray, byte> grayFrame = currentFrame.Convert<Gray, byte>();
+                
 
+               if (set_markers_done)
+                {
+                    int x = (int)markers[0].X;
+                    int y = (int)markers[0].Y;
+
+                    int w = (int)Math.Abs(markers[0].X - markers[2].X);
+                    int h = (int)Math.Abs(markers[0].Y - markers[2].Y);
+                    //currentFrame.ROI = new System.Drawing.Rectangle(x,y,w,h);
+                    if (roi == null)
+                        roi = currentFrame.Mat;
+                }
+                    
                 image1.Source = ToBitmapSource(currentFrame);
+                
+
             }
         }
 
@@ -72,12 +91,31 @@ namespace CameraEmguCV
         private void MainCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             first_corner = Mouse.GetPosition(mainCanvas);
-           
+            if (add_markers)
+            {
+               if (num_of_clicks <4)
+                {
+                    System.Windows.Shapes.Ellipse ellipse = new System.Windows.Shapes.Ellipse();
+                    ellipse.Stroke = new SolidColorBrush(Colors.Orange);
+                    ellipse.StrokeThickness = 2;
+                    ellipse.Width = 5;
+                    ellipse.Fill = new SolidColorBrush(Colors.Orange);
+                    mainCanvas.Children.Add(ellipse);
+                    Point point = new Point(Mouse.GetPosition(mainCanvas).X, Mouse.GetPosition(mainCanvas).Y);
+                    Canvas.SetLeft(ellipse, point.X);
+                    Canvas.SetTop(ellipse, point.Y);
+                    markers.Add(point);
+                    num_of_clicks++;
+                    
+                }
+                if (num_of_clicks == 4)
+                    set_markers_done = true;
+            }
         }
 
         private void MainCanvas_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            second_corner = Mouse.GetPosition(mainCanvas);
+            /*second_corner = Mouse.GetPosition(mainCanvas);
             Rectangle rect = new Rectangle();
             rect.Width = Math.Abs(second_corner.X - first_corner.Y);
             rect.Height = Math.Abs(first_corner.Y - second_corner.X);
@@ -94,7 +132,7 @@ namespace CameraEmguCV
             
             currentFrame.Save("test_save.jpg");
             first_corner = new Point();
-            second_corner = new Point();
+            second_corner = new Point();*/
             
 
         }
@@ -146,8 +184,8 @@ namespace CameraEmguCV
         {
             LineSegment2D[] houghLines = new LineSegment2D[100];
          
-            int rho = 2, threshold = 30, minLineLength = 15, maxLineGap = 3; 
-            double theta = Math.PI / 180;
+            int threshold = 30, minLineLength = 15, maxLineGap = 3; 
+            double rho = 0.1, theta = Math.PI / 180;
             houghLines = CvInvoke.HoughLinesP(img, rho, theta, threshold, minLineLength, maxLineGap);
             return houghLines;
         }
@@ -173,7 +211,11 @@ namespace CameraEmguCV
         private void BtnShowImage_Click(object sender, RoutedEventArgs e)
         {
             Mat img = CvInvoke.Imread("4.jpg",Emgu.CV.CvEnum.LoadImageType.Grayscale);
-            image2.Source = ToBitmapSource(img.ToImage< Bgr, byte >());     
+            image2.Source = ToBitmapSource(img.ToImage< Bgr, byte >());
+
+
+            //MessageBox.Show(roi.Bitmap.GetPixel((int)markers[0].X,(int) markers[0].Y).ToString());
+
         }
 
         private void BtnWarp_Click(object sender, RoutedEventArgs e)
@@ -194,6 +236,11 @@ namespace CameraEmguCV
            LineSegment2D[] lines = HoughLines(img);
             Mat output = AddLines(lines);
             image2.Source = ToBitmapSource(output.ToImage<Bgr, byte>());
+        }
+
+        private void BtnAddMarkers_Click(object sender, RoutedEventArgs e)
+        {
+            add_markers = true;
         }
     }
 }
