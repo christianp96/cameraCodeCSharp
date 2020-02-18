@@ -20,6 +20,13 @@ namespace CameraEmguCV
         private bool add_markers = false;
         private int num_of_clicks = 0;
         List<Point> markers = new List<Point>();
+        Point lastPoint = new Point();
+        System.Windows.Shapes.Ellipse lastEllipse = new System.Windows.Shapes.Ellipse();
+        List<System.Windows.Shapes.Ellipse> allEllipses = new List<System.Windows.Shapes.Ellipse>();
+        bool wasClick = false;
+      
+
+
 
         public MainWindow()
         {
@@ -29,9 +36,11 @@ namespace CameraEmguCV
         #region Camera Capture Functions
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            capture = new Capture(1);
+            capture = new Capture();
+            //Fortarea capturii sa fie la aceasi dimensiune
             capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameWidth, image1.Width);
             capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameHeight, image1.Height);
+
             timer = new DispatcherTimer();
             timer.Tick += new EventHandler(timer_Tick);
             timer.Interval = new TimeSpan(0, 0, 0, 0, 1);
@@ -156,18 +165,25 @@ namespace CameraEmguCV
             if (add_markers)
             {
                 if (num_of_clicks < 4)
-                {
+                { // Definirea elipsei
                     System.Windows.Shapes.Ellipse ellipse = new System.Windows.Shapes.Ellipse();
                     ellipse.Stroke = new SolidColorBrush(Colors.Orange);
-                    ellipse.StrokeThickness = 2;
+                    ellipse.StrokeThickness = 4;
                     ellipse.Width = 5;
                     ellipse.Fill = new SolidColorBrush(Colors.Orange);
                     mainCanvas.Children.Add(ellipse);
+                    allEllipses.Add(ellipse);
+
+                    lastEllipse = ellipse; 
+                    //Retinerea pozitiei elipsei
                     Point point = new Point(Mouse.GetPosition(image1).X, Mouse.GetPosition(image1).Y);
                     Canvas.SetLeft(ellipse, point.X);
                     Canvas.SetTop(ellipse, point.Y);
+
                     markers.Add(point);
+                    lastPoint = point; 
                     num_of_clicks++;
+                    wasClick = false;
 
                 }
                 if (num_of_clicks == 4)
@@ -177,8 +193,44 @@ namespace CameraEmguCV
                     Mat img = CvInvoke.Imread("test_save.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
                     image2.Source = ToBitmapSource(WarpPerspective(img, GetPoints(markers)).ToImage<Bgr, byte>());
 
+
                 }
             }
+        }
+
+
+        private void MainCanvas_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (add_markers)
+            {
+                if (wasClick == false)
+                {
+                    mainCanvas.Children.Remove(lastEllipse);
+                    markers.Remove(lastPoint);
+
+                    num_of_clicks--;
+                    wasClick = true;
+                }
+            }
+
+        }
+
+        private void ResetAll()
+        {
+            if (add_markers)
+            {
+                foreach (System.Windows.Shapes.Ellipse c in allEllipses)
+                {
+                    mainCanvas.Children.Remove(c);
+                }
+                markers.Clear();
+                num_of_clicks = 0;
+                wasClick = false;
+            }
+        }
+        private void Reset_Click(object sender, RoutedEventArgs e)
+        {
+            ResetAll();
         }
 
         private void BtnShowImage_Click(object sender, RoutedEventArgs e)
@@ -211,7 +263,19 @@ namespace CameraEmguCV
 
         private void BtnAddMarkers_Click(object sender, RoutedEventArgs e)
         {
-            add_markers = true;
+            if (add_markers == false)
+            {
+                add_markers = true;
+                btnAddMarkers.Background = Brushes.Red;
+            }
+            else
+            {
+                ResetAll();
+                add_markers = false;
+                btnAddMarkers.Background = Brushes.LightGray;
+               
+                
+            }
         }
         #endregion
 
@@ -244,5 +308,9 @@ namespace CameraEmguCV
             return GetMaxWidthOfSelectedArea(points) / GetMaxHeightOfSelectedArea(points);
         }
         #endregion
+
+
+
+      
     }
 }
