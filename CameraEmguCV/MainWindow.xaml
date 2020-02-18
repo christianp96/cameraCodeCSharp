@@ -8,13 +8,12 @@
         Title="MainWindow" Height="659.2" Width="1167.4" Loaded="Window_Loaded">
     <Grid Height="613" Margin="0,0,-0.2,0" VerticalAlignment="Top">
         <Canvas Name="mainCanvas" Panel.ZIndex="1"  RenderTransformOrigin="0,0" HorizontalAlignment="Left" Width="640" Height="360" VerticalAlignment="Top">
-            <Image Name="image1"  Height="360" Width="640" Panel.ZIndex="0" MouseLeftButtonDown="MainCanvas_MouseLeftButtonDown" MouseRightButtonDown="MainCanvas_MouseRightButtonDown" RenderTransformOrigin="0,0"/>
+            <Image Name="image1"  Height="360" Width="640" Panel.ZIndex="0" MouseLeftButtonDown="MainCanvas_MouseLeftButtonDown"  RenderTransformOrigin="0,0" Canvas.Top="2"/>
         </Canvas>
         <Image Name="image2" Stretch="Uniform" Margin="697,10,10,275"/>
         <Button Name="btnShowImage" Content="Show image" Height="40" Margin="697,426,322,147" Click="BtnShowImage_Click" />
         <Button Name="btnWarp" Content="Warp perspective" Margin="902,426,115,147" Click="BtnWarp_Click" />
         <Button Name="btnHough" Content="Show hough lines" Height="40" Margin="697,471,322,102" Click="BtnHough_Click"/>
         <Button Name="btnAddMarkers" Content="Add Markers" Margin="902,471,115,102" Click="BtnAddMarkers_Click"/>
-        <Button Content="Shitty Button" HorizontalAlignment="Left" Height="39" Margin="697,516,0,0" VerticalAlignment="Top" Width="140" Background="Yellow" Name="Reset" Click="Reset_Click"/>
     </Grid>
 </Window>
