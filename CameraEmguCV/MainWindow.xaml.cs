@@ -168,15 +168,16 @@ namespace CameraEmguCV
                     Canvas.SetTop(ellipse, point.Y);
                     markers.Add(point);
                     num_of_clicks++;
-
                 }
+
                 if (num_of_clicks == 4)
                 {
                     Image<Bgr, byte> currentFrame = capture.QueryFrame().ToImage<Bgr, byte>();
                     currentFrame.Save("test_save.jpg");
-                    Mat img = CvInvoke.Imread("test_save.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
-                    image2.Source = ToBitmapSource(WarpPerspective(img, GetPoints(markers)).ToImage<Bgr, byte>());
-
+                    Mat img = CvInvoke.Imread("test_save.jpg", Emgu.CV.CvEnum.LoadImageType.Color);
+                    Mat warp = WarpPerspective(img, GetPoints(markers));
+                    CvInvoke.Imwrite("warp_save.jpg",warp);
+                    image2.Source = ToBitmapSource(warp.ToImage<Bgr, byte>());
                 }
             }
         }
@@ -189,7 +190,8 @@ namespace CameraEmguCV
 
         private void BtnWarp_Click(object sender, RoutedEventArgs e)
         {
-            Mat img = CvInvoke.Imread("4.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
+            Mat img = CvInvoke.Imread("test_save.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
+            
             if (markers.Count == 4)
             {
                 image2.Source = ToBitmapSource(WarpPerspective(img, GetPoints(markers)).ToImage<Bgr, byte>());
@@ -199,12 +201,14 @@ namespace CameraEmguCV
 
         private void BtnHough_Click(object sender, RoutedEventArgs e)
         {
-            Mat img = CvInvoke.Imread("4.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
+            Mat img = CvInvoke.Imread("test_save.jpg", Emgu.CV.CvEnum.LoadImageType.Color);
             if (markers.Count == 4)
                 img = WarpPerspective(img, GetPoints(markers));
             img = ApplyBlur(img, 0, 3);
-            img = CannyEdgeDetection(img, 30, 200);
-            LineSegment2D[] lines = HoughLines(img, 0.1, 30, 15, 3);
+            img = CannyEdgeDetection(img, 30, 250);
+            LineSegment2D[] lines = HoughLines(img, 1, 20, 15, 3);
+            
+            LineSegment2D[] singleLines = KMeans(lines,5);
             Mat output = AddLines(lines, GetRatioOfSelectedArea(GetPoints(markers)));
             image2.Source = ToBitmapSource(output.ToImage<Bgr, byte>());
         }
@@ -243,6 +247,68 @@ namespace CameraEmguCV
         {
             return GetMaxWidthOfSelectedArea(points) / GetMaxHeightOfSelectedArea(points);
         }
+        
+       private Matrix<float> ConvertLineSegmentArrayToMatrix(LineSegment2D[] lines)
+        {
+            Matrix<float> convertedLines = new Matrix<float>(lines.Length, 4,3);
+            
+            for( int i =0; i<lines.Length; i++)
+            {
+                convertedLines[i, 0] = lines[i].P1.X;
+                convertedLines[i, 1] = lines[i].P1.Y;
+                convertedLines[i, 2] = lines[i].P2.X;
+                convertedLines[i, 3] = lines[i].P2.Y;
+            }
+
+            return convertedLines;
+        }
+
+        private LineSegment2D[] ConvertMatrixOfLineSegmentsToArray(Matrix<float> lines)
+        {
+            LineSegment2D[] convertedLines = new LineSegment2D[lines.Rows];
+
+            for (int i = 0; i < lines.Rows; i++)
+            {
+                System.Drawing.Point p1 = new System.Drawing.Point((int)lines[i, 0], (int)lines[i, 1]);
+                System.Drawing.Point p2 = new System.Drawing.Point((int)lines[i, 2], (int)lines[i, 3]);
+                convertedLines[i] = new LineSegment2D(p1, p2);
+            }
+
+            return convertedLines;
+        }
+
+        private LineSegment2D[] GetOneLineFromDuplicate(LineSegment2D[] lines, Matrix<int> labels, int k)
+        {
+            LineSegment2D[] singleLines = new LineSegment2D[k];
+            List<int> existingLabels = new List<int>();
+            int count = 0;
+            for(int i=0; i<lines.Length;i++)
+            {
+                if(!existingLabels.Contains(labels[i,0]))
+                {
+                    existingLabels.Add(labels[i, 0]);
+                    singleLines[count++] = lines[i];
+                }
+                
+            }
+
+            return singleLines;
+        }
+
+
+        private LineSegment2D[] KMeans(LineSegment2D[] lines,int k)
+        {
+           
+            Matrix<float> lines_matrix = ConvertLineSegmentArrayToMatrix(lines);
+            Matrix<int> retLabels = new Matrix<int>(lines.Length,1);
+            MCvTermCriteria criteria = new MCvTermCriteria(1, 2);
+            CvInvoke.Kmeans(lines_matrix, k, retLabels, criteria, 10, Emgu.CV.CvEnum.KMeansInitType.RandomCenters);
+        
+            return GetOneLineFromDuplicate(lines,retLabels,k);
+        }
+        
+        
         #endregion
+
     }
 }

@@ -8,7 +8,7 @@
         Title="MainWindow" Height="659.2" Width="1167.4" Loaded="Window_Loaded">
     <Grid Height="613" Margin="0,0,-0.2,0" VerticalAlignment="Top">
         <Canvas Name="mainCanvas" Panel.ZIndex="1"  RenderTransformOrigin="0,0" HorizontalAlignment="Left" Width="640" Height="360" VerticalAlignment="Top">
-            <Image Name="image1"  Height="360" Width="640" Panel.ZIndex="0" MouseLeftButtonDown="MainCanvas_MouseLeftButtonDown"  RenderTransformOrigin="0,0"/>
+            <Image Name="image1"  Height="360" Width="640" Panel.ZIndex="0" MouseLeftButtonDown="MainCanvas_MouseLeftButtonDown"  RenderTransformOrigin="0,0" Canvas.Top="2"/>
         </Canvas>
         <Image Name="image2" Stretch="Uniform" Margin="697,10,10,275"/>
         <Button Name="btnShowImage" Content="Show image" Height="40" Margin="697,426,322,147" Click="BtnShowImage_Click" />
