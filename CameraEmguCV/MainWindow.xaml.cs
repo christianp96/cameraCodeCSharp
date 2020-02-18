@@ -140,6 +140,13 @@ namespace CameraEmguCV
             return output;
         }
 
+        private Mat ApplyMask(Mat img, Mat mask)
+        {
+            Mat output = new Mat(img.Size, Emgu.CV.CvEnum.DepthType.Cv8U, 3);
+            CvInvoke.BitwiseAnd(img, img, output, mask);
+            return output;
+        }
+
         private Mat ApplyErosion(Mat img, int iterations)
         {
             Mat output = new Mat(img.Size, Emgu.CV.CvEnum.DepthType.Cv8U, 3);
@@ -184,8 +191,9 @@ namespace CameraEmguCV
 
         private void BtnShowImage_Click(object sender, RoutedEventArgs e)
         {
-            Mat img = CvInvoke.Imread("4.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
-            image2.Source = ToBitmapSource(img.ToImage<Bgr, byte>());
+            Mat img = CvInvoke.Imread("warp_save.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
+            Mat mask = CvInvoke.Imread("out.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
+            image2.Source = ToBitmapSource(ApplyMask(img,mask).ToImage<Bgr, byte>());
         }
 
         private void BtnWarp_Click(object sender, RoutedEventArgs e)
@@ -201,16 +209,21 @@ namespace CameraEmguCV
 
         private void BtnHough_Click(object sender, RoutedEventArgs e)
         {
-            Mat img = CvInvoke.Imread("test_save.jpg", Emgu.CV.CvEnum.LoadImageType.Color);
+            Mat img = CvInvoke.Imread("test_save.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
             if (markers.Count == 4)
                 img = WarpPerspective(img, GetPoints(markers));
             img = ApplyBlur(img, 0, 3);
             img = CannyEdgeDetection(img, 30, 250);
-            LineSegment2D[] lines = HoughLines(img, 1, 20, 15, 3);
+            //img = ApplyDilation(img, 3);
+            //img = ApplyErosion(img, 3);
+
+            LineSegment2D[] lines = HoughLines(img, 0.4, 20, 50, 3);
             
             LineSegment2D[] singleLines = KMeans(lines,5);
-            Mat output = AddLines(lines, GetRatioOfSelectedArea(GetPoints(markers)));
+            Mat output = AddLines(singleLines, GetRatioOfSelectedArea(GetPoints(markers)));
+            CvInvoke.Imwrite("out.jpg", output);
             image2.Source = ToBitmapSource(output.ToImage<Bgr, byte>());
+            
         }
 
         private void BtnAddMarkers_Click(object sender, RoutedEventArgs e)
