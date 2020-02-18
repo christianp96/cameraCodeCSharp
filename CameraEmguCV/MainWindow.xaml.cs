@@ -20,6 +20,10 @@ namespace CameraEmguCV
         private bool add_markers = false;
         private int num_of_clicks = 0;
         List<Point> markers = new List<Point>();
+        Point lastPoint = new Point();
+        System.Windows.Shapes.Ellipse lastEllipse = new System.Windows.Shapes.Ellipse();
+        List<System.Windows.Shapes.Ellipse> allEllipses = new List<System.Windows.Shapes.Ellipse>();
+        bool wasClick = false;
 
         public MainWindow()
         {
@@ -163,11 +167,16 @@ namespace CameraEmguCV
                     ellipse.Width = 5;
                     ellipse.Fill = new SolidColorBrush(Colors.Orange);
                     mainCanvas.Children.Add(ellipse);
+                    allEllipses.Add(ellipse);
+                    lastEllipse = ellipse;
+
                     Point point = new Point(Mouse.GetPosition(image1).X, Mouse.GetPosition(image1).Y);
                     Canvas.SetLeft(ellipse, point.X);
                     Canvas.SetTop(ellipse, point.Y);
                     markers.Add(point);
+                    lastPoint = point;
                     num_of_clicks++;
+                    wasClick = false;
                 }
 
                 if (num_of_clicks == 4)
@@ -182,7 +191,42 @@ namespace CameraEmguCV
             }
         }
 
-        private void BtnShowImage_Click(object sender, RoutedEventArgs e)
+        private void MainCanvas_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (add_markers)
+            {
+
+                if (wasClick == false)
+                {
+                        mainCanvas.Children.Remove(lastEllipse);
+                    markers.Remove(lastPoint);
+
+                    num_of_clicks--;
+                    wasClick = true;
+                }
+            }
+
+        }
+
+        private void ResetAll()
+        {
+            if (add_markers)
+            {
+
+                foreach (System.Windows.Shapes.Ellipse c in allEllipses)
+                {
+                    mainCanvas.Children.Remove(c);
+                }
+                markers.Clear();
+                num_of_clicks = 0;
+                wasClick = false;
+            }
+
+        }
+
+
+
+            private void BtnShowImage_Click(object sender, RoutedEventArgs e)
         {
             Mat img = CvInvoke.Imread("4.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
             image2.Source = ToBitmapSource(img.ToImage<Bgr, byte>());
@@ -215,7 +259,24 @@ namespace CameraEmguCV
 
         private void BtnAddMarkers_Click(object sender, RoutedEventArgs e)
         {
-            add_markers = true;
+            if (add_markers == false)
+            {
+                add_markers = true;
+                btnAddMarkers.Background = Brushes.Red;
+            }
+            else
+            {
+                ResetAll();
+                add_markers = false;
+                btnAddMarkers.Background = Brushes.LightGray;
+
+
+            }
+        }
+
+        private void BtnReset_Click(object sender, RoutedEventArgs e)
+        {
+            ResetAll();
         }
         #endregion
 
@@ -308,7 +369,11 @@ namespace CameraEmguCV
         }
 
 
+
+
+
         #endregion
 
+       
     }
 }
