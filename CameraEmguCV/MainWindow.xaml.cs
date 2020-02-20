@@ -10,6 +10,7 @@ using Emgu.CV.Structure;
 using Emgu.CV;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using Emgu.CV.CvEnum;
 
 namespace CameraEmguCV
 {
@@ -80,7 +81,7 @@ namespace CameraEmguCV
         #region Image Processing Functions
         private Mat WarpPerspective(Mat image, System.Drawing.PointF[] points)
         {
-            double r = GetRatioOfSelectedArea(GetPoints(markers));//1.298;
+            double r = GetRatioOfSelectedArea(points);//1.298;
             //MessageBox.Show("r = " + r.ToString());
             System.Drawing.PointF[] squared_points = new System.Drawing.PointF[4];
             squared_points[0] = new System.Drawing.PointF(0, 0);
@@ -208,19 +209,20 @@ namespace CameraEmguCV
                     ellipse.Fill = new SolidColorBrush(Colors.Orange);
                     secondaryCanvas.Children.Add(ellipse);
 
-                    Point point = new Point(Mouse.GetPosition(image1).X, Mouse.GetPosition(image1).Y);
+                    Point point = new Point(Mouse.GetPosition(image2).X, Mouse.GetPosition(image2).Y);
                     Canvas.SetLeft(ellipse, point.X);
                     Canvas.SetTop(ellipse, point.Y);
                     markers_test.Add(point);
+                    num_of_clicks_test++;
 
                 }
 
                 if( num_of_clicks_test == 4)
                 {
-                    Image<Bgr, byte> currentFrame = capture.QueryFrame().ToImage<Bgr, byte>();
+                    Image<Bgr, byte> currentFrame = ToMat((BitmapSource)image2.Source).ToImage<Bgr,byte>();  //capture.QueryFrame().ToImage<Bgr, byte>();
                     currentFrame.Save("test_save_1.jpg");
                     Mat img = CvInvoke.Imread("test_save_1.jpg", Emgu.CV.CvEnum.LoadImageType.Color);
-                    Mat warp = WarpPerspective(img, GetPoints(markers));
+                    Mat warp = WarpPerspective(img, GetPoints(markers_test));
                     CvInvoke.Imwrite("warp_save_1.jpg", warp);
                     image3.Source = ToBitmapSource(warp.ToImage<Bgr, byte>());
 
@@ -418,8 +420,36 @@ namespace CameraEmguCV
 
         private void BtnTest_Click(object sender, RoutedEventArgs e)
         {
-            test_markers = true;
+           
+                if (test_markers == false)
+                {
+                    test_markers = true;
+                    btnTest.Background = Brushes.Red;
+                }
+                else
+                {
+                   
+                    test_markers = false;
+                    btnTest.Background = Brushes.LightGray;
+
+
+                }
+            
 
         }
+
+        public static Mat ToMat(BitmapSource source)
+        {
+            if (source.Format == PixelFormats.Bgr32)
+            {
+                Mat result = new Mat();
+                result.Create(source.PixelHeight, source.PixelWidth, DepthType.Cv8U, 4);
+                source.CopyPixels(Int32Rect.Empty, result.DataPointer, result.Step * result.Rows, result.Step);
+                return result;
+            }
+            else
+                return new Mat();
+        }
+
     }
 }
