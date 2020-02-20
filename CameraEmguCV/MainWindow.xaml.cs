@@ -38,7 +38,7 @@ namespace CameraEmguCV
         #region Camera Capture Functions
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            capture = new Capture();
+            capture = new Capture(1);
             capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameWidth, image1.Width);
             capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameHeight, image1.Height);
             timer = new DispatcherTimer();
@@ -462,25 +462,6 @@ namespace CameraEmguCV
             return convertedLines;
         }
 
-
-        private Matrix<float> ConvertLineSegmentArrayToMatrix(LineSegment2D[] lines)
-        {
-            float[,] llines = ConvertLineSegmentArrayToFloatArray(lines);
-            
-            Matrix<float> convertedLines = new Matrix<float>(lines.Length, 4);
-            convertedLines.SetZero();
-            convertedLines = new Matrix<float>(llines);
-            
-           /* for( int i =0; i<lines.Length; i++)
-            {
-                convertedLines[i, 0] = lines[i].P1.X;
-                convertedLines[i, 1] = lines[i].P1.Y;
-                convertedLines[i, 2] = lines[i].P2.X;
-                convertedLines[i, 3] = lines[i].P2.Y;
-            }
-            */
-            return convertedLines;
-        }
 
         private LineSegment2D[] ConvertMatrixOfLineSegmentsToArray(Matrix<float> lines)
         {
