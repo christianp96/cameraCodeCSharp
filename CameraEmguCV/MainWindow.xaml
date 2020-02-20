@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:CameraEmguCV"
         mc:Ignorable="d"
         Title="MainWindow" Height="907.6" Width="1905.2" Loaded="Window_Loaded">
-    <Grid Height="898" VerticalAlignment="Top" Margin="0,0,0.2,-20.4">
+    <Grid Height="898" VerticalAlignment="Top" Margin="0,0,0.2,-20.4" Width="1905">
 
         <Canvas Name="mainCanvas" Panel.ZIndex="1"  RenderTransformOrigin="0,0" HorizontalAlignment="Left" Width="640" Height="360" VerticalAlignment="Top">
             <Image Name="image1"  Height="360" Width="640" Panel.ZIndex="0" MouseLeftButtonDown="MainCanvas_MouseLeftButtonDown" MouseRightButtonDown="MainCanvas_MouseRightButtonDown"/>

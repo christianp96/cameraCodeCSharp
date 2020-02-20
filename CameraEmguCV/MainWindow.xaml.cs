@@ -111,27 +111,6 @@ namespace CameraEmguCV
             return blurred;
         }
 
-        private Mat GetSkeleton(Mat img)
-        {
-            Mat skeleton = new Mat(img.Size, Emgu.CV.CvEnum.DepthType.Cv8U, 1);
-            var kernel = CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Cross, new System.Drawing.Size(3, 3), new System.Drawing.Point(-1, -1));
-            Mat temp = new Mat();
-            Mat eroded = new Mat(img.Size, Emgu.CV.CvEnum.DepthType.Cv8U, 1);
-            bool done;
-
-            do
-            {
-                CvInvoke.Erode(img, eroded, kernel, new System.Drawing.Point(-1, -1),1,Emgu.CV.CvEnum.BorderType.Default,default(MCvScalar));
-                CvInvoke.Dilate(eroded, temp, kernel, new System.Drawing.Point(-1, -1), 1, Emgu.CV.CvEnum.BorderType.Default, default(MCvScalar));
-                CvInvoke.Subtract(img, temp, temp);
-                CvInvoke.BitwiseOr(skeleton, temp, skeleton);
-                eroded.CopyTo(img);
-
-                done = CvInvoke.CountNonZero(img) == 0;
-            } while (!done);
-               
-            return skeleton;
-        }
 
         private Mat CannyEdgeDetection(Mat img, int lowThreshold, int highThreshold)
         {
@@ -156,7 +135,7 @@ namespace CameraEmguCV
         private Mat AddLines(LineSegment2D[] lines, double ratio)
         {
             //double r = 1.298;
-            Mat output = new Mat(new System.Drawing.Size(200, (int)(200 / ratio)), Emgu.CV.CvEnum.DepthType.Cv8U, 1);
+            Mat output = new Mat(new System.Drawing.Size(200, (int)(200 / ratio)), Emgu.CV.CvEnum.DepthType.Cv8U, 3);
             output.SetTo(new MCvScalar(0));
 
             MCvScalar color = new MCvScalar(255, 255, 255);
@@ -341,7 +320,6 @@ namespace CameraEmguCV
             LineSegment2D[] singleLines = KMeans(lines,5);
             Mat output = AddLines(lines, GetRatioOfSelectedArea(GetPoints(markers)));
             CvInvoke.Imwrite("out.jpg", output);
-            CvInvoke.Imwrite("skel.jpg", GetSkeleton(output));
             image2.Source = ToBitmapSource(output.ToImage<Bgr, byte>());
             
         }
