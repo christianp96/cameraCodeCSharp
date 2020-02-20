@@ -11,18 +11,46 @@
         <Canvas Name="mainCanvas" Panel.ZIndex="1"  RenderTransformOrigin="0,0" HorizontalAlignment="Left" Width="640" Height="360" VerticalAlignment="Top">
             <Image Name="image1"  Height="360" Width="640" Panel.ZIndex="0" MouseLeftButtonDown="MainCanvas_MouseLeftButtonDown" MouseRightButtonDown="MainCanvas_MouseRightButtonDown"  RenderTransformOrigin="0,0" Canvas.Top="2"/>
         </Canvas>
-
         <Canvas Width="458" Height="324" Name="secondaryCanvas" Margin="710,10,638,309">
             <Image Name="image2" Stretch="Uniform" Width="458" Height="324" MouseLeftButtonDown="SecondaryCanvas_MouseLeftButtonDown" />
         </Canvas>
-
-        <Button Name="btnShowImage" Content="Show image" Margin="10,419,1421,176" Click="BtnShowImage_Click" />
-        <Button Name="btnWarp" Content="Warp perspective" Margin="265,419,1166,176" Click="BtnWarp_Click" />
-        <Button Name="btnHough" Content="Show hough lines" Margin="265,495,1166,100" Click="BtnHough_Click"/>
+        <Button Name="btnShowImage" Content="Show image" Height="40" Margin="697,426,322,147" Click="BtnShowImage_Click" />
+        <Button Name="btnWarp" Content="Warp perspective" Margin="902,426,115,147" Click="BtnWarp_Click" />
+        <Button Name="btnHough" Content="Show hough lines" Height="40" Margin="697,471,322,102" Click="BtnHough_Click"/>
+        <Button Name="btnAddMarkers" Content="Add Markers" Margin="902,471,115,102" Click="BtnAddMarkers_Click"/>
+        <Button Name="btnSingleLines" Content="SingleLines" Margin="695,525,322,48" Click="BtnSingleLines_Click"/>
         <Button Name="btnReset" Content="RESET!"  Margin="10,495,1421,100"   Click="BtnReset_Click"/>
-        <Button Name="btnAddMarkers" Content="Add Markers" Margin="497,419,961,176" Click="BtnAddMarkers_Click"/>
-
-        <Image HorizontalAlignment="Left" Height="102" Margin="1249,38,0,0" VerticalAlignment="Top" Width="516" Name="image3"/>
+         <Image HorizontalAlignment="Left" Height="102" Margin="1249,38,0,0" VerticalAlignment="Top" Width="516" Name="image3"/>
         <Button Content="Test" HorizontalAlignment="Left" VerticalAlignment="Top" Width="348" Height="66" Margin="497,495,0,0" Name="btnTest" Click="BtnTest_Click"/>
+        <DockPanel VerticalAlignment="Center" Margin="78,518,836.2,63" Height="32">
+            <Label Content="rho" DockPanel.Dock="Left"></Label>
+            <TextBox Text="{Binding ElementName=slRho, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" TextAlignment="Right" Width="40"/>
+            <Slider Maximum="20" TickPlacement="BottomRight" TickFrequency="0.1" IsSnapToTickEnabled="True" Name="slRho" ValueChanged="SlRho_ValueChanged"/>
+        </DockPanel>
+        <DockPanel VerticalAlignment="Center" Margin="77,427,837,150" Height="31">
+            <Label Content="lowThreshold" DockPanel.Dock="Left"></Label>
+            <TextBox Text="{Binding ElementName=slLowThresh, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" TextAlignment="Right" Width="40"/>
+            <Slider Maximum="400" TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="True" Name="slLowThresh" ValueChanged="SlLowThresh_ValueChanged"/>
+        </DockPanel>
+        <DockPanel VerticalAlignment="Center" Margin="77,476,837,101" Height="31">
+            <Label Content="highThreshold" DockPanel.Dock="Left"></Label>
+            <TextBox Text="{Binding ElementName=slHighThresh, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" TextAlignment="Right" Width="40"/>
+            <Slider Maximum="400" TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="True" Name="slHighThresh" ValueChanged="SlHighThresh_ValueChanged"/>
+        </DockPanel>
+        <DockPanel VerticalAlignment="Center" Margin="77,601,837,-24" Height="31">
+            <Label Content="minLineLength" DockPanel.Dock="Left"></Label>
+            <TextBox Text="{Binding ElementName=slMinLineLength, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" TextAlignment="Right" Width="40"/>
+            <Slider Maximum="400" TickPlacement="BottomRight" TickFrequency="5" IsSnapToTickEnabled="True" Name="slMinLineLength" ValueChanged="SlMinLineLength_ValueChanged"/>
+        </DockPanel>
+        <DockPanel VerticalAlignment="Center" Margin="77,637,837,-60" Height="31">
+            <Label Content="maxGap" DockPanel.Dock="Left"></Label>
+            <TextBox Text="{Binding ElementName=slMaxLineGap, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" TextAlignment="Right" Width="40"/>
+            <Slider Maximum="100" TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="True" Name="slMaxLineGap" ValueChanged="SlMaxLineGap_ValueChanged"/>
+        </DockPanel>
+        <DockPanel VerticalAlignment="Center" Margin="78,558,837,18" Height="32">
+            <Label Content="houghThreshold" DockPanel.Dock="Left"></Label>
+            <TextBox Text="{Binding ElementName=slHoughThresh, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" TextAlignment="Right" Width="40"/>
+            <Slider Maximum="100" TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="True" Name="slHoughThresh" ValueChanged="SlHoughThresh_ValueChanged"/>
+        </DockPanel>
     </Grid>
 </Window>

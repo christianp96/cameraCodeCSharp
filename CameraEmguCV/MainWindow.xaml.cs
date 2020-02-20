@@ -20,6 +20,8 @@ namespace CameraEmguCV
         DispatcherTimer timer;
         private bool add_markers = false;
         private int num_of_clicks = 0;
+        private  double rho;
+        private int lowThreshold, highThreshold, minLineLength, maxLineGap, houghThreshold;
         private List<Point> markers = new List<Point>();
         private Point lastPoint = new Point();
         private System.Windows.Shapes.Ellipse lastEllipse = new System.Windows.Shapes.Ellipse();
@@ -28,8 +30,6 @@ namespace CameraEmguCV
         private bool test_markers = false;
         private int num_of_clicks_test = 0;
         private List<Point> markers_test = new List<Point>();
-
-
         public MainWindow()
         {
             InitializeComponent();
@@ -51,6 +51,13 @@ namespace CameraEmguCV
         {
             Image<Bgr, byte> currentFrame = capture.QueryFrame().ToImage<Bgr, byte>();
 
+            if(num_of_clicks == 4)
+            {
+                Mat frame = currentFrame.Mat;
+                frame = WarpPerspective(frame, GetPoints(markers));
+                currentFrame = frame.ToImage<Bgr, byte>();
+            }
+            
             if (currentFrame != null)
                 image1.Source = ToBitmapSource(currentFrame);
         }
@@ -104,11 +111,33 @@ namespace CameraEmguCV
             return blurred;
         }
 
+        private Mat GetSkeleton(Mat img)
+        {
+            Mat skeleton = new Mat(img.Size, Emgu.CV.CvEnum.DepthType.Cv8U, 1);
+            var kernel = CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Cross, new System.Drawing.Size(3, 3), new System.Drawing.Point(-1, -1));
+            Mat temp = new Mat();
+            Mat eroded = new Mat(img.Size, Emgu.CV.CvEnum.DepthType.Cv8U, 1);
+            bool done;
+
+            do
+            {
+                CvInvoke.Erode(img, eroded, kernel, new System.Drawing.Point(-1, -1),1,Emgu.CV.CvEnum.BorderType.Default,default(MCvScalar));
+                CvInvoke.Dilate(eroded, temp, kernel, new System.Drawing.Point(-1, -1), 1, Emgu.CV.CvEnum.BorderType.Default, default(MCvScalar));
+                CvInvoke.Subtract(img, temp, temp);
+                CvInvoke.BitwiseOr(skeleton, temp, skeleton);
+                eroded.CopyTo(img);
+
+                done = CvInvoke.CountNonZero(img) == 0;
+            } while (!done);
+               
+            return skeleton;
+        }
+
         private Mat CannyEdgeDetection(Mat img, int lowThreshold, int highThreshold)
         {
-            Mat canny = new Mat(img.Size, Emgu.CV.CvEnum.DepthType.Cv8U, 3);
-
-            CvInvoke.Canny(img, canny, lowThreshold, highThreshold);
+            Mat canny = new Mat(img.Size, Emgu.CV.CvEnum.DepthType.Cv8U, 3);         
+            CvInvoke.Canny(img, canny, lowThreshold, highThreshold,3);
+           
 
             return canny;
         }
@@ -120,17 +149,18 @@ namespace CameraEmguCV
             //int threshold = 30, minLineLength = 15, maxLineGap = 3;
             double theta = Math.PI / 180;//rho = 0.1;
             houghLines = CvInvoke.HoughLinesP(img, rho, theta, threshold, minLineLength, maxLineGap);
+            //CvInvoke.Imwrite("hough.jpg", img);
             return houghLines;
         }
 
         private Mat AddLines(LineSegment2D[] lines, double ratio)
         {
             //double r = 1.298;
-            Mat output = new Mat(new System.Drawing.Size(200, (int)(200 / ratio)), Emgu.CV.CvEnum.DepthType.Cv8U, 3);
+            Mat output = new Mat(new System.Drawing.Size(200, (int)(200 / ratio)), Emgu.CV.CvEnum.DepthType.Cv8U, 1);
             output.SetTo(new MCvScalar(0));
 
-            MCvScalar color = new MCvScalar(0, 0, 255);
-            int thickness = 2;
+            MCvScalar color = new MCvScalar(255, 255, 255);
+            int thickness = 1;
             foreach (LineSegment2D line in lines)
             {
                 System.Drawing.Point p1 = line.P1;
@@ -142,10 +172,18 @@ namespace CameraEmguCV
 
         private Mat ApplyDilation(Mat img, int iterations)
         {
-            Mat output = new Mat(img.Size, Emgu.CV.CvEnum.DepthType.Cv8U, 3);
+            Mat output = new Mat(img.Size, Emgu.CV.CvEnum.DepthType.Cv8U, 1);
             var kernel = CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Cross, new System.Drawing.Size(3, 3), new System.Drawing.Point(-1, -1));
-            CvInvoke.Erode(img, output, kernel, new System.Drawing.Point(-1, -1), iterations, Emgu.CV.CvEnum.BorderType.Default, default(MCvScalar));
+            CvInvoke.Dilate(img, output, kernel, new System.Drawing.Point(-1, -1), iterations, Emgu.CV.CvEnum.BorderType.Default, default(MCvScalar));
 
+            return output;
+        }
+
+        private Mat ApplyMask(Mat img, Mat mask)
+        {
+            Mat output = new Mat(img.Size, Emgu.CV.CvEnum.DepthType.Cv8U, 1);
+            output.SetTo(new MCvScalar(0));
+            CvInvoke.BitwiseAnd(img, img, output, mask);
             return output;
         }
 
@@ -153,7 +191,7 @@ namespace CameraEmguCV
         {
             Mat output = new Mat(img.Size, Emgu.CV.CvEnum.DepthType.Cv8U, 3);
             var kernel = CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Rectangle, new System.Drawing.Size(3, 3), new System.Drawing.Point(-1, -1));
-            CvInvoke.Dilate(img, output, kernel, new System.Drawing.Point(-1, -1), iterations, Emgu.CV.CvEnum.BorderType.Default, default(MCvScalar));
+            CvInvoke.Erode(img, output, kernel, new System.Drawing.Point(-1, -1), iterations, Emgu.CV.CvEnum.BorderType.Default, default(MCvScalar));
 
             return output;
         }
@@ -270,8 +308,9 @@ namespace CameraEmguCV
 
             private void BtnShowImage_Click(object sender, RoutedEventArgs e)
         {
-            Mat img = CvInvoke.Imread("4.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
-            image2.Source = ToBitmapSource(img.ToImage<Bgr, byte>());
+            Mat img = CvInvoke.Imread("warp_save.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
+            Mat mask = CvInvoke.Imread("out.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
+            image2.Source = ToBitmapSource(ApplyMask(img,mask).ToImage<Bgr, byte>());
         }
 
         private void BtnWarp_Click(object sender, RoutedEventArgs e)
@@ -279,24 +318,32 @@ namespace CameraEmguCV
             Mat img = CvInvoke.Imread("test_save.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
 
             if (markers.Count == 4)
-            {
-                image2.Source = ToBitmapSource(WarpPerspective(img, GetPoints(markers)).ToImage<Bgr, byte>());
+                img = WarpPerspective(img, GetPoints(markers));
+            img = ApplyBlur(img, 0, 3);
+            img = CannyEdgeDetection(img, lowThreshold, highThreshold);
+            image2.Source = ToBitmapSource(img.ToImage<Bgr, byte>());
 
-            }
         }
 
         private void BtnHough_Click(object sender, RoutedEventArgs e)
         {
-            Mat img = CvInvoke.Imread("test_save.jpg", Emgu.CV.CvEnum.LoadImageType.Color);
+            Mat img = CvInvoke.Imread("test_save.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
             if (markers.Count == 4)
                 img = WarpPerspective(img, GetPoints(markers));
             img = ApplyBlur(img, 0, 3);
-            img = CannyEdgeDetection(img, 30, 250);
-            LineSegment2D[] lines = HoughLines(img, 1, 20, 15, 3);
 
-            LineSegment2D[] singleLines = KMeans(lines, 5);
+            img = CannyEdgeDetection(img, lowThreshold, highThreshold);
+            img = ApplyDilation(img, 3);
+            img = ApplyErosion(img, 3);
+
+            LineSegment2D[] lines = HoughLines(img, rho, houghThreshold, minLineLength, maxLineGap);
+            
+            LineSegment2D[] singleLines = KMeans(lines,5);
             Mat output = AddLines(lines, GetRatioOfSelectedArea(GetPoints(markers)));
+            CvInvoke.Imwrite("out.jpg", output);
+            CvInvoke.Imwrite("skel.jpg", GetSkeleton(output));
             image2.Source = ToBitmapSource(output.ToImage<Bgr, byte>());
+            
         }
 
         private void BtnAddMarkers_Click(object sender, RoutedEventArgs e)
@@ -320,6 +367,56 @@ namespace CameraEmguCV
         {
             ResetAll();
         }
+
+        private void BtnSingleLines_Click(object sender, RoutedEventArgs e)
+        {
+            Mat img = CvInvoke.Imread("test_save.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
+            if (markers.Count == 4)
+                img = WarpPerspective(img, GetPoints(markers));
+            img = ApplyBlur(img, 0, 3);
+            img = CannyEdgeDetection(img, lowThreshold, highThreshold);
+            img = ApplyDilation(img, 3);
+            img = ApplyErosion(img, 3);
+
+            LineSegment2D[] lines = HoughLines(img, rho, houghThreshold, minLineLength, maxLineGap);
+
+            LineSegment2D[] singleLines = KMeans(lines, 5);
+            Mat output = AddLines(singleLines, GetRatioOfSelectedArea(GetPoints(markers)));
+            CvInvoke.Imwrite("out.jpg", output);
+            image2.Source = ToBitmapSource(output.ToImage<Bgr, byte>());
+        }
+
+        private void SlRho_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            rho = slRho.Value;
+        }
+
+        private void SlLowThresh_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            lowThreshold = (int)slLowThresh.Value;
+        }
+
+        private void SlHighThresh_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            highThreshold = (int)slHighThresh.Value;
+        }
+
+        private void SlMinLineLength_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            minLineLength = (int)slMinLineLength.Value;
+        }
+
+        private void SlMaxLineGap_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            maxLineGap = (int)slMaxLineGap.Value;
+        }
+
+        private void SlHoughThresh_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            houghThreshold = (int)slHoughThresh.Value;
+        }
+
+
         #endregion
 
         #region Helpers
@@ -354,7 +451,6 @@ namespace CameraEmguCV
         private Matrix<float> ConvertLineSegmentArrayToMatrix(LineSegment2D[] lines)
         {
             Matrix<float> convertedLines = new Matrix<float>(lines.Length, 4, 3);
-
             for (int i = 0; i < lines.Length; i++)
             {
                 convertedLines[i, 0] = lines[i].P1.X;
@@ -363,6 +459,26 @@ namespace CameraEmguCV
                 convertedLines[i, 3] = lines[i].P2.Y;
             }
 
+            return convertedLines;
+        }
+
+
+        private Matrix<float> ConvertLineSegmentArrayToMatrix(LineSegment2D[] lines)
+        {
+            float[,] llines = ConvertLineSegmentArrayToFloatArray(lines);
+            
+            Matrix<float> convertedLines = new Matrix<float>(lines.Length, 4);
+            convertedLines.SetZero();
+            convertedLines = new Matrix<float>(llines);
+            
+           /* for( int i =0; i<lines.Length; i++)
+            {
+                convertedLines[i, 0] = lines[i].P1.X;
+                convertedLines[i, 1] = lines[i].P1.Y;
+                convertedLines[i, 2] = lines[i].P2.X;
+                convertedLines[i, 3] = lines[i].P2.Y;
+            }
+            */
             return convertedLines;
         }
 
@@ -380,8 +496,12 @@ namespace CameraEmguCV
             return convertedLines;
         }
 
+       
+
         private LineSegment2D[] GetOneLineFromDuplicate(LineSegment2D[] lines, Matrix<int> labels, int k)
         {
+            lines = SortLineSegments(lines);
+            lines = ReverseArray(lines);
             LineSegment2D[] singleLines = new LineSegment2D[k];
             List<int> existingLabels = new List<int>();
             int count = 0;
@@ -394,29 +514,70 @@ namespace CameraEmguCV
                 }
 
             }
-
+            
             return singleLines;
         }
 
+        private LineSegment2D[] ReverseArray(LineSegment2D[] lines)
+        {
+            for(int i=0; i<lines.Length/2;i++)
+            {
+                LineSegment2D aux = lines[i];
+                lines[i] = lines[lines.Length - i-1];
+                lines[lines.Length - i-1] = aux;
+            }
+
+            return lines;
+        }
 
         private LineSegment2D[] KMeans(LineSegment2D[] lines, int k)
         {
 
             Matrix<float> lines_matrix = ConvertLineSegmentArrayToMatrix(lines);
-            Matrix<int> retLabels = new Matrix<int>(lines.Length, 1);
-            MCvTermCriteria criteria = new MCvTermCriteria(1, 2);
-            CvInvoke.Kmeans(lines_matrix, k, retLabels, criteria, 10, Emgu.CV.CvEnum.KMeansInitType.RandomCenters);
+            Matrix<int> retLabels = new Matrix<int>(lines.Length,1);
 
-            return GetOneLineFromDuplicate(lines, retLabels, k);
+            MCvTermCriteria criteria = new MCvTermCriteria(10,1.0);
+            criteria.Type = Emgu.CV.CvEnum.TermCritType.Eps | Emgu.CV.CvEnum.TermCritType.Iter;
+            
+           
+            if (lines.Length >= k)
+            {
+                CvInvoke.Kmeans(lines_matrix, k, retLabels, criteria, 10, Emgu.CV.CvEnum.KMeansInitType.RandomCenters);
+                return GetOneLineFromDuplicate(lines, retLabels, k);
+            }
+                
+            else
+                return lines;
+        }
+        
+        private LineSegment2D[] SortLineSegments(LineSegment2D[] lines)
+        {
+            
+            int i, j;
+            LineSegment2D key;
+
+            for (i = 1; i < lines.Length; i++)
+            {
+                key = lines[i];
+                j = i - 1;
+
+                while (j >= 0 && lines[j].Length > key.Length)
+                {
+                    lines[j + 1] = lines[j];
+                    j = j - 1;
+                }
+                lines[j + 1] = key;
+            }
+
+            return lines;
+
+            
         }
 
-
-
-
-
-
-
         #endregion
+
+        
+     
 
         private void BtnTest_Click(object sender, RoutedEventArgs e)
         {
