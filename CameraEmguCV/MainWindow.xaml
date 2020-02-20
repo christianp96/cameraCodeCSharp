@@ -5,17 +5,23 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CameraEmguCV"
         mc:Ignorable="d"
-        Title="MainWindow" Height="713.2" Width="1178.2" Loaded="Window_Loaded">
-    <Grid Height="608" VerticalAlignment="Top">
+        Title="MainWindow" Height="653.2" Width="1816.4" Loaded="Window_Loaded">
+    <Grid Height="643" Margin="10,0,-8,-21" VerticalAlignment="Top">
+
         <Canvas Name="mainCanvas" Panel.ZIndex="1"  RenderTransformOrigin="0,0" HorizontalAlignment="Left" Width="640" Height="360" VerticalAlignment="Top">
-            <Image Name="image1"  Height="360" Width="640" Panel.ZIndex="0" MouseLeftButtonDown="MainCanvas_MouseLeftButtonDown"  RenderTransformOrigin="0,0" Canvas.Top="2"/>
+            <Image Name="image1"  Height="360" Width="640" Panel.ZIndex="0" MouseLeftButtonDown="MainCanvas_MouseLeftButtonDown" MouseRightButtonDown="MainCanvas_MouseRightButtonDown"  RenderTransformOrigin="0,0" Canvas.Top="2"/>
         </Canvas>
-        <Image Name="image2" Stretch="Uniform" Margin="697,10,10,275"/>
+        <Canvas Width="458" Height="324" Name="secondaryCanvas" Margin="710,10,638,309">
+            <Image Name="image2" Stretch="Uniform" Width="458" Height="324" MouseLeftButtonDown="SecondaryCanvas_MouseLeftButtonDown" />
+        </Canvas>
         <Button Name="btnShowImage" Content="Show image" Height="40" Margin="697,426,322,147" Click="BtnShowImage_Click" />
         <Button Name="btnWarp" Content="Warp perspective" Margin="902,426,115,147" Click="BtnWarp_Click" />
         <Button Name="btnHough" Content="Show hough lines" Height="40" Margin="697,471,322,102" Click="BtnHough_Click"/>
         <Button Name="btnAddMarkers" Content="Add Markers" Margin="902,471,115,102" Click="BtnAddMarkers_Click"/>
         <Button Name="btnSingleLines" Content="SingleLines" Margin="695,525,322,48" Click="BtnSingleLines_Click"/>
+        <Button Name="btnReset" Content="RESET!"  Margin="10,495,1421,100"   Click="BtnReset_Click"/>
+         <Image HorizontalAlignment="Left" Height="102" Margin="1249,38,0,0" VerticalAlignment="Top" Width="516" Name="image3"/>
+        <Button Content="Test" HorizontalAlignment="Left" VerticalAlignment="Top" Width="348" Height="66" Margin="497,495,0,0" Name="btnTest" Click="BtnTest_Click"/>
         <DockPanel VerticalAlignment="Center" Margin="78,518,836.2,63" Height="32">
             <Label Content="rho" DockPanel.Dock="Left"></Label>
             <TextBox Text="{Binding ElementName=slRho, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" TextAlignment="Right" Width="40"/>
