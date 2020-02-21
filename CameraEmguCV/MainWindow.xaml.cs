@@ -30,6 +30,7 @@ namespace CameraEmguCV
         private bool test_markers = false;
         private int num_of_clicks_test = 0;
         private List<Point> markers_test = new List<Point>();
+        private bool selection = false;
         public MainWindow()
         {
             InitializeComponent();
@@ -38,7 +39,7 @@ namespace CameraEmguCV
         #region Camera Capture Functions
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            capture = new Capture(1);
+            capture = new Capture(0);
             capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameWidth, image1.Width);
             capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameHeight, image1.Height);
             timer = new DispatcherTimer();
@@ -51,12 +52,12 @@ namespace CameraEmguCV
         {
             Image<Bgr, byte> currentFrame = capture.QueryFrame().ToImage<Bgr, byte>();
 
-            if(num_of_clicks == 4)
-            {
-                Mat frame = currentFrame.Mat;
-                frame = WarpPerspective(frame, GetPoints(markers));
-                currentFrame = frame.ToImage<Bgr, byte>();
-            }
+            //if(num_of_clicks == 4)
+            //{
+            //    Mat frame = currentFrame.Mat;
+            //    frame = WarpPerspective(frame, GetPoints(markers));
+            //    currentFrame = frame.ToImage<Bgr, byte>();
+            //}
             
             if (currentFrame != null)
                 image1.Source = ToBitmapSource(currentFrame);
@@ -139,7 +140,7 @@ namespace CameraEmguCV
             output.SetTo(new MCvScalar(0));
 
             MCvScalar color = new MCvScalar(255, 255, 255);
-            int thickness = 1;
+                int thickness = 1;
             foreach (LineSegment2D line in lines)
             {
                 System.Drawing.Point p1 = line.P1;
@@ -179,7 +180,44 @@ namespace CameraEmguCV
         #region GUI Events
         private void MainCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (add_markers)
+            if (add_markers == true && selection == true)
+            {
+                if (num_of_clicks_test < 4)
+                {
+                    System.Windows.Shapes.Ellipse ellipse = new System.Windows.Shapes.Ellipse();
+                    ellipse.Stroke = new SolidColorBrush(Colors.Red);
+                    ellipse.StrokeThickness = 3;
+                    ellipse.Width = 5;
+                    ellipse.Fill = new SolidColorBrush(Colors.Blue);
+                   mainCanvas.Children.Add(ellipse);
+                   // mainCanvas.Width = image1.ActualWidth;
+                   // mainCanvas.Height = image1.ActualHeight;
+                    //mainCanvas.Margin = image1.Margin;
+                  //  mainCanvas.VerticalAlignment = image1.VerticalAlignment;
+                    Point point = new Point(Mouse.GetPosition(this).X, Mouse.GetPosition(this).Y);
+                    Canvas.SetLeft(ellipse, point.X);
+                    Canvas.SetTop(ellipse, point.Y);
+                    markers_test.Add(point);
+                    num_of_clicks_test++;
+
+                }
+
+                if (num_of_clicks_test == 4)
+                {
+                     Image<Bgr, byte> currentFrame = capture.QueryFrame().ToImage<Bgr, byte>();
+                    
+
+                   // Image<Bgr, byte> currentFrame = new Image<Bgr, byte>();
+                    currentFrame.Save("test_save_1.jpg");
+                    Mat img = CvInvoke.Imread("test_save_1.jpg", Emgu.CV.CvEnum.LoadImageType.Color);
+                    Mat warp = WarpPerspective(img, GetPoints(markers_test));
+                    CvInvoke.Imwrite("warp_save_1.jpg", warp);
+                    image3.Source = ToBitmapSource(warp.ToImage<Bgr, byte>());
+
+                }
+
+            }
+                else if(add_markers)
             {
                 if (num_of_clicks < 4)
                 {
@@ -189,6 +227,7 @@ namespace CameraEmguCV
                     ellipse.Width = 5;
                     ellipse.Fill = new SolidColorBrush(Colors.Orange);
                     mainCanvas.Children.Add(ellipse);
+                    
                     allEllipses.Add(ellipse);
                     lastEllipse = ellipse;
 
@@ -209,41 +248,16 @@ namespace CameraEmguCV
                     Mat warp = WarpPerspective(img, GetPoints(markers));
                     CvInvoke.Imwrite("warp_save.jpg", warp);
                     image2.Source = ToBitmapSource(warp.ToImage<Bgr, byte>());
+                    selection = true;
                 }
             }
         }
 
         private void SecondaryCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (test_markers)
+            if (test_markers == true && selection == true)
             {
-                if( num_of_clicks_test < 4)
-                {
-                    System.Windows.Shapes.Ellipse ellipse = new System.Windows.Shapes.Ellipse();
-                    ellipse.Stroke = new SolidColorBrush(Colors.Orange);
-                    ellipse.StrokeThickness = 2;
-                    ellipse.Width = 5;
-                    ellipse.Fill = new SolidColorBrush(Colors.Orange);
-                    secondaryCanvas.Children.Add(ellipse);
-
-                    Point point = new Point(Mouse.GetPosition(image2).X, Mouse.GetPosition(image2).Y);
-                    Canvas.SetLeft(ellipse, point.X);
-                    Canvas.SetTop(ellipse, point.Y);
-                    markers_test.Add(point);
-                    num_of_clicks_test++;
-
-                }
-
-                if( num_of_clicks_test == 4)
-                {
-                    Image<Bgr, byte> currentFrame = ToMat((BitmapSource)image2.Source).ToImage<Bgr,byte>();  //capture.QueryFrame().ToImage<Bgr, byte>();
-                    currentFrame.Save("test_save_1.jpg");
-                    Mat img = CvInvoke.Imread("test_save_1.jpg", Emgu.CV.CvEnum.LoadImageType.Color);
-                    Mat warp = WarpPerspective(img, GetPoints(markers_test));
-                    CvInvoke.Imwrite("warp_save_1.jpg", warp);
-                    image3.Source = ToBitmapSource(warp.ToImage<Bgr, byte>());
-
-                }
+                
 
 
             }
@@ -269,8 +283,8 @@ namespace CameraEmguCV
 
         private void ResetAll()
         {
-            if (add_markers)
-            {
+           
+          
 
                 foreach (System.Windows.Shapes.Ellipse c in allEllipses)
                 {
@@ -279,7 +293,7 @@ namespace CameraEmguCV
                 markers.Clear();
                 num_of_clicks = 0;
                 wasClick = false;
-            }
+            
 
         }
 
@@ -329,11 +343,11 @@ namespace CameraEmguCV
             if (add_markers == false)
             {
                 add_markers = true;
-                btnAddMarkers.Background = Brushes.Red;
+                btnAddMarkers.Background = Brushes.Pink;
             }
             else
             {
-                ResetAll();
+               // ResetAll();
                 add_markers = false;
                 btnAddMarkers.Background = Brushes.LightGray;
 
@@ -544,7 +558,7 @@ namespace CameraEmguCV
                 if (test_markers == false)
                 {
                     test_markers = true;
-                    btnTest.Background = Brushes.Red;
+                    btnTest.Background = Brushes.Pink;
                 }
                 else
                 {
