@@ -52,6 +52,6 @@
             <TextBox Text="{Binding ElementName=slHoughThresh, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" TextAlignment="Right" Width="40"/>
             <Slider Maximum="100" TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="True" Name="slHoughThresh" ValueChanged="SlHoughThresh_ValueChanged"/>
         </DockPanel>
-        <TreeView HorizontalAlignment="Left" Height="317" Margin="1249,178,0,0" VerticalAlignment="Top" Width="472"/>
+        <TreeView HorizontalAlignment="Left" Height="221" Margin="1249,286,0,0" VerticalAlignment="Top" Width="287"/>
     </Grid>
 </Window>
