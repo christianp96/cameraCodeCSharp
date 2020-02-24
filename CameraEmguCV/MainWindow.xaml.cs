@@ -39,7 +39,7 @@ namespace CameraEmguCV
         #region Camera Capture Functions
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            capture = new Capture(0);
+            capture = new Capture(1);
             capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameWidth, image1.Width);
             capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameHeight, image1.Height);
             timer = new DispatcherTimer();
@@ -372,7 +372,7 @@ namespace CameraEmguCV
 
             LineSegment2D[] lines = HoughLines(img, rho, houghThreshold, minLineLength, maxLineGap);
 
-            LineSegment2D[] singleLines = KMeans(lines, 5);
+            LineSegment2D[] singleLines = GetSingleLinesFromHoughLines(lines, 20);//KMeans(lines, 5);
             Mat output = AddLines(singleLines, GetRatioOfSelectedArea(GetPoints(markers)));
             CvInvoke.Imwrite("out.jpg", output);
             image2.Source = ToBitmapSource(output.ToImage<Bgr, byte>());
@@ -547,10 +547,46 @@ namespace CameraEmguCV
             
         }
 
+
+        private double GetYIntercept(LineSegment2D line)
+        {
+            double a = line.P2.Y - line.P1.Y;
+            double b = line.P1.X - line.P2.X;
+            double c = a * line.P1.X + b * line.P1.Y;
+
+            if (b == 0)
+                return double.PositiveInfinity;
+            else
+                return c / b;
+        }
+
+        private LineSegment2D[] SortSegmentsByYIntercept(LineSegment2D[] lines)
+        {
+            int i, j;
+            LineSegment2D key;
+
+            for (i = 1; i < lines.Length; i++)
+            {
+                key = lines[i];
+                j = i - 1;
+
+                while (j >= 0 && GetYIntercept(lines[j]) > GetYIntercept(key))
+                {
+                    lines[j + 1] = lines[j];
+                    j = j - 1;
+                }
+                lines[j + 1] = key;
+            }
+
+            return lines;
+
+        }
+
+
         #endregion
 
-        
-     
+
+
 
         private void BtnTest_Click(object sender, RoutedEventArgs e)
         {
@@ -570,6 +606,26 @@ namespace CameraEmguCV
                 }
             
 
+        }
+
+        private LineSegment2D[] GetSingleLinesFromHoughLines(LineSegment2D[] lines, double threshold)
+        {
+            LineSegment2D[] singleLines = new LineSegment2D[lines.Length];
+
+            lines = SortSegmentsByYIntercept(lines);
+            int count = 0;
+            singleLines[0] = lines[0];
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                double y_intercept = GetYIntercept(lines[i]);
+                if (Math.Abs(GetYIntercept(singleLines[count]) - y_intercept) >= threshold)
+                    singleLines[++count] = lines[i];
+                else if (lines[i].Length >= singleLines[count].Length)
+                    singleLines[count] = lines[i];
+            }
+
+            return singleLines;
         }
 
         public static Mat ToMat(BitmapSource source)
