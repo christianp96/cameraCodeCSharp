@@ -163,6 +163,8 @@ namespace CameraEmguCV
         {
             Mat output = new Mat(img.Size, Emgu.CV.CvEnum.DepthType.Cv8U, 1);
             output.SetTo(new MCvScalar(0));
+            CvInvoke.Threshold(mask, mask, 127, 255, ThresholdType.Binary);
+            
             CvInvoke.BitwiseAnd(img, img, output, mask);
             return output;
         }
@@ -473,7 +475,7 @@ namespace CameraEmguCV
 
         private LineSegment2D[] GetOneLineFromDuplicate(LineSegment2D[] lines, Matrix<int> labels, int k)
         {
-            lines = SortLineSegments(lines);
+            lines = SortLineSegmentsByLength(lines);
             lines = ReverseArray(lines);
             LineSegment2D[] singleLines = new LineSegment2D[k];
             List<int> existingLabels = new List<int>();
@@ -523,7 +525,7 @@ namespace CameraEmguCV
                 return lines;
         }
         
-        private LineSegment2D[] SortLineSegments(LineSegment2D[] lines)
+        private LineSegment2D[] SortLineSegmentsByLength(LineSegment2D[] lines)
         {
             
             int i, j;
