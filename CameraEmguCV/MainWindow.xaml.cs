@@ -20,8 +20,8 @@ namespace CameraEmguCV
         DispatcherTimer timer;
         private bool add_markers = false;
         private int num_of_clicks = 0;
-        private  double rho;
-        private int lowThreshold, highThreshold, minLineLength, maxLineGap, houghThreshold;
+        private  double rho = 0.5;
+        private int lowThreshold = 30, highThreshold = 210, minLineLength=90, maxLineGap = 50, houghThreshold =50;
         private List<Point> markers = new List<Point>();
         private Point lastPoint = new Point();
         private System.Windows.Shapes.Ellipse lastEllipse = new System.Windows.Shapes.Ellipse();
@@ -31,6 +31,7 @@ namespace CameraEmguCV
         private int num_of_clicks_test = 0;
         private List<Point> markers_test = new List<Point>();
         private bool selection = false;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -117,8 +118,7 @@ namespace CameraEmguCV
         {
             Mat canny = new Mat(img.Size, Emgu.CV.CvEnum.DepthType.Cv8U, 3);         
             CvInvoke.Canny(img, canny, lowThreshold, highThreshold,3);
-           
-
+  
             return canny;
         }
 
@@ -176,6 +176,26 @@ namespace CameraEmguCV
             CvInvoke.Erode(img, output, kernel, new System.Drawing.Point(-1, -1), iterations, Emgu.CV.CvEnum.BorderType.Default, default(MCvScalar));
 
             return output;
+        }
+
+        private bool MatchTemplate(Mat img, Mat template, Mat mask)
+        {
+            bool found = false;
+            double min_val = 0 , max_val = 0,threshold = 10;
+            System.Drawing.Point min_loc = new System.Drawing.Point(), max_loc = new System.Drawing.Point();
+            Mat output = new Mat(img.Size, Emgu.CV.CvEnum.DepthType.Cv8U, 1);
+            output.SetTo(new MCvScalar(0));
+
+            CvInvoke.Threshold(mask, mask, 127, 255, ThresholdType.Binary);
+            CvInvoke.Resize(mask, mask, template.Size);
+            CvInvoke.MatchTemplate(img, template, output, TemplateMatchingType.Sqdiff, mask: mask);
+            CvInvoke.MinMaxLoc(output,ref min_val, ref max_val, ref min_loc,ref max_loc);
+
+            if (max_val < threshold)
+                found = true; 
+
+
+            return found;
         }
         #endregion
 
@@ -285,9 +305,6 @@ namespace CameraEmguCV
 
         private void ResetAll()
         {
-           
-          
-
                 foreach (System.Windows.Shapes.Ellipse c in allEllipses)
                 {
                     mainCanvas.Children.Remove(c);
@@ -295,17 +312,28 @@ namespace CameraEmguCV
                 markers.Clear();
                 num_of_clicks = 0;
                 wasClick = false;
-            
-
         }
 
 
 
             private void BtnShowImage_Click(object sender, RoutedEventArgs e)
         {
-            Mat img = CvInvoke.Imread("warp_save.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
-            Mat mask = CvInvoke.Imread("out.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
-            image2.Source = ToBitmapSource(ApplyMask(img,mask).ToImage<Bgr, byte>());
+            Image<Bgr, byte> currentFrame = capture.QueryFrame().ToImage<Bgr, byte>();
+            currentFrame.Save("frame.jpg");
+            Mat img = CvInvoke.Imread("frame.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
+            Mat warp = WarpPerspective(img, GetPoints(markers));
+            CvInvoke.Imwrite("warp_frame.jpg", warp);
+            Mat template = CvInvoke.Imread("template.jpg", LoadImageType.Grayscale);
+            Mat mask = CvInvoke.Imread("template_mask.jpg", LoadImageType.Grayscale);
+            bool found = MatchTemplate(warp, template, mask);
+            MessageBox.Show("Template found = " + found.ToString());
+
+
+            //Mat img = CvInvoke.Imread("warp_save.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
+            //Mat mask = CvInvoke.Imread("template_mask.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
+            //Mat result = ApplyMask(img, mask);
+            //CvInvoke.Imwrite("template.jpg", result);
+            //image2.Source = ToBitmapSource(result.ToImage<Bgr, byte>());
         }
 
         private void BtnWarp_Click(object sender, RoutedEventArgs e)
@@ -333,9 +361,8 @@ namespace CameraEmguCV
 
             LineSegment2D[] lines = HoughLines(img, rho, houghThreshold, minLineLength, maxLineGap);
             
-            LineSegment2D[] singleLines = KMeans(lines,5);
             Mat output = AddLines(lines, GetRatioOfSelectedArea(GetPoints(markers)));
-            CvInvoke.Imwrite("out.jpg", output);
+            CvInvoke.Imwrite("template_mask.jpg", output);
             image2.Source = ToBitmapSource(output.ToImage<Bgr, byte>());
             
         }
@@ -376,7 +403,7 @@ namespace CameraEmguCV
 
             LineSegment2D[] singleLines = GetSingleLinesFromHoughLines(lines, 20);//KMeans(lines, 5);
             Mat output = AddLines(singleLines, GetRatioOfSelectedArea(GetPoints(markers)));
-            CvInvoke.Imwrite("out.jpg", output);
+            CvInvoke.Imwrite("tempalte_mask.jpg", output);
             image2.Source = ToBitmapSource(output.ToImage<Bgr, byte>());
         }
 
@@ -410,6 +437,19 @@ namespace CameraEmguCV
             houghThreshold = (int)slHoughThresh.Value;
         }
 
+        private void BtnTest_Click(object sender, RoutedEventArgs e)
+        {
+            if (test_markers == false)
+            {
+                test_markers = true;
+                btnTest.Background = Brushes.Pink;
+            }
+            else
+            {
+                test_markers = false;
+                btnTest.Background = Brushes.LightGray;
+            }
+        }
 
         #endregion
 
@@ -425,6 +465,26 @@ namespace CameraEmguCV
 
             return pointFs;
 
+        }
+
+        private LineSegment2D[] GetSingleLinesFromHoughLines(LineSegment2D[] lines, double threshold)
+        {
+            LineSegment2D[] singleLines = new LineSegment2D[lines.Length];
+
+            lines = SortSegmentsByYIntercept(lines);
+            int count = 0;
+            singleLines[0] = lines[0];
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                double y_intercept = GetYIntercept(lines[i]);
+                if (Math.Abs(GetYIntercept(singleLines[count]) - y_intercept) >= threshold)
+                    singleLines[++count] = lines[i];
+                else if (lines[i].Length >= singleLines[count].Length)
+                    singleLines[count] = lines[i];
+            }
+
+            return singleLines;
         }
 
         private double GetMaxWidthOfSelectedArea(System.Drawing.PointF[] points)
@@ -587,48 +647,7 @@ namespace CameraEmguCV
 
         #endregion
 
-
-
-
-        private void BtnTest_Click(object sender, RoutedEventArgs e)
-        {
-           
-                if (test_markers == false)
-                {
-                    test_markers = true;
-                    btnTest.Background = Brushes.Pink;
-                }
-                else
-                {
-                   
-                    test_markers = false;
-                    btnTest.Background = Brushes.LightGray;
-
-
-                }
-            
-
-        }
-
-        private LineSegment2D[] GetSingleLinesFromHoughLines(LineSegment2D[] lines, double threshold)
-        {
-            LineSegment2D[] singleLines = new LineSegment2D[lines.Length];
-
-            lines = SortSegmentsByYIntercept(lines);
-            int count = 0;
-            singleLines[0] = lines[0];
-
-            for (int i = 0; i < lines.Length; i++)
-            {
-                double y_intercept = GetYIntercept(lines[i]);
-                if (Math.Abs(GetYIntercept(singleLines[count]) - y_intercept) >= threshold)
-                    singleLines[++count] = lines[i];
-                else if (lines[i].Length >= singleLines[count].Length)
-                    singleLines[count] = lines[i];
-            }
-
-            return singleLines;
-        }
+       
 
         public static Mat ToMat(BitmapSource source)
         {
@@ -642,6 +661,5 @@ namespace CameraEmguCV
             else
                 return new Mat();
         }
-
     }
 }
