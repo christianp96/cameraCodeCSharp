@@ -53,5 +53,6 @@
             <Slider Maximum="100" TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="True" Name="slHoughThresh" ValueChanged="SlHoughThresh_ValueChanged"/>
         </DockPanel>
         <TreeView HorizontalAlignment="Left" Height="221" Margin="1249,286,0,0" VerticalAlignment="Top" Width="287"/>
+        <Label Name="lblFound" Content="" HorizontalAlignment="Left" Margin="1297,652,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.417,-1.922"/>
     </Grid>
 </Window>

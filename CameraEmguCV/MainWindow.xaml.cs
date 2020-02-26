@@ -53,12 +53,20 @@ namespace CameraEmguCV
         {
             Image<Bgr, byte> currentFrame = capture.QueryFrame().ToImage<Bgr, byte>();
 
-            //if(num_of_clicks == 4)
-            //{
-            //    Mat frame = currentFrame.Mat;
-            //    frame = WarpPerspective(frame, GetPoints(markers));
-            //    currentFrame = frame.ToImage<Bgr, byte>();
-            //}
+            if(num_of_clicks == 4)
+            {
+                Mat frame = currentFrame.Mat;
+                frame = WarpPerspective(frame, GetPoints(markers));
+                CvInvoke.Imwrite("warp_frame.jpg", frame);
+                frame = CvInvoke.Imread("warp_frame.jpg", LoadImageType.Grayscale);
+                
+                
+                Mat template = CvInvoke.Imread("template.jpg", LoadImageType.Grayscale);
+                Mat mask = CvInvoke.Imread("template_mask.jpg", LoadImageType.Grayscale);
+                bool found = MatchTemplate(frame, template, mask);
+                lblFound.Content = found.ToString();
+                //currentFrame = frame.ToImage<Bgr, byte>();
+            }
             
             if (currentFrame != null)
                 image1.Source = ToBitmapSource(currentFrame);
@@ -188,6 +196,9 @@ namespace CameraEmguCV
 
             CvInvoke.Threshold(mask, mask, 127, 255, ThresholdType.Binary);
             CvInvoke.Resize(mask, mask, template.Size);
+
+            if(template.Height>img.Height)
+                CvInvoke.Resize(img, img, template.Size);
             CvInvoke.MatchTemplate(img, template, output, TemplateMatchingType.Sqdiff, mask: mask);
             CvInvoke.MinMaxLoc(output,ref min_val, ref max_val, ref min_loc,ref max_loc);
 
@@ -318,22 +329,22 @@ namespace CameraEmguCV
 
             private void BtnShowImage_Click(object sender, RoutedEventArgs e)
         {
-            Image<Bgr, byte> currentFrame = capture.QueryFrame().ToImage<Bgr, byte>();
-            currentFrame.Save("frame.jpg");
-            Mat img = CvInvoke.Imread("frame.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
-            Mat warp = WarpPerspective(img, GetPoints(markers));
-            CvInvoke.Imwrite("warp_frame.jpg", warp);
-            Mat template = CvInvoke.Imread("template.jpg", LoadImageType.Grayscale);
-            Mat mask = CvInvoke.Imread("template_mask.jpg", LoadImageType.Grayscale);
-            bool found = MatchTemplate(warp, template, mask);
-            MessageBox.Show("Template found = " + found.ToString());
+            //Image<Bgr, byte> currentFrame = capture.QueryFrame().ToImage<Bgr, byte>();
+            //currentFrame.Save("frame.jpg");
+            //Mat img = CvInvoke.Imread("frame.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
+            //Mat warp = WarpPerspective(img, GetPoints(markers));
+            //CvInvoke.Imwrite("warp_frame.jpg", warp);
+            //Mat template = CvInvoke.Imread("template.jpg", LoadImageType.Grayscale);
+            //Mat mask = CvInvoke.Imread("template_mask.jpg", LoadImageType.Grayscale);
+            //bool found = MatchTemplate(warp, template, mask);
+            //MessageBox.Show("Template found = " + found.ToString());
 
 
-            //Mat img = CvInvoke.Imread("warp_save.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
-            //Mat mask = CvInvoke.Imread("template_mask.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
-            //Mat result = ApplyMask(img, mask);
-            //CvInvoke.Imwrite("template.jpg", result);
-            //image2.Source = ToBitmapSource(result.ToImage<Bgr, byte>());
+            Mat img = CvInvoke.Imread("warp_save.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
+            Mat mask = CvInvoke.Imread("template_mask.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
+            Mat result = ApplyMask(img, mask);
+            CvInvoke.Imwrite("template.jpg", result);
+            image2.Source = ToBitmapSource(result.ToImage<Bgr, byte>());
         }
 
         private void BtnWarp_Click(object sender, RoutedEventArgs e)
@@ -403,7 +414,7 @@ namespace CameraEmguCV
 
             LineSegment2D[] singleLines = GetSingleLinesFromHoughLines(lines, 20);//KMeans(lines, 5);
             Mat output = AddLines(singleLines, GetRatioOfSelectedArea(GetPoints(markers)));
-            CvInvoke.Imwrite("tempalte_mask.jpg", output);
+            CvInvoke.Imwrite("template_mask.jpg", output);
             image2.Source = ToBitmapSource(output.ToImage<Bgr, byte>());
         }
 
