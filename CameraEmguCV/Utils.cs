@@ -22,7 +22,7 @@ namespace CameraEmguCV
                 pointFs[i] = new System.Drawing.PointF((float)points[i].X, (float)points[i].Y);
             }
 
-            return pointFs;
+            return SortPoints(pointFs);
 
         }
 
@@ -61,89 +61,6 @@ namespace CameraEmguCV
             return GetMaxWidthOfSelectedArea(points) / GetMaxHeightOfSelectedArea(points);
         }
 
-        public static Matrix<float> ConvertLineSegmentArrayToMatrix(LineSegment2D[] lines)
-        {
-            Matrix<float> convertedLines = new Matrix<float>(lines.Length, 4, 3);
-            for (int i = 0; i < lines.Length; i++)
-            {
-                convertedLines[i, 0] = lines[i].P1.X;
-                convertedLines[i, 1] = lines[i].P1.Y;
-                convertedLines[i, 2] = lines[i].P2.X;
-                convertedLines[i, 3] = lines[i].P2.Y;
-            }
-
-            return convertedLines;
-        }
-
-
-        public static LineSegment2D[] ConvertMatrixOfLineSegmentsToArray(Matrix<float> lines)
-        {
-            LineSegment2D[] convertedLines = new LineSegment2D[lines.Rows];
-
-            for (int i = 0; i < lines.Rows; i++)
-            {
-                System.Drawing.Point p1 = new System.Drawing.Point((int)lines[i, 0], (int)lines[i, 1]);
-                System.Drawing.Point p2 = new System.Drawing.Point((int)lines[i, 2], (int)lines[i, 3]);
-                convertedLines[i] = new LineSegment2D(p1, p2);
-            }
-
-            return convertedLines;
-        }
-
-
-
-        public static LineSegment2D[] GetOneLineFromDuplicate(LineSegment2D[] lines, Matrix<int> labels, int k)
-        {
-            lines = SortLineSegmentsByLength(lines);
-            lines = ReverseArray(lines);
-            LineSegment2D[] singleLines = new LineSegment2D[k];
-            List<int> existingLabels = new List<int>();
-            int count = 0;
-            for (int i = 0; i < lines.Length; i++)
-            {
-                if (!existingLabels.Contains(labels[i, 0]))
-                {
-                    existingLabels.Add(labels[i, 0]);
-                    singleLines[count++] = lines[i];
-                }
-
-            }
-
-            return singleLines;
-        }
-
-        public static LineSegment2D[] ReverseArray(LineSegment2D[] lines)
-        {
-            for (int i = 0; i < lines.Length / 2; i++)
-            {
-                LineSegment2D aux = lines[i];
-                lines[i] = lines[lines.Length - i - 1];
-                lines[lines.Length - i - 1] = aux;
-            }
-
-            return lines;
-        }
-
-        public static LineSegment2D[] KMeans(LineSegment2D[] lines, int k)
-        {
-
-            Matrix<float> lines_matrix = ConvertLineSegmentArrayToMatrix(lines);
-            Matrix<int> retLabels = new Matrix<int>(lines.Length, 1);
-
-            MCvTermCriteria criteria = new MCvTermCriteria(10, 1.0);
-            criteria.Type = Emgu.CV.CvEnum.TermCritType.Eps | Emgu.CV.CvEnum.TermCritType.Iter;
-
-
-            if (lines.Length >= k)
-            {
-                CvInvoke.Kmeans(lines_matrix, k, retLabels, criteria, 10, Emgu.CV.CvEnum.KMeansInitType.RandomCenters);
-                return GetOneLineFromDuplicate(lines, retLabels, k);
-            }
-
-            else
-                return lines;
-        }
-
         public static LineSegment2D[] SortLineSegmentsByLength(LineSegment2D[] lines)
         {
 
@@ -167,7 +84,6 @@ namespace CameraEmguCV
 
 
         }
-
 
         public static double GetYIntercept(LineSegment2D line)
         {
@@ -203,18 +119,29 @@ namespace CameraEmguCV
 
         }
 
-
-        public static Mat ToMat(BitmapSource source)
+        public static System.Drawing.PointF[] SortPoints(System.Drawing.PointF[] pts)
         {
-            if (source.Format == PixelFormats.Bgr32)
+            for (int i = 0; i < pts.Length - 1; i++)
+                for (int j = i + 1; j < pts.Length; j++)
+
+                    if (pts[i].Y > pts[j].Y)
+                    {
+                        System.Drawing.PointF aux = pts[i];
+                        pts[i] = pts[j];
+                        pts[j] = aux;
+                    }
+            for (int i = 0; i < pts.Length; i += 2)
             {
-                Mat result = new Mat();
-                result.Create(source.PixelHeight, source.PixelWidth, DepthType.Cv8U, 4);
-                source.CopyPixels(Int32Rect.Empty, result.DataPointer, result.Step * result.Rows, result.Step);
-                return result;
+                if (pts[i].X > pts[i + 1].X)
+                {
+                    System.Drawing.PointF aux = pts[i];
+                    pts[i] = pts[i + 1];
+                    pts[i + 1] = aux;
+                }
             }
-            else
-                return new Mat();
+
+            return pts;
         }
+
     }
 }
