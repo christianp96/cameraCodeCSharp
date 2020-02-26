@@ -54,5 +54,6 @@
         </DockPanel>
         <TreeView HorizontalAlignment="Left" Height="221" Margin="1249,286,0,0" VerticalAlignment="Top" Width="287"/>
         <Label Name="lblFound" Content="" HorizontalAlignment="Left" Margin="1297,652,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.417,-1.922"/>
+        <ComboBox Name="cbxCameraDevices" HorizontalAlignment="Left" Margin="1297,746,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="CbxCameraDevices_SelectionChanged"/>
     </Grid>
 </Window>

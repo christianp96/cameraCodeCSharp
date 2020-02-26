@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using Emgu.CV;
+using DirectShowLib;
+
 
 
 
@@ -32,6 +34,7 @@ namespace CameraEmguCV
         private int num_of_clicks_test = 0;
         private List<Point> markers_test = new List<Point>();
         private bool selection = false;
+       
 
         public MainWindow()
         {
@@ -41,7 +44,16 @@ namespace CameraEmguCV
         #region Camera Capture Functions
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            capture = new Capture(1);
+            DsDevice[] captureDevices = DsDevice.GetDevicesOfCat(FilterCategory.VideoInputDevice);
+            
+            for (int i = 0; i < captureDevices.Length; i++)
+            {               
+                cbxCameraDevices.Items.Add(captureDevices[i].Name.ToString());
+            }
+           
+
+             
+            capture = new Capture(0);
             capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameWidth, image1.Width);
             capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameHeight, image1.Height);
             timer = new DispatcherTimer();
@@ -316,6 +328,11 @@ namespace CameraEmguCV
         private void SlHighThresh_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             highThreshold = (int)slHighThresh.Value;
+        }
+
+        private void CbxCameraDevices_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            capture = new Capture(cbxCameraDevices.SelectedIndex);
         }
 
         private void SlMinLineLength_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
