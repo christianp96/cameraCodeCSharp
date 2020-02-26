@@ -50,9 +50,7 @@ namespace CameraEmguCV
             {               
                 cbxCameraDevices.Items.Add(captureDevices[i].Name.ToString());
             }
-           
 
-             
             capture = new Capture(0);
             capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameWidth, image1.Width);
             capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameHeight, image1.Height);
