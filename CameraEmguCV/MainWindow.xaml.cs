@@ -50,10 +50,14 @@ namespace CameraEmguCV
             {               
                 cbxCameraDevices.Items.Add(captureDevices[i].Name.ToString());
             }
-
+            
             capture = new Capture(0);
-            capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameWidth, image1.Width);
-            capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameHeight, image1.Height);
+            capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameWidth, image1.ActualWidth);
+            capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameHeight, image1.ActualHeight);
+            image1.Height = capture.Height;
+            image1.Width = capture.Width;
+            //mainCanvas.Height = image1.Height;
+           //mainCanvas.Width = image1.Width;
             timer = new DispatcherTimer();
             timer.Tick += new EventHandler(timer_Tick);
             timer.Interval = new TimeSpan(0, 0, 0, 0, 1);
@@ -219,8 +223,6 @@ namespace CameraEmguCV
                 num_of_clicks = 0;
                 wasClick = false;
         }
-
-
 
             private void BtnShowImage_Click(object sender, RoutedEventArgs e)
         {
