@@ -75,11 +75,21 @@ namespace CameraEmguCV
                 frame = ImageProcessor.WarpPerspective(frame, Utils.GetPoints(markers));
                 CvInvoke.Imwrite("warp_frame.jpg", frame);
                 frame = CvInvoke.Imread("warp_frame.jpg", LoadImageType.Grayscale);
-                
-                
-                Mat template = CvInvoke.Imread("template.jpg", LoadImageType.Grayscale);
-                Mat mask = CvInvoke.Imread("template_mask.jpg", LoadImageType.Grayscale);
-                bool found = ImageProcessor.MatchTemplate(frame, template, mask);
+                Mat template = null, mask = null;
+                bool found = false;
+
+                try
+                {
+                    template = CvInvoke.Imread("template.jpg", LoadImageType.Grayscale);
+                    mask = CvInvoke.Imread("template_mask.jpg", LoadImageType.Grayscale);
+
+                } catch(Exception ex)
+                {
+                    MessageBox.Show("A handled exception just occurred: " + ex.Message, "Exception Sample", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+
+                if (mask != null && template != null)
+                    found = ImageProcessor.MatchTemplate(frame, template, mask);
                 lblFound.Content = found.ToString();
                 //currentFrame = frame.ToImage<Bgr, byte>(); 
             }
@@ -217,13 +227,25 @@ namespace CameraEmguCV
             //Mat mask = CvInvoke.Imread("template_mask.jpg", LoadImageType.Grayscale);
             //bool found = MatchTemplate(warp, template, mask);
             //MessageBox.Show("Template found = " + found.ToString());
+            Mat img = null;
+            Mat mask = null;
+            Mat result = null;
+            try
+            {
+                img = CvInvoke.Imread("warp_save.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
+                mask = CvInvoke.Imread("template_mask.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("A handled exception just occurred: " + ex.Message, "Exception Sample", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
 
-
-            Mat img = CvInvoke.Imread("warp_save.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
-            Mat mask = CvInvoke.Imread("template_mask.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
-            Mat result = ImageProcessor.ApplyMask(img, mask);
-            CvInvoke.Imwrite("template.jpg", result);
-            image2.Source = Utils.ToBitmapSource(result.ToImage<Bgr, byte>());
+            if (mask != null && img != null)
+            {
+                result = ImageProcessor.ApplyMask(img, mask);
+                CvInvoke.Imwrite("template.jpg", result);
+                image2.Source = Utils.ToBitmapSource(result.ToImage<Bgr, byte>());
+            }
         }
 
         private void BtnAddMarkers_Click(object sender, RoutedEventArgs e)

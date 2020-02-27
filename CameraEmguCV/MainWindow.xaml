@@ -22,5 +22,7 @@
         <TreeView HorizontalAlignment="Left" Height="221" Margin="1249,286,0,0" VerticalAlignment="Top" Width="287"/>
         <ComboBox Name="cbxCameraDevices" HorizontalAlignment="Left" Margin="1297,746,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="CbxCameraDevices_SelectionChanged"/>
         <Button x:Name="btnDebugWindow" Content="Debug Mode"  Margin="1249,656,369,193"   Click="btnDebugWindow_Click"/>
+        <Label Content="Template found: " HorizontalAlignment="Left" Margin="936,583,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.198,0.266"/>
+        <Label Name="lblFound" Content="" HorizontalAlignment="Left" Margin="1030,583,0,0" VerticalAlignment="Top" Height="26"/>
     </Grid>
 </Window>

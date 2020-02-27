@@ -86,6 +86,8 @@ namespace CameraEmguCV
         {
             Mat output = new Mat(img.Size, Emgu.CV.CvEnum.DepthType.Cv8U, 1);
             output.SetTo(new MCvScalar(0));
+            if (img.Height < mask.Height)
+                CvInvoke.Resize(img, img, mask.Size);
             CvInvoke.Threshold(mask, mask, 127, 255, ThresholdType.Binary);
 
             CvInvoke.BitwiseAnd(img, img, output, mask);
