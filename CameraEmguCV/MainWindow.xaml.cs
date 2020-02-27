@@ -23,9 +23,7 @@ namespace CameraEmguCV
         DispatcherTimer timer;
         private bool add_markers = false;
         private int num_of_clicks = 0;
-        private  double rho = 0.5;
-        private int lowThreshold = 30, highThreshold = 210, minLineLength=90, maxLineGap = 50, houghThreshold =50;
-        private List<Point> markers = new List<Point>();
+        public  List<Point> markers = new List<Point>();
         private Point lastPoint = new Point();
         private System.Windows.Shapes.Ellipse lastEllipse = new System.Windows.Shapes.Ellipse();
         private List<System.Windows.Shapes.Ellipse> allEllipses = new List<System.Windows.Shapes.Ellipse>();
@@ -34,10 +32,13 @@ namespace CameraEmguCV
         private int num_of_clicks_test = 0;
         private List<Point> markers_test = new List<Point>();
         private bool selection = false;
+
+        DebugWindow debugWindow = null;
        
 
         public MainWindow()
         {
+            debugWindow = new DebugWindow();
             InitializeComponent();
         }
 
@@ -80,33 +81,14 @@ namespace CameraEmguCV
                 Mat mask = CvInvoke.Imread("template_mask.jpg", LoadImageType.Grayscale);
                 bool found = ImageProcessor.MatchTemplate(frame, template, mask);
                 lblFound.Content = found.ToString();
-                //currentFrame = frame.ToImage<Bgr, byte>();
+                //currentFrame = frame.ToImage<Bgr, byte>(); 
             }
             
             if (currentFrame != null)
-                image1.Source = ToBitmapSource(currentFrame);
+                image1.Source = Utils.ToBitmapSource(currentFrame);
         }
 
-        [DllImport("gdi32")]
-        private static extern int DeleteObject(IntPtr o);
 
-        public static BitmapSource ToBitmapSource(IImage image)
-        {
-            using (System.Drawing.Bitmap source = image.Bitmap)
-            {
-                IntPtr ptr = source.GetHbitmap(); //obtain the Hbitmap
-                BitmapSource bs = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap
-                (
-                  ptr,
-                  IntPtr.Zero,
-                  Int32Rect.Empty,
-                  BitmapSizeOptions.FromEmptyOptions()
-                );
-
-                DeleteObject(ptr); //release the HBitmap
-                return bs;
-            }
-        }
         #endregion
 
         #region GUI Events
@@ -144,7 +126,7 @@ namespace CameraEmguCV
                     Mat img = CvInvoke.Imread("test_save_1.jpg", Emgu.CV.CvEnum.LoadImageType.Color);
                     Mat warp = ImageProcessor.WarpPerspective(img, Utils.GetPoints(markers_test));
                     CvInvoke.Imwrite("warp_save_1.jpg", warp);
-                    image3.Source = ToBitmapSource(warp.ToImage<Bgr, byte>());
+                    image3.Source = Utils.ToBitmapSource(warp.ToImage<Bgr, byte>());
 
                 }
 
@@ -179,7 +161,7 @@ namespace CameraEmguCV
                     Mat img = CvInvoke.Imread("test_save.jpg", Emgu.CV.CvEnum.LoadImageType.Color);
                     Mat warp = ImageProcessor.WarpPerspective(img, Utils.GetPoints(markers));
                     CvInvoke.Imwrite("warp_save.jpg", warp);
-                    image2.Source = ToBitmapSource(warp.ToImage<Bgr, byte>());
+                    image2.Source = Utils.ToBitmapSource(warp.ToImage<Bgr, byte>());
                     selection = true;
                 }
             }
@@ -241,38 +223,7 @@ namespace CameraEmguCV
             Mat mask = CvInvoke.Imread("template_mask.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
             Mat result = ImageProcessor.ApplyMask(img, mask);
             CvInvoke.Imwrite("template.jpg", result);
-            image2.Source = ToBitmapSource(result.ToImage<Bgr, byte>());
-        }
-
-        private void BtnWarp_Click(object sender, RoutedEventArgs e)
-        {
-            Mat img = CvInvoke.Imread("test_save.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
-
-            if (markers.Count == 4)
-                img = ImageProcessor.WarpPerspective(img, Utils.GetPoints(markers));
-            img = ImageProcessor.ApplyBlur(img, 0, 3);
-            img = ImageProcessor.CannyEdgeDetection(img, lowThreshold, highThreshold);
-            image2.Source = ToBitmapSource(img.ToImage<Bgr, byte>());
-
-        }
-
-        private void BtnHough_Click(object sender, RoutedEventArgs e)
-        {
-            Mat img = CvInvoke.Imread("test_save.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
-            if (markers.Count == 4)
-                img = ImageProcessor.WarpPerspective(img, Utils.GetPoints(markers));
-            img = ImageProcessor.ApplyBlur(img, 0, 3);
-
-            img = ImageProcessor.CannyEdgeDetection(img, lowThreshold, highThreshold);
-            img = ImageProcessor.ApplyDilation(img, 3);
-            img = ImageProcessor.ApplyErosion(img, 3);
-
-            LineSegment2D[] lines = ImageProcessor.HoughLines(img, rho, houghThreshold, minLineLength, maxLineGap);
-            
-            Mat output = ImageProcessor.AddLines(lines, Utils.GetRatioOfSelectedArea(Utils.GetPoints(markers)));
-            CvInvoke.Imwrite("template_mask.jpg", output);
-            image2.Source = ToBitmapSource(output.ToImage<Bgr, byte>());
-            
+            image2.Source = Utils.ToBitmapSource(result.ToImage<Bgr, byte>());
         }
 
         private void BtnAddMarkers_Click(object sender, RoutedEventArgs e)
@@ -297,37 +248,14 @@ namespace CameraEmguCV
             ResetAll();
         }
 
-        private void BtnSingleLines_Click(object sender, RoutedEventArgs e)
+        private void btnDebugWindow_Click(object sender, RoutedEventArgs e)
         {
-            Mat img = CvInvoke.Imread("test_save.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
-            if (markers.Count == 4)
-                img = ImageProcessor.WarpPerspective(img, Utils.GetPoints(markers));
-            img = ImageProcessor.ApplyBlur(img, 0, 3);
-            img = ImageProcessor.CannyEdgeDetection(img, lowThreshold, highThreshold);
-            img = ImageProcessor.ApplyDilation(img, 3);
-            img = ImageProcessor.ApplyErosion(img, 3);
-
-            LineSegment2D[] lines = ImageProcessor.HoughLines(img, rho, houghThreshold, minLineLength, maxLineGap);
-
-            LineSegment2D[] singleLines = Utils.GetSingleLinesFromHoughLines(lines, 20);//KMeans(lines, 5);
-            Mat output = ImageProcessor.AddLines(singleLines, Utils.GetRatioOfSelectedArea(Utils.GetPoints(markers)));
-            CvInvoke.Imwrite("template_mask.jpg", output);
-            image2.Source = ToBitmapSource(output.ToImage<Bgr, byte>());
-        }
-
-        private void SlRho_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            rho = slRho.Value;
-        }
-
-        private void SlLowThresh_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            lowThreshold = (int)slLowThresh.Value;
-        }
-
-        private void SlHighThresh_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            highThreshold = (int)slHighThresh.Value;
+            try { debugWindow.Show(); }
+            catch (Exception ex) 
+            {
+                MessageBox.Show("A handled exception just occurred: " + ex.Message, "Exception Sample", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            
         }
 
         private void CbxCameraDevices_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -335,20 +263,6 @@ namespace CameraEmguCV
             capture = new Capture(cbxCameraDevices.SelectedIndex);
         }
 
-        private void SlMinLineLength_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            minLineLength = (int)slMinLineLength.Value;
-        }
-
-        private void SlMaxLineGap_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            maxLineGap = (int)slMaxLineGap.Value;
-        }
-
-        private void SlHoughThresh_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            houghThreshold = (int)slHoughThresh.Value;
-        }
 
         private void BtnTest_Click(object sender, RoutedEventArgs e)
         {

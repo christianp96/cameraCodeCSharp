@@ -6,8 +6,7 @@ using System.Collections.Generic;
 using Emgu.CV.Structure;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
-
-
+using System.Runtime.InteropServices;
 
 namespace CameraEmguCV
 {
@@ -141,6 +140,27 @@ namespace CameraEmguCV
             }
 
             return pts;
+        }
+
+        [DllImport("gdi32")]
+        public static extern int DeleteObject(IntPtr o);
+
+        public static BitmapSource ToBitmapSource(IImage image)
+        {
+            using (System.Drawing.Bitmap source = image.Bitmap)
+            {
+                IntPtr ptr = source.GetHbitmap(); //obtain the Hbitmap
+                BitmapSource bs = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap
+                (
+                  ptr,
+                  IntPtr.Zero,
+                  Int32Rect.Empty,
+                  BitmapSizeOptions.FromEmptyOptions()
+                );
+
+                DeleteObject(ptr); //release the HBitmap
+                return bs;
+            }
         }
 
     }
