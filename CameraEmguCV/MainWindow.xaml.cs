@@ -118,6 +118,7 @@ namespace CameraEmguCV
                     Canvas.SetLeft(ellipse, point.X);
                     Canvas.SetTop(ellipse, point.Y);
                     markers_test.Add(point);
+                    allEllipses.Add(ellipse);
                     num_of_clicks_test++;
 
                 }
@@ -165,6 +166,11 @@ namespace CameraEmguCV
                     Mat img = currentFrame.Mat;
                     Mat warp = ImageProcessor.WarpPerspective(img, Utils.GetPoints(markers));
                     image2.Source = Utils.ToBitmapSource(warp.ToImage<Bgr, byte>());
+                    foreach (System.Windows.Shapes.Ellipse c in allEllipses)
+                    {
+                        mainCanvas.Children.Remove(c);
+                    }
+
                     selection = true;
                 }
             }
@@ -196,7 +202,11 @@ namespace CameraEmguCV
                     mainCanvas.Children.Remove(c);
                 }
                 markers.Clear();
+                markers_test.Clear();
                 num_of_clicks = 0;
+                num_of_clicks_test = 0;
+            add_markers = false;
+            selection = false;
                 wasClick = false;
         }
 
