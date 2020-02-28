@@ -129,10 +129,15 @@ namespace CameraEmguCV
                     Mat warp = ImageProcessor.WarpPerspective(img, Utils.GetPoints(second_markers));
                     image3.Source = Utils.ToBitmapSource(warp.ToImage<Bgr, byte>());
                     ResetMarkers();
-                    treeItem.Header = "cadran1";
-                    treeItemTest.Items.Add("Numeric");
-                    treeItemTest.Items.Add("Numeric2");
-                    treeItem2.Items.Add("Numeric3");
+                    // treeItem.Header = "cadran1";
+                    //treeItemTest.Items.Add("Numeric");
+                    //treeItemTest.Items.Add("Numeric2");
+                    //treeItem2.Items.Add("Numeric3
+                    treeItemTest.Header = "Cadran1";
+                    treeItemTest.Items.Add("Numeric1");
+                    treeItemTest.Items.Add("invalid");
+                    tree.Items.Add(treeItemTest);
+
 
                 }
 
