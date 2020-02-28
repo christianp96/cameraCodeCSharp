@@ -33,11 +33,13 @@ namespace CameraEmguCV
         private bool selection = false;
 
         DebugWindow debugWindow = null;
+        CadranDefinition cadranDefinition = null;
        
 
         public MainWindow()
         {
             debugWindow = new DebugWindow();
+            cadranDefinition = new CadranDefinition();
             InitializeComponent();
         }
 
@@ -120,6 +122,7 @@ namespace CameraEmguCV
                 if (num_of_clicks_second_markers == 4)
                 {
                     TreeViewItem treeItemTest = new TreeViewItem();
+
                      Image<Bgr, byte> currentFrame = capture.QueryFrame().ToImage<Bgr, byte>();
                     Mat frame = currentFrame.Mat;
                     frame = ImageProcessor.WarpPerspective(frame, Utils.GetPoints(markers));
@@ -129,14 +132,11 @@ namespace CameraEmguCV
                     Mat warp = ImageProcessor.WarpPerspective(img, Utils.GetPoints(second_markers));
                     image3.Source = Utils.ToBitmapSource(warp.ToImage<Bgr, byte>());
                     ResetMarkers();
-                    // treeItem.Header = "cadran1";
-                    //treeItemTest.Items.Add("Numeric");
-                    //treeItemTest.Items.Add("Numeric2");
-                    //treeItem2.Items.Add("Numeric3
                     treeItemTest.Header = "Cadran1";
                     treeItemTest.Items.Add("Numeric1");
                     treeItemTest.Items.Add("invalid");
                     tree.Items.Add(treeItemTest);
+
 
 
                 }
@@ -166,6 +166,12 @@ namespace CameraEmguCV
                     Mat warp = ImageProcessor.WarpPerspective(img, Utils.GetPoints(markers));
                     image2.Source = Utils.ToBitmapSource(warp.ToImage<Bgr, byte>());
                     ResetMarkers();
+
+                    try { cadranDefinition.Show(); }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("A handled exception just occurred: " + ex.Message, "Exception Sample", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
 
                     selection = true;
                 }
