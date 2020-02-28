@@ -12,15 +12,15 @@
             <ColumnDefinition Width="7*"/>
             <ColumnDefinition Width="48*"/>
         </Grid.ColumnDefinitions>
-        <TextBox Text="Hei"  HorizontalAlignment="Left" Height="24" Margin="10,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="103" TextChanged="TextBox_TextChanged" Grid.Column="1" Grid.ColumnSpan="2"/>
+        <TextBox Text="" x:Name="CadranName" HorizontalAlignment="Left" Height="24" Margin="10,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="103"  Grid.Column="1" Grid.ColumnSpan="2"/>
         <Label Content="Denumire Cadran" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
         <Label Content="Tip Cadran" Grid.Column="2" HorizontalAlignment="Left" Margin="208,10,0,0" VerticalAlignment="Top" Width="101"/>
-        <ComboBox Grid.Column="2" HorizontalAlignment="Left" Margin="189,40,0,0" VerticalAlignment="Top" Width="120">
-            <ComboBoxItem Content="Numeric"></ComboBoxItem>
-            <ComboBoxItem Content="AlfaNumeric"></ComboBoxItem>
+        <ComboBox x:Name="CadranType" Grid.Column="2" HorizontalAlignment="Left" Margin="189,40,0,0" VerticalAlignment="Top" Width="120" >
+            <ComboBoxItem >Numeric</ComboBoxItem>
+            <ComboBoxItem >AlfaNumeric</ComboBoxItem>
         </ComboBox>
-        <Button x:Name="btn_Cancel" Content="Cancel" Grid.Column="2" HorizontalAlignment="Left" Margin="251,139,0,0" VerticalAlignment="Top" Width="75" Click="Btn_Cancel_Click"/>
-        <Button x:Name="btn_Accept" Content="Accept" Grid.Column="2" HorizontalAlignment="Left" Margin="172,139,0,0" VerticalAlignment="Top" Width="74" />
+      
+        <Button x:Name="btn_Accept" Content="Accept" Grid.Column="2" HorizontalAlignment="Left" Margin="235,139,0,0" VerticalAlignment="Top" Width="74" Click="Btn_Accept_Click"/>
 
     </Grid>
 </Window>

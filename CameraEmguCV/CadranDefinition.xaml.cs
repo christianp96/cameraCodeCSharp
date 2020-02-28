@@ -33,17 +33,14 @@ namespace CameraEmguCV
             this.Hide();      // Programmatically hides the window
         }
 
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
-
+   
    
 
-        private void Btn_Cancel_Click(object sender, RoutedEventArgs e)
+        
+
+        private void Btn_Accept_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
-
         }
     }
 }
