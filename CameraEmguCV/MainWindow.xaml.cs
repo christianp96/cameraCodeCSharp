@@ -28,9 +28,8 @@ namespace CameraEmguCV
         private System.Windows.Shapes.Ellipse lastEllipse = new System.Windows.Shapes.Ellipse();
         private List<System.Windows.Shapes.Ellipse> allEllipses = new List<System.Windows.Shapes.Ellipse>();
         private bool wasClick = false;
-        private bool test_markers = false;
-        private int num_of_clicks_test = 0;
-        private List<Point> markers_test = new List<Point>();
+        private int num_of_clicks_second_markers = 0;
+        private List<Point> second_markers = new List<Point>();
         private bool selection = false;
 
         DebugWindow debugWindow = null;
@@ -106,34 +105,34 @@ namespace CameraEmguCV
         {
             if (add_markers == true && selection == true)
             {
-                if (num_of_clicks_test < 4)
+                if (num_of_clicks_second_markers < 4)
                 {
                     System.Windows.Shapes.Ellipse ellipse = new System.Windows.Shapes.Ellipse();
-                    ellipse.Stroke = new SolidColorBrush(Colors.Red);
-                    ellipse.StrokeThickness = 3;
-                    ellipse.Width = 5;
-                    ellipse.Fill = new SolidColorBrush(Colors.Blue);
-                   mainCanvas.Children.Add(ellipse);
+                    AddEllipse(ellipse);
                     Point point = new Point(Mouse.GetPosition(this).X, Mouse.GetPosition(this).Y);
                     Canvas.SetLeft(ellipse, point.X);
                     Canvas.SetTop(ellipse, point.Y);
-                    markers_test.Add(point);
-                    allEllipses.Add(ellipse);
-                    num_of_clicks_test++;
+                    second_markers.Add(point);
+                    num_of_clicks_second_markers++;
 
                 }
 
-                if (num_of_clicks_test == 4)
+                if (num_of_clicks_second_markers == 4)
                 {
+                    TreeViewItem treeItemTest = new TreeViewItem();
                      Image<Bgr, byte> currentFrame = capture.QueryFrame().ToImage<Bgr, byte>();
                     Mat frame = currentFrame.Mat;
                     frame = ImageProcessor.WarpPerspective(frame, Utils.GetPoints(markers));
                     currentFrame = frame.ToImage<Bgr, byte>();
                     Mat img = currentFrame.Mat; 
                     CvInvoke.Resize(img, img, new System.Drawing.Size((int)image1.Width,(int) image1.Height));
-                    Mat warp = ImageProcessor.WarpPerspective(img, Utils.GetPoints(markers_test));
+                    Mat warp = ImageProcessor.WarpPerspective(img, Utils.GetPoints(second_markers));
                     image3.Source = Utils.ToBitmapSource(warp.ToImage<Bgr, byte>());
                     ResetMarkers();
+                    treeItem.Header = "cadran1";
+                    treeItemTest.Items.Add("Numeric");
+                    treeItemTest.Items.Add("Numeric2");
+                    treeItem2.Items.Add("Numeric3");
 
                 }
 
@@ -143,16 +142,10 @@ namespace CameraEmguCV
                 if (num_of_clicks < 4)
                 {
                     System.Windows.Shapes.Ellipse ellipse = new System.Windows.Shapes.Ellipse();
-                    ellipse.Stroke = new SolidColorBrush(Colors.Orange);
-                    ellipse.StrokeThickness = 2;
-                    ellipse.Width = 5;
-                    ellipse.Fill = new SolidColorBrush(Colors.Orange);
-                    mainCanvas.Children.Add(ellipse);
-                    
-                    allEllipses.Add(ellipse);
-                    lastEllipse = ellipse;
 
-                    Point point = new Point(Mouse.GetPosition(image1).X, Mouse.GetPosition(image1).Y);
+                    AddEllipse(ellipse);
+
+                    Point point = new Point(Mouse.GetPosition(this).X, Mouse.GetPosition(this).Y);
                     Canvas.SetLeft(ellipse, point.X);
                     Canvas.SetTop(ellipse, point.Y);
                     markers.Add(point);
@@ -201,14 +194,27 @@ namespace CameraEmguCV
             }
 
         }
+        //Generarea elipselor pe canvas si adaugarea lor intr-o lista de elipse pentru stergerea lor ulterioara
+        private void AddEllipse(System.Windows.Shapes.Ellipse ellipse)
+        {
+            ellipse.Stroke = new SolidColorBrush(Colors.Orange);
+            ellipse.StrokeThickness = 2;
+            ellipse.Width = 5;
+            ellipse.Fill = new SolidColorBrush(Colors.Orange);
+            mainCanvas.Children.Add(ellipse);
+
+            allEllipses.Add(ellipse);
+            lastEllipse = ellipse;
+
+        }
 
         private void ResetAll()
         {
                 ResetMarkers();
                 markers.Clear();
-                markers_test.Clear();
+                second_markers.Clear();
                 num_of_clicks = 0;
-                num_of_clicks_test = 0;
+                num_of_clicks_second_markers = 0;
                 add_markers = false;
                 selection = false;
                 wasClick = false;
@@ -248,7 +254,7 @@ namespace CameraEmguCV
             }
             else
             {
-               // ResetAll();
+               
                 add_markers = false;
                 btnAddMarkers.Background = Brushes.LightGray;
 
