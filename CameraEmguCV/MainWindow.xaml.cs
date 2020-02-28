@@ -91,7 +91,7 @@ namespace CameraEmguCV
                 if (mask != null && template != null)
                     found = ImageProcessor.MatchTemplate(frame, template, mask);
                 lblFound.Content = found.ToString();
-                //currentFrame = frame.ToImage<Bgr, byte>(); 
+                currentFrame = frame.ToImage<Bgr, byte>(); 
             }
             
             if (currentFrame != null)
@@ -114,10 +114,6 @@ namespace CameraEmguCV
                     ellipse.Width = 5;
                     ellipse.Fill = new SolidColorBrush(Colors.Blue);
                    mainCanvas.Children.Add(ellipse);
-                   // mainCanvas.Width = image1.ActualWidth;
-                   // mainCanvas.Height = image1.ActualHeight;
-                    //mainCanvas.Margin = image1.Margin;
-                  //  mainCanvas.VerticalAlignment = image1.VerticalAlignment;
                     Point point = new Point(Mouse.GetPosition(this).X, Mouse.GetPosition(this).Y);
                     Canvas.SetLeft(ellipse, point.X);
                     Canvas.SetTop(ellipse, point.Y);
@@ -129,11 +125,12 @@ namespace CameraEmguCV
                 if (num_of_clicks_test == 4)
                 {
                      Image<Bgr, byte> currentFrame = capture.QueryFrame().ToImage<Bgr, byte>();
-                    
-
-                   // Image<Bgr, byte> currentFrame = new Image<Bgr, byte>();
+                    Mat frame = currentFrame.Mat;
+                    frame = ImageProcessor.WarpPerspective(frame, Utils.GetPoints(markers));
+                    currentFrame = frame.ToImage<Bgr, byte>();
                     currentFrame.Save("test_save_1.jpg");
                     Mat img = CvInvoke.Imread("test_save_1.jpg", Emgu.CV.CvEnum.LoadImageType.Color);
+                    CvInvoke.Resize(img, img, new System.Drawing.Size((int)image1.Width,(int) image1.Height));
                     Mat warp = ImageProcessor.WarpPerspective(img, Utils.GetPoints(markers_test));
                     CvInvoke.Imwrite("warp_save_1.jpg", warp);
                     image3.Source = Utils.ToBitmapSource(warp.ToImage<Bgr, byte>());
@@ -218,15 +215,7 @@ namespace CameraEmguCV
 
             private void BtnShowImage_Click(object sender, RoutedEventArgs e)
         {
-            //Image<Bgr, byte> currentFrame = capture.QueryFrame().ToImage<Bgr, byte>();
-            //currentFrame.Save("frame.jpg");
-            //Mat img = CvInvoke.Imread("frame.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
-            //Mat warp = WarpPerspective(img, Utils.GetPoints(markers));
-            //CvInvoke.Imwrite("warp_frame.jpg", warp);
-            //Mat template = CvInvoke.Imread("template.jpg", LoadImageType.Grayscale);
-            //Mat mask = CvInvoke.Imread("template_mask.jpg", LoadImageType.Grayscale);
-            //bool found = MatchTemplate(warp, template, mask);
-            //MessageBox.Show("Template found = " + found.ToString());
+    
             Mat img = null;
             Mat mask = null;
             Mat result = null;

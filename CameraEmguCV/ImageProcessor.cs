@@ -23,6 +23,7 @@ namespace CameraEmguCV
 
             Mat M = CvInvoke.GetPerspectiveTransform(points, squared_points);
             Mat screen = new Mat(M.Size, Emgu.CV.CvEnum.DepthType.Cv8U, 3);
+            screen.SetTo(new MCvScalar(0));
             CvInvoke.WarpPerspective(image, screen, M, new System.Drawing.Size(200, (int)(200 / r)));
 
             return screen;
