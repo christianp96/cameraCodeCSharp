@@ -12,7 +12,7 @@
             <Image Name="image1"  Height="360" Width="640" Panel.ZIndex="0" MouseLeftButtonDown="MainCanvas_MouseLeftButtonDown" MouseRightButtonDown="MainCanvas_MouseRightButtonDown"/>
         </Canvas>
         <Canvas Width="458" Name="secondaryCanvas" Margin="757,10,684,538">
-            <Image Name="image2" Stretch="Uniform" Width="458" Height="350" MouseLeftButtonDown="SecondaryCanvas_MouseLeftButtonDown" />
+            <Image Name="image2" Stretch="Uniform" Width="458" Height="350" />
         </Canvas>
         <Button Name="btnShowImage" Content="Show image" Margin="608,569,1010,275" Click="BtnShowImage_Click"/>
         <Button Name="btnAddMarkers" Content="Add Markers" Margin="608,738,1010,112" Click="BtnAddMarkers_Click"/>

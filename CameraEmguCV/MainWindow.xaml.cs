@@ -128,11 +128,9 @@ namespace CameraEmguCV
                     Mat frame = currentFrame.Mat;
                     frame = ImageProcessor.WarpPerspective(frame, Utils.GetPoints(markers));
                     currentFrame = frame.ToImage<Bgr, byte>();
-                    currentFrame.Save("test_save_1.jpg");
-                    Mat img = CvInvoke.Imread("test_save_1.jpg", Emgu.CV.CvEnum.LoadImageType.Color);
+                    Mat img = currentFrame.Mat; 
                     CvInvoke.Resize(img, img, new System.Drawing.Size((int)image1.Width,(int) image1.Height));
                     Mat warp = ImageProcessor.WarpPerspective(img, Utils.GetPoints(markers_test));
-                    CvInvoke.Imwrite("warp_save_1.jpg", warp);
                     image3.Source = Utils.ToBitmapSource(warp.ToImage<Bgr, byte>());
 
                 }
@@ -164,26 +162,15 @@ namespace CameraEmguCV
                 if (num_of_clicks == 4)
                 {
                     Image<Bgr, byte> currentFrame = capture.QueryFrame().ToImage<Bgr, byte>();
-                    currentFrame.Save("test_save.jpg");
-                    Mat img = CvInvoke.Imread("test_save.jpg", Emgu.CV.CvEnum.LoadImageType.Color);
+                    Mat img = currentFrame.Mat;
                     Mat warp = ImageProcessor.WarpPerspective(img, Utils.GetPoints(markers));
-                    CvInvoke.Imwrite("warp_save.jpg", warp);
                     image2.Source = Utils.ToBitmapSource(warp.ToImage<Bgr, byte>());
                     selection = true;
                 }
             }
         }
 
-        private void SecondaryCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            if (test_markers == true && selection == true)
-            {
-                
-
-
-            }
-
-        }
+      
 
         private void MainCanvas_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
