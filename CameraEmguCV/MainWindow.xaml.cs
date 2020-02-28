@@ -133,6 +133,7 @@ namespace CameraEmguCV
                     CvInvoke.Resize(img, img, new System.Drawing.Size((int)image1.Width,(int) image1.Height));
                     Mat warp = ImageProcessor.WarpPerspective(img, Utils.GetPoints(markers_test));
                     image3.Source = Utils.ToBitmapSource(warp.ToImage<Bgr, byte>());
+                    ResetMarkers();
 
                 }
 
@@ -166,10 +167,7 @@ namespace CameraEmguCV
                     Mat img = currentFrame.Mat;
                     Mat warp = ImageProcessor.WarpPerspective(img, Utils.GetPoints(markers));
                     image2.Source = Utils.ToBitmapSource(warp.ToImage<Bgr, byte>());
-                    foreach (System.Windows.Shapes.Ellipse c in allEllipses)
-                    {
-                        mainCanvas.Children.Remove(c);
-                    }
+                    ResetMarkers();
 
                     selection = true;
                 }
@@ -195,19 +193,26 @@ namespace CameraEmguCV
 
         }
 
+        private void ResetMarkers()
+        {
+            foreach (System.Windows.Shapes.Ellipse c in allEllipses)
+            {
+                mainCanvas.Children.Remove(c);
+            }
+
+        }
+
         private void ResetAll()
         {
-                foreach (System.Windows.Shapes.Ellipse c in allEllipses)
-                {
-                    mainCanvas.Children.Remove(c);
-                }
+                ResetMarkers();
                 markers.Clear();
                 markers_test.Clear();
                 num_of_clicks = 0;
                 num_of_clicks_test = 0;
-            add_markers = false;
-            selection = false;
+                add_markers = false;
+                selection = false;
                 wasClick = false;
+                btnAddMarkers.Background = Brushes.LightGray;
         }
 
             private void BtnShowImage_Click(object sender, RoutedEventArgs e)
@@ -272,19 +277,7 @@ namespace CameraEmguCV
         }
 
 
-        private void BtnTest_Click(object sender, RoutedEventArgs e)
-        {
-            if (test_markers == false)
-            {
-                test_markers = true;
-                btnTest.Background = Brushes.Pink;
-            }
-            else
-            {
-                test_markers = false;
-                btnTest.Background = Brushes.LightGray;
-            }
-        }
+     
     }
     #endregion
 

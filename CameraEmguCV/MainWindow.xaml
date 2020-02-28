@@ -18,7 +18,6 @@
         <Button Name="btnAddMarkers" Content="Add Markers" Margin="608,738,1010,112" Click="BtnAddMarkers_Click"/>
         <Button Name="btnReset" Content="RESET!"  Margin="1249,566,369,283"   Click="BtnReset_Click"/>
         <Image HorizontalAlignment="Left" Height="102" Margin="1249,38,0,0" VerticalAlignment="Top" Width="516" Name="image3"/>
-        <Button Content="Test" HorizontalAlignment="Left" VerticalAlignment="Top" Width="279" Height="48" Margin="936,738,0,0" Name="btnTest" Click="BtnTest_Click"/>
         <TreeView HorizontalAlignment="Left" Height="221" Margin="1249,286,0,0" VerticalAlignment="Top" Width="287"/>
         <ComboBox Name="cbxCameraDevices" HorizontalAlignment="Left" Margin="1297,746,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="CbxCameraDevices_SelectionChanged"/>
         <Button x:Name="btnDebugWindow" Content="Debug Mode"  Margin="1249,656,369,193"   Click="btnDebugWindow_Click"/>
