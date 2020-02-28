@@ -37,5 +37,13 @@ namespace CameraEmguCV
         {
 
         }
+
+   
+
+        private void Btn_Cancel_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+
+        }
     }
 }
