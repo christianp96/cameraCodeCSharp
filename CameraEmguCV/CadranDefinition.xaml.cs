@@ -27,17 +27,6 @@ namespace CameraEmguCV
             this.parent = (MainWindow)Application.Current.MainWindow;
         }
 
-        protected override void OnClosing(CancelEventArgs e)
-        {
-            e.Cancel = true;  // cancels the window close    
-            this.Hide();      // Programmatically hides the window
-        }
-
-   
-   
-
-        
-
         private void Btn_Accept_Click(object sender, RoutedEventArgs e)
         {
             this.Close();

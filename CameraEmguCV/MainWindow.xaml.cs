@@ -48,6 +48,8 @@ namespace CameraEmguCV
         #region Camera Capture Functions
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            debugWindow.Owner = GetWindow(this);
+            cadranDefinition.Owner = GetWindow(this);
             DsDevice[] captureDevices = DsDevice.GetDevicesOfCat(FilterCategory.VideoInputDevice);
             
             for (int i = 0; i < captureDevices.Length; i++)
@@ -134,7 +136,7 @@ namespace CameraEmguCV
                     Mat warp = ImageProcessor.WarpPerspective(img, Utils.GetPoints(second_markers));
                     image3.Source = Utils.ToBitmapSource(warp.ToImage<Bgr, byte>());
                     ResetMarkers();
-                    try { cadranDefinition.ShowDialog(); }
+                    try {  cadranDefinition.ShowDialog(); }
                     catch (Exception ex)
                     {
                         MessageBox.Show("A handled exception just occurred: " + ex.Message, "Exception Sample", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -289,7 +291,7 @@ namespace CameraEmguCV
 
         private void btnDebugWindow_Click(object sender, RoutedEventArgs e)
         {
-            try { debugWindow.Show(); }
+            try {  debugWindow.Show(); }
             catch (Exception ex) 
             {
                 MessageBox.Show("A handled exception just occurred: " + ex.Message, "Exception Sample", MessageBoxButton.OK, MessageBoxImage.Warning);
