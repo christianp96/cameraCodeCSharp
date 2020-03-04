@@ -5,41 +5,61 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CameraEmguCV"
         mc:Ignorable="d"
-        Title="MainWindow" Height="907.6" Width="1905.2" Loaded="Window_Loaded">
-    <Grid Height="898" VerticalAlignment="Top" Margin="0,0,0.2,-20.4" Width="1905">
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF"
+        fw:AcrylicWindow.Enabled="True" Height="650" Width="1540" Loaded="Window_Loaded" WindowStyle="None" WindowStartupLocation="CenterScreen" Visibility="Visible" ResizeMode="NoResize">
+    <Grid Height="650" VerticalAlignment="Top" Margin="0,0,-8,-21">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="350"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0" fw:PointerTracker.Enabled="True" Background="#01FFFFFF">
+            <StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Button Foreground="Black" Background="{x:Null}" BorderBrush="{x:Null}">
+                        <materialDesign:PackIcon Kind="ArrowLeft"></materialDesign:PackIcon>
+                    </Button>
+                    <TextBlock Text="Menu" FontSize="12" Margin="10" VerticalAlignment="Center" />
+                </StackPanel>
+
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Column="1" Background="White">
+            <TreeView HorizontalAlignment="Left" Height="221" Margin="844,396,0,0" VerticalAlignment="Top" Width="287" x:Name="tree">
+
+                <TreeView.Resources>
+                    <Style TargetType="{x:Type TreeViewItem}">
+                        <Setter Property="HeaderTemplate">
+                            <Setter.Value>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock VerticalAlignment="Center" Text="{Binding}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </TreeView.Resources>
+            </TreeView>
+
+        </Grid>
 
 
-        <Canvas Name="mainCanvas" Panel.ZIndex="1"    Width="640" Height="360" VerticalAlignment="Top"  HorizontalAlignment="Left"  >
+        <Canvas Name="mainCanvas" Panel.ZIndex="1"    Width="640" Height="360" VerticalAlignment="Top"  HorizontalAlignment="Left" Margin="44,10,0,0" Grid.Column="1"  >
             <Image  Name="image1"  Height="360" Width="640" Panel.ZIndex="0" MouseLeftButtonDown="MainCanvas_MouseLeftButtonDown" MouseRightButtonDown="MainCanvas_MouseRightButtonDown"   />
         </Canvas>
-        <Canvas Width="458" Name="secondaryCanvas" Margin="1145,10,302,538">
+        <Canvas Width="458" Name="secondaryCanvas" Margin="713,10,162,289" Grid.Column="1">
             <Image Name="image2" Stretch="Uniform" Width="458" Height="350" />
         </Canvas>
-        <Button Name="btnShowImage" Content="Show image" Margin="1608,527,10,339" Click="BtnShowImage_Click"/>
-        <Button Name="btnAddMarkers" Content="Add Markers" Margin="1316,527,302,339" Click="BtnAddMarkers_Click"/>
-        <Button Name="btnReset" Content="RESET!"  Margin="10,753,1608,113"   Click="BtnReset_Click"/>
-        <Image HorizontalAlignment="Left" Height="122" Margin="523,610,0,0" VerticalAlignment="Top" Width="262" Name="image3"/>
-        <TreeView HorizontalAlignment="Left" Height="221" Margin="1316,610,0,0" VerticalAlignment="Top" Width="287" x:Name="tree">
-
-            <TreeView.Resources>
-                <Style TargetType="{x:Type TreeViewItem}">
-                    <Setter Property="HeaderTemplate">
-                        <Setter.Value>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock VerticalAlignment="Center" Text="{Binding}">
-
-                                    </TextBlock>
-                                </StackPanel>
-                            </DataTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </TreeView.Resources>
-        </TreeView>
-        <ComboBox Name="cbxCameraDevices" HorizontalAlignment="Left" Margin="343,753,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="CbxCameraDevices_SelectionChanged"/>
-        <Button x:Name="btnDebugWindow" Content="Debug Mode"  Margin="10,700,1608,166"   Click="btnDebugWindow_Click"/>
-        <Label Content="Template found: " HorizontalAlignment="Left" Margin="941,589,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.198,0.266"/>
-        <Label Name="lblFound" Content="" HorizontalAlignment="Left" Margin="1045,589,0,0" VerticalAlignment="Top" Height="26"/>
+        <Button Name="btnShowImage" Content="Show image" Margin="68,144,142,468" Click="BtnShowImage_Click" Background="LightGray" Height="Auto"/>
+        <Button Name="btnAddMarkers" Content="Add Markers" Margin="68,210,142,406" Click="BtnAddMarkers_Click" Background="LightGray" Height="Auto"/>
+        <Button Name="btnReset" Content="RESET!"  Margin="68,269,142,349"   Click="BtnReset_Click" Background="LightGray"/>
+        <Image HorizontalAlignment="Left" Height="122" Margin="44,479,0,0" VerticalAlignment="Top" Width="262" Name="image3" Grid.Column="1"/>
+        <ComboBox Name="cbxCameraDevices" HorizontalAlignment="Left" Margin="68,428,0,0" VerticalAlignment="Top" Width="140" SelectionChanged="CbxCameraDevices_SelectionChanged"/>
+        <Button x:Name="btnDebugWindow" Content="Debug Mode"  Margin="68,329,142,280"   Click="btnDebugWindow_Click" Background="LightGray" Height="Auto"/>
+        <Label Content="Template found: " HorizontalAlignment="Left" Margin="345,505,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.198,0.266" Grid.Column="1" Height="44"/>
+        <Label Name="lblFound" Content="" HorizontalAlignment="Left" Margin="470,505,0,0" VerticalAlignment="Top" Height="26" Grid.Column="1" Width="68" RenderTransformOrigin="0.529,0.654"/>
     </Grid>
 </Window>
