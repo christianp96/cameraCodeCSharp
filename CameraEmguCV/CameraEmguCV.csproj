@@ -93,6 +93,7 @@
     <Compile Include="DebugWindow.xaml.cs">
       <DependentUpon>DebugWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="TemplateImage.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="CadranDefinition.xaml.cs">
       <DependentUpon>CadranDefinition.xaml</DependentUpon>
