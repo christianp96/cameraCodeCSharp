@@ -166,7 +166,7 @@ namespace CameraEmguCV
 
                     AddEllipse(ellipse);
 
-                    Point point = new Point(Mouse.GetPosition(this).X, Mouse.GetPosition(this).Y);
+                    Point point = new Point(Mouse.GetPosition(image1).X, Mouse.GetPosition(image1).Y);
                     Canvas.SetLeft(ellipse, point.X);
                     Canvas.SetTop(ellipse, point.Y);
                     markers.Add(point);
@@ -242,6 +242,10 @@ namespace CameraEmguCV
                 selection = false;
                 wasClick = false;
                 btnAddMarkers.Background = Brushes.LightGray;
+            image1.Width = capture.Width;
+            image1.Height = capture.Height;
+            mainCanvas.Width = capture.Width;
+            mainCanvas.Height = capture.Height;
         }
 
             private void BtnShowImage_Click(object sender, RoutedEventArgs e)
