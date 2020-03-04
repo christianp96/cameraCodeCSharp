@@ -8,6 +8,7 @@
         Title="MainWindow" Height="907.6" Width="1905.2" Loaded="Window_Loaded">
     <Grid Height="898" VerticalAlignment="Top" Margin="0,0,0.2,-20.4" Width="1905">
 
+
         <Canvas Name="mainCanvas" Panel.ZIndex="1"    Width="640" Height="360" VerticalAlignment="Top"  HorizontalAlignment="Left"  >
             <Image  Name="image1"  Height="360" Width="640" Panel.ZIndex="0" MouseLeftButtonDown="MainCanvas_MouseLeftButtonDown" MouseRightButtonDown="MainCanvas_MouseRightButtonDown"   />
         </Canvas>
@@ -19,6 +20,7 @@
         <Button Name="btnReset" Content="RESET!"  Margin="10,753,1608,113"   Click="BtnReset_Click"/>
         <Image HorizontalAlignment="Left" Height="122" Margin="523,610,0,0" VerticalAlignment="Top" Width="262" Name="image3"/>
         <TreeView HorizontalAlignment="Left" Height="221" Margin="1316,610,0,0" VerticalAlignment="Top" Width="287" x:Name="tree">
+
             <TreeView.Resources>
                 <Style TargetType="{x:Type TreeViewItem}">
                     <Setter Property="HeaderTemplate">

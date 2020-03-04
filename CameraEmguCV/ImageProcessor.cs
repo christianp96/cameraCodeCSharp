@@ -17,14 +17,14 @@ namespace CameraEmguCV
             //MessageBox.Show("r = " + r.ToString());
             System.Drawing.PointF[] squared_points = new System.Drawing.PointF[4];
             squared_points[0] = new System.Drawing.PointF(0, 0);
-            squared_points[1] = new System.Drawing.PointF(200, 0);
-            squared_points[2] = new System.Drawing.PointF(0, (int)(200 / r));
-            squared_points[3] = new System.Drawing.PointF(200, (int)(200 / r));
+            squared_points[1] = new System.Drawing.PointF(400, 0);
+            squared_points[2] = new System.Drawing.PointF(0, (int)(400 / r));
+            squared_points[3] = new System.Drawing.PointF(400, (int)(400 / r));
 
             Mat M = CvInvoke.GetPerspectiveTransform(points, squared_points);
             Mat screen = new Mat(M.Size, Emgu.CV.CvEnum.DepthType.Cv8U, 3);
             screen.SetTo(new MCvScalar(0));
-            CvInvoke.WarpPerspective(image, screen, M, new System.Drawing.Size(200, (int)(200 / r)));
+            CvInvoke.WarpPerspective(image, screen, M, new System.Drawing.Size(400, (int)(400 / r)));
 
             return screen;
         }

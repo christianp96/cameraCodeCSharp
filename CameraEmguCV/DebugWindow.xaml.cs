@@ -20,13 +20,6 @@ namespace CameraEmguCV
             this.parent = (MainWindow)Application.Current.MainWindow;
         }
 
-        protected override void OnClosing(CancelEventArgs e)
-        {
-            e.Cancel = true;  // cancels the window close    
-            this.Hide();      // Programmatically hides the window
-        }
-
-
         private void BtnHough_Click(object sender, RoutedEventArgs e)
         {
             Mat img = CvInvoke.Imread("test_save.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);

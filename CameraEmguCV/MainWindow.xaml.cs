@@ -40,14 +40,16 @@ namespace CameraEmguCV
 
         public MainWindow()
         {
-            debugWindow = new DebugWindow();
-            cadranDefinition = new CadranDefinition();
-            InitializeComponent();  
+ 
+
+            InitializeComponent();
+
         }
 
         #region Camera Capture Functions
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            
             DsDevice[] captureDevices = DsDevice.GetDevicesOfCat(FilterCategory.VideoInputDevice);
             
             for (int i = 0; i < captureDevices.Length; i++)
@@ -56,8 +58,8 @@ namespace CameraEmguCV
             }
             
             capture = new Capture(0);
-            capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameWidth, image1.ActualWidth);
-            capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameHeight, image1.ActualHeight);
+            //capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameWidth, image1.ActualWidth);
+            //capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameHeight, image1.ActualHeight);
             image1.Height = capture.Height;
             image1.Width = capture.Width;
             mainCanvas.Height = image1.Height;
@@ -94,7 +96,12 @@ namespace CameraEmguCV
                 if (mask != null && template != null)
                     found = ImageProcessor.MatchTemplate(frame, template, mask);
                 lblFound.Content = found.ToString();
-                //CvInvoke.Resize(frame, frame, new System.Drawing.Size((int)image1.Width, (int)image1.Height));
+
+                image1.Width = frame.Width;
+                image1.Height = frame.Height;
+                mainCanvas.Height = frame.Height;
+                mainCanvas.Width = frame.Width;
+
                 currentFrame = frame.ToImage<Bgr, byte>(); 
             }
             
@@ -114,8 +121,9 @@ namespace CameraEmguCV
                 {
                     System.Windows.Shapes.Ellipse ellipse = new System.Windows.Shapes.Ellipse();
                     AddEllipse(ellipse);
-                    Point point = new Point(Mouse.GetPosition(this).X, Mouse.GetPosition(this).Y);
-                    //MessageBox.Show(image1.Width.ToString()+ " "+ image1.Height.ToString());
+
+                    Point point = new Point(Mouse.GetPosition(image1).X, Mouse.GetPosition(image1).Y);
+
                     Canvas.SetLeft(ellipse, point.X);
                     Canvas.SetTop(ellipse, point.Y);
                     
@@ -137,7 +145,7 @@ namespace CameraEmguCV
                     Mat warp = ImageProcessor.WarpPerspective(img, Utils.GetPoints(second_markers));
                     image3.Source = Utils.ToBitmapSource(warp.ToImage<Bgr, byte>());
                     ResetMarkers();
-                    try { cadranDefinition.ShowDialog(); }
+                    try { cadranDefinition = new CadranDefinition(); cadranDefinition.Owner = GetWindow(this); cadranDefinition.ShowDialog(); }
                     catch (Exception ex)
                     {
                         MessageBox.Show("A handled exception just occurred: " + ex.Message, "Exception Sample", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -167,7 +175,7 @@ namespace CameraEmguCV
                     AddEllipse(ellipse);
 
                     Point point = new Point(Mouse.GetPosition(image1).X, Mouse.GetPosition(image1).Y);
-                    
+
                     Canvas.SetLeft(ellipse, point.X);
                     Canvas.SetTop(ellipse, point.Y);
                     markers.Add(point);
@@ -243,6 +251,10 @@ namespace CameraEmguCV
                 selection = false;
                 wasClick = false;
                 btnAddMarkers.Background = Brushes.LightGray;
+            image1.Width = capture.Width;
+            image1.Height = capture.Height;
+            mainCanvas.Width = capture.Width;
+            mainCanvas.Height = capture.Height;
         }
 
             private void BtnShowImage_Click(object sender, RoutedEventArgs e)
@@ -293,7 +305,7 @@ namespace CameraEmguCV
 
         private void btnDebugWindow_Click(object sender, RoutedEventArgs e)
         {
-            try { debugWindow.Show(); }
+            try { debugWindow = new DebugWindow(); debugWindow.Owner = GetWindow(this); debugWindow.Show(); }
             catch (Exception ex) 
             {
                 MessageBox.Show("A handled exception just occurred: " + ex.Message, "Exception Sample", MessageBoxButton.OK, MessageBoxImage.Warning);
