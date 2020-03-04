@@ -8,17 +8,17 @@
         Title="MainWindow" Height="907.6" Width="1905.2" Loaded="Window_Loaded">
     <Grid Height="898" VerticalAlignment="Top" Margin="0,0,0.2,-20.4" Width="1905">
 
-        <Canvas Name="mainCanvas" Panel.ZIndex="1"  RenderTransformOrigin="0,0" HorizontalAlignment="Left" Width="640" Height="360" VerticalAlignment="Top">
-            <Image Name="image1"  Height="360" Width="640" Panel.ZIndex="0" MouseLeftButtonDown="MainCanvas_MouseLeftButtonDown" MouseRightButtonDown="MainCanvas_MouseRightButtonDown"/>
+        <Canvas Name="mainCanvas" Panel.ZIndex="1"    Width="640" Height="360" VerticalAlignment="Top"  HorizontalAlignment="Left"  >
+            <Image  Name="image1"  Height="360" Width="640" Panel.ZIndex="0" MouseLeftButtonDown="MainCanvas_MouseLeftButtonDown" MouseRightButtonDown="MainCanvas_MouseRightButtonDown"   />
         </Canvas>
-        <Canvas Width="458" Name="secondaryCanvas" Margin="757,10,684,538">
+        <Canvas Width="458" Name="secondaryCanvas" Margin="1145,10,302,538">
             <Image Name="image2" Stretch="Uniform" Width="458" Height="350" />
         </Canvas>
-        <Button Name="btnShowImage" Content="Show image" Margin="608,569,1010,275" Click="BtnShowImage_Click"/>
-        <Button Name="btnAddMarkers" Content="Add Markers" Margin="608,657,1010,193" Click="BtnAddMarkers_Click"/>
-        <Button Name="btnReset" Content="RESET!"  Margin="1249,566,369,283"   Click="BtnReset_Click"/>
-        <Image HorizontalAlignment="Left" Height="102" Margin="1249,38,0,0" VerticalAlignment="Top" Width="516" Name="image3"/>
-        <TreeView HorizontalAlignment="Left" Height="221" Margin="1249,286,0,0" VerticalAlignment="Top" Width="287" x:Name="tree">
+        <Button Name="btnShowImage" Content="Show image" Margin="1608,527,10,339" Click="BtnShowImage_Click"/>
+        <Button Name="btnAddMarkers" Content="Add Markers" Margin="1316,527,302,339" Click="BtnAddMarkers_Click"/>
+        <Button Name="btnReset" Content="RESET!"  Margin="10,753,1608,113"   Click="BtnReset_Click"/>
+        <Image HorizontalAlignment="Left" Height="122" Margin="523,610,0,0" VerticalAlignment="Top" Width="262" Name="image3"/>
+        <TreeView HorizontalAlignment="Left" Height="221" Margin="1316,610,0,0" VerticalAlignment="Top" Width="287" x:Name="tree">
             <TreeView.Resources>
                 <Style TargetType="{x:Type TreeViewItem}">
                     <Setter Property="HeaderTemplate">
@@ -26,7 +26,7 @@
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock VerticalAlignment="Center" Text="{Binding}">
-                                        
+
                                     </TextBlock>
                                 </StackPanel>
                             </DataTemplate>
@@ -35,8 +35,8 @@
                 </Style>
             </TreeView.Resources>
         </TreeView>
-        <ComboBox Name="cbxCameraDevices" HorizontalAlignment="Left" Margin="1297,746,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="CbxCameraDevices_SelectionChanged"/>
-        <Button x:Name="btnDebugWindow" Content="Debug Mode"  Margin="1249,656,369,193"   Click="btnDebugWindow_Click"/>
+        <ComboBox Name="cbxCameraDevices" HorizontalAlignment="Left" Margin="343,753,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="CbxCameraDevices_SelectionChanged"/>
+        <Button x:Name="btnDebugWindow" Content="Debug Mode"  Margin="10,700,1608,166"   Click="btnDebugWindow_Click"/>
         <Label Content="Template found: " HorizontalAlignment="Left" Margin="941,589,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.198,0.266"/>
         <Label Name="lblFound" Content="" HorizontalAlignment="Left" Margin="1045,589,0,0" VerticalAlignment="Top" Height="26"/>
     </Grid>

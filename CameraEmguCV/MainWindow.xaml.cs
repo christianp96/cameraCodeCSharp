@@ -42,7 +42,7 @@ namespace CameraEmguCV
         {
             debugWindow = new DebugWindow();
             cadranDefinition = new CadranDefinition();
-            InitializeComponent();
+            InitializeComponent();  
         }
 
         #region Camera Capture Functions
@@ -60,8 +60,8 @@ namespace CameraEmguCV
             capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameHeight, image1.ActualHeight);
             image1.Height = capture.Height;
             image1.Width = capture.Width;
-            //mainCanvas.Height = image1.Height;
-           //mainCanvas.Width = image1.Width;
+            mainCanvas.Height = image1.Height;
+            mainCanvas.Width = image1.Width;
             timer = new DispatcherTimer();
             timer.Tick += new EventHandler(timer_Tick);
             timer.Interval = new TimeSpan(0, 0, 0, 0, 1);
@@ -94,6 +94,7 @@ namespace CameraEmguCV
                 if (mask != null && template != null)
                     found = ImageProcessor.MatchTemplate(frame, template, mask);
                 lblFound.Content = found.ToString();
+                //CvInvoke.Resize(frame, frame, new System.Drawing.Size((int)image1.Width, (int)image1.Height));
                 currentFrame = frame.ToImage<Bgr, byte>(); 
             }
             
@@ -114,8 +115,10 @@ namespace CameraEmguCV
                     System.Windows.Shapes.Ellipse ellipse = new System.Windows.Shapes.Ellipse();
                     AddEllipse(ellipse);
                     Point point = new Point(Mouse.GetPosition(this).X, Mouse.GetPosition(this).Y);
+                    //MessageBox.Show(image1.Width.ToString()+ " "+ image1.Height.ToString());
                     Canvas.SetLeft(ellipse, point.X);
                     Canvas.SetTop(ellipse, point.Y);
+                    
                     second_markers.Add(point);
                     num_of_clicks_second_markers++;
 
@@ -163,7 +166,8 @@ namespace CameraEmguCV
 
                     AddEllipse(ellipse);
 
-                    Point point = new Point(Mouse.GetPosition(this).X, Mouse.GetPosition(this).Y);
+                    Point point = new Point(Mouse.GetPosition(image1).X, Mouse.GetPosition(image1).Y);
+                    
                     Canvas.SetLeft(ellipse, point.X);
                     Canvas.SetTop(ellipse, point.Y);
                     markers.Add(point);
