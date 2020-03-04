@@ -40,7 +40,10 @@ namespace CameraEmguCV
 
         public MainWindow()
         {
+ 
+
             InitializeComponent();
+
         }
 
         #region Camera Capture Functions
@@ -93,10 +96,12 @@ namespace CameraEmguCV
                 if (mask != null && template != null)
                     found = ImageProcessor.MatchTemplate(frame, template, mask);
                 lblFound.Content = found.ToString();
+
                 image1.Width = frame.Width;
                 image1.Height = frame.Height;
                 mainCanvas.Height = frame.Height;
                 mainCanvas.Width = frame.Width;
+
                 currentFrame = frame.ToImage<Bgr, byte>(); 
             }
             
@@ -116,9 +121,12 @@ namespace CameraEmguCV
                 {
                     System.Windows.Shapes.Ellipse ellipse = new System.Windows.Shapes.Ellipse();
                     AddEllipse(ellipse);
+
                     Point point = new Point(Mouse.GetPosition(image1).X, Mouse.GetPosition(image1).Y);
+
                     Canvas.SetLeft(ellipse, point.X);
                     Canvas.SetTop(ellipse, point.Y);
+                    
                     second_markers.Add(point);
                     num_of_clicks_second_markers++;
 
@@ -167,6 +175,7 @@ namespace CameraEmguCV
                     AddEllipse(ellipse);
 
                     Point point = new Point(Mouse.GetPosition(image1).X, Mouse.GetPosition(image1).Y);
+
                     Canvas.SetLeft(ellipse, point.X);
                     Canvas.SetTop(ellipse, point.Y);
                     markers.Add(point);
