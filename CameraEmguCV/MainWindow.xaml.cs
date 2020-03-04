@@ -55,12 +55,12 @@ namespace CameraEmguCV
             }
             
             capture = new Capture(0);
-            capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameWidth, image1.ActualWidth);
-            capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameHeight, image1.ActualHeight);
+            //capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameWidth, image1.ActualWidth);
+            //capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameHeight, image1.ActualHeight);
             image1.Height = capture.Height;
             image1.Width = capture.Width;
-            //mainCanvas.Height = image1.Height;
-           //mainCanvas.Width = image1.Width;
+            mainCanvas.Height = image1.Height;
+            mainCanvas.Width = image1.Width;
             timer = new DispatcherTimer();
             timer.Tick += new EventHandler(timer_Tick);
             timer.Interval = new TimeSpan(0, 0, 0, 0, 1);
@@ -93,6 +93,10 @@ namespace CameraEmguCV
                 if (mask != null && template != null)
                     found = ImageProcessor.MatchTemplate(frame, template, mask);
                 lblFound.Content = found.ToString();
+                image1.Width = frame.Width;
+                image1.Height = frame.Height;
+                mainCanvas.Height = frame.Height;
+                mainCanvas.Width = frame.Width;
                 currentFrame = frame.ToImage<Bgr, byte>(); 
             }
             
@@ -112,7 +116,7 @@ namespace CameraEmguCV
                 {
                     System.Windows.Shapes.Ellipse ellipse = new System.Windows.Shapes.Ellipse();
                     AddEllipse(ellipse);
-                    Point point = new Point(Mouse.GetPosition(this).X, Mouse.GetPosition(this).Y);
+                    Point point = new Point(Mouse.GetPosition(image1).X, Mouse.GetPosition(image1).Y);
                     Canvas.SetLeft(ellipse, point.X);
                     Canvas.SetTop(ellipse, point.Y);
                     second_markers.Add(point);
