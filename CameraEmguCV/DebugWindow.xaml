@@ -7,39 +7,47 @@
         mc:Ignorable="d"
         Title="DebugWindow" Height="450" Width="800">
     <Grid>
-        <DockPanel VerticalAlignment="Center" Margin="13,99,302,288" Height="32">
+        <DockPanel VerticalAlignment="Center" Margin="13,100,581.6,288" Height="32">
             <Label Content="rho" DockPanel.Dock="Left"/>
             <TextBox Text="{Binding Value, ElementName=slRho, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" TextAlignment="Right" Width="40"/>
             <Slider Maximum="20" TickPlacement="BottomRight" TickFrequency="0.1" IsSnapToTickEnabled="True" x:Name="slRho" ValueChanged="SlRho_ValueChanged"/>
         </DockPanel>
-        <DockPanel VerticalAlignment="Center" Margin="12,11,303,377" Height="31">
+        <DockPanel VerticalAlignment="Center" Margin="12,12,581.6,378" Height="30">
             <Label Content="lowThreshold" DockPanel.Dock="Left"/>
             <TextBox Text="{Binding Value, ElementName=slLowThresh, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" TextAlignment="Right" Width="40"/>
             <Slider Maximum="400" TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="True" x:Name="slLowThresh" ValueChanged="SlLowThresh_ValueChanged"/>
         </DockPanel>
-        <DockPanel VerticalAlignment="Center" Margin="12,60,303,328" Height="31">
+        <DockPanel VerticalAlignment="Center" Margin="12,60,581.6,328" Height="32">
             <Label Content="highThreshold" DockPanel.Dock="Left"/>
             <TextBox Text="{Binding Value, ElementName=slHighThresh, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" TextAlignment="Right" Width="40"/>
             <Slider Maximum="400" TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="True" x:Name="slHighThresh" ValueChanged="SlHighThresh_ValueChanged"/>
         </DockPanel>
-        <DockPanel VerticalAlignment="Center" Margin="12,185,302,203" Height="31">
+        <DockPanel VerticalAlignment="Center" Margin="12,186,581.6,204" Height="30">
             <Label Content="minLineLength" DockPanel.Dock="Left"/>
             <TextBox Text="{Binding Value, ElementName=slMinLineLength, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" TextAlignment="Right" Width="40"/>
             <Slider Maximum="400" TickPlacement="BottomRight" TickFrequency="5" IsSnapToTickEnabled="True" x:Name="slMinLineLength" ValueChanged="SlMinLineLength_ValueChanged"/>
         </DockPanel>
-        <DockPanel VerticalAlignment="Center" Margin="12,221,302,167" Height="31">
+        <DockPanel VerticalAlignment="Center" Margin="12,222,581.6,168" Height="30">
             <Label Content="maxGap" DockPanel.Dock="Left"/>
             <TextBox Text="{Binding Value, ElementName=slMaxLineGap, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" TextAlignment="Right" Width="40"/>
             <Slider Maximum="100" TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="True" x:Name="slMaxLineGap" ValueChanged="SlMaxLineGap_ValueChanged"/>
         </DockPanel>
-        <DockPanel VerticalAlignment="Center" Margin="13,142,302,245" Height="32">
+        <DockPanel VerticalAlignment="Center" Margin="13,142,581.6,246" Height="32">
             <Label Content="houghThreshold" DockPanel.Dock="Left"/>
             <TextBox Text="{Binding Value, ElementName=slHoughThresh, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" TextAlignment="Right" Width="40"/>
             <Slider Maximum="100" TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="True" x:Name="slHoughThresh" ValueChanged="SlHoughThresh_ValueChanged"/>
         </DockPanel>
-        <Button x:Name="btnWarp" Content="Warp perspective" Margin="567,18,69,363" Click="BtnWarp_Click" />
-        <Button x:Name="btnSingleLines" Content="SingleLines" Margin="567,75,69,306" Click="BtnSingleLines_Click"/>
-        <Button x:Name="btnHough" Content="Show hough lines" Margin="567,135,69,251" Click="BtnHough_Click"/>
+        <Button x:Name="btnWarp" Content="Warp perspective" Margin="249,12,387.6,376" Click="BtnWarp_Click" />
+        <Button x:Name="btnSingleLines" Content="SingleLines" Margin="431,12,204.6,376" Click="BtnSingleLines_Click"/>
+        <Button x:Name="btnDefineTemplate" Content="Define template" Margin="616,12,20.6,376" Click="BtnDefineTemplate_Click"/>
+        <Canvas Width="200" Height="200" Name="secondaryCanvas" Margin="266,151,327.6,69">
+            <Image Name="tempImage" Stretch="Uniform" Width="200" Height="200" />
+        </Canvas>
+        <Canvas Width="200" Height="200" x:Name="secondaryCanvas_Copy" Margin="547,151,46.6,69">
+            <Image x:Name="templateMask" Stretch="Uniform" Width="200" Height="200" />
+        </Canvas>
+        <Label Content="Template" HorizontalAlignment="Left" Margin="334,115,0,281"/>
+        <Label Content="Template mask" HorizontalAlignment="Left" Margin="616,115,0,0" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>

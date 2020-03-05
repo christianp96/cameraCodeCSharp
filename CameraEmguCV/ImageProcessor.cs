@@ -60,7 +60,7 @@ namespace CameraEmguCV
         public static Mat AddLines(LineSegment2D[] lines, double ratio)
         {
             //double r = 1.298;
-            Mat output = new Mat(new System.Drawing.Size(400, (int)(400 / ratio)), Emgu.CV.CvEnum.DepthType.Cv8U, 3);
+            Mat output = new Mat(new System.Drawing.Size(400, (int)(400 / ratio)), Emgu.CV.CvEnum.DepthType.Cv8U, 1);
             output.SetTo(new MCvScalar(0));
 
             MCvScalar color = new MCvScalar(255, 255, 255);
@@ -97,7 +97,7 @@ namespace CameraEmguCV
 
         public static Mat ApplyErosion(Mat img, int iterations)
         {
-            Mat output = new Mat(img.Size, Emgu.CV.CvEnum.DepthType.Cv8U, 3);
+            Mat output = new Mat(img.Size, Emgu.CV.CvEnum.DepthType.Cv8U, 1);
             var kernel = CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Rectangle, new System.Drawing.Size(3, 3), new System.Drawing.Point(-1, -1));
             CvInvoke.Erode(img, output, kernel, new System.Drawing.Point(-1, -1), iterations, Emgu.CV.CvEnum.BorderType.Default, default(MCvScalar));
 
