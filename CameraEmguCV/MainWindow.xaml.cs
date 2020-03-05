@@ -46,23 +46,14 @@ namespace CameraEmguCV
         #region Camera Capture Functions
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            
-            DsDevice[] captureDevices = DsDevice.GetDevicesOfCat(FilterCategory.VideoInputDevice);
-            
-            for (int i = 0; i < captureDevices.Length; i++)
-            {               
-                cbxCameraDevices.Items.Add(captureDevices[i].Name.ToString());
-            }
-            
+            PopulateDevicesComboBox();    
             capture = new Capture(0);
-            image1.Height = capture.Height;
-            image1.Width = capture.Width;
-            mainCanvas.Height = image1.Height;
-            mainCanvas.Width = image1.Width;
+            SetImageAndCanvasSize(capture.Height, capture.Width);
             timer = new DispatcherTimer();
             timer.Tick += new EventHandler(timer_Tick);
             timer.Interval = new TimeSpan(0, 0, 0, 0, 1);
             timer.Start();
+            
         }
 
         void timer_Tick(object sender, EventArgs e)
@@ -91,11 +82,11 @@ namespace CameraEmguCV
                 //if (mask != null && template != null)
                 //    found = ImageProcessor.MatchTemplate(frame, template, mask);
                 //lblFound.Content = found.ToString();
-
-                image1.Width = frame.Width;
-                image1.Height = frame.Height;
-                mainCanvas.Height = frame.Height;
-                mainCanvas.Width = frame.Width;
+                SetImageAndCanvasSize(frame.Height, frame.Width);
+                //image1.Width = frame.Width;
+                //image1.Height = frame.Height;
+                //mainCanvas.Height = frame.Height;
+                //mainCanvas.Width = frame.Width;
 
                 currentFrame = frame.ToImage<Bgr, byte>(); 
             }
@@ -103,9 +94,27 @@ namespace CameraEmguCV
             if (currentFrame != null)
                 image1.Source = Utils.ToBitmapSource(currentFrame);
         }
+
+        private void PopulateDevicesComboBox()
+        {
+            DsDevice[] captureDevices = DsDevice.GetDevicesOfCat(FilterCategory.VideoInputDevice);
+
+            for (int i = 0; i < captureDevices.Length; i++)
+            {
+                cbxCameraDevices.Items.Add(captureDevices[i].Name.ToString());
+            }
+        }
         #endregion
 
         #region GUI Events
+
+        private void SetImageAndCanvasSize(double height, double width)
+        {
+            image1.Height = height;
+            image1.Width = width;
+            mainCanvas.Height = height;
+            mainCanvas.Width = width;
+        }
         private void MainCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (add_markers == true && selection == true)
@@ -231,10 +240,7 @@ namespace CameraEmguCV
             selection = false;
             wasClick = false;
             btnAddMarkers.Background = Brushes.LightGray;
-            image1.Width = capture.Width;
-            image1.Height = capture.Height;
-            mainCanvas.Width = capture.Width;
-            mainCanvas.Height = capture.Height;
+            SetImageAndCanvasSize(capture.Height, capture.Width);
             selectedScreen = null;
         }
 
