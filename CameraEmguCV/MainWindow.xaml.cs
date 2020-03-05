@@ -31,7 +31,7 @@ namespace CameraEmguCV
         private int num_of_clicks_second_markers = 0;
         private List<Point> second_markers = new List<Point>();
         private bool selection = false;
-
+        public Mat selectedScreen = null;
         DebugWindow debugWindow = null;
         CadranDefinition cadranDefinition = null;
 
@@ -40,10 +40,7 @@ namespace CameraEmguCV
 
         public MainWindow()
         {
- 
-
             InitializeComponent();
-
         }
 
         #region Camera Capture Functions
@@ -58,8 +55,6 @@ namespace CameraEmguCV
             }
             
             capture = new Capture(0);
-            //capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameWidth, image1.ActualWidth);
-            //capture.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameHeight, image1.ActualHeight);
             image1.Height = capture.Height;
             image1.Width = capture.Width;
             mainCanvas.Height = image1.Height;
@@ -78,24 +73,24 @@ namespace CameraEmguCV
             {
                 Mat frame = currentFrame.Mat;
                 frame = ImageProcessor.WarpPerspective(frame, Utils.GetPoints(markers));
-                CvInvoke.Imwrite("warp_frame.jpg", frame);
-                frame = CvInvoke.Imread("warp_frame.jpg", LoadImageType.Grayscale);
-                Mat template = null, mask = null;
-                bool found = false;
+                //CvInvoke.Imwrite("warp_frame.jpg", frame);
+                //frame = CvInvoke.Imread("warp_frame.jpg", LoadImageType.Grayscale);
+                //Mat template = null, mask = null;
+                //bool found = false;
 
-                try
-                {
-                    template = CvInvoke.Imread("template.jpg", LoadImageType.Grayscale);
-                    mask = CvInvoke.Imread("template_mask.jpg", LoadImageType.Grayscale);
+                //try
+                //{
+                //    template = CvInvoke.Imread("template.jpg", LoadImageType.Grayscale);
+                //    mask = CvInvoke.Imread("template_mask.jpg", LoadImageType.Grayscale);
 
-                } catch(Exception ex)
-                {
-                    MessageBox.Show("A handled exception just occurred: " + ex.Message, "Exception Sample", MessageBoxButton.OK, MessageBoxImage.Warning);
-                }
+                //} catch(Exception ex)
+                //{
+                //    MessageBox.Show("A handled exception just occurred: " + ex.Message, "Exception Sample", MessageBoxButton.OK, MessageBoxImage.Warning);
+                //}
 
-                if (mask != null && template != null)
-                    found = ImageProcessor.MatchTemplate(frame, template, mask);
-                lblFound.Content = found.ToString();
+                //if (mask != null && template != null)
+                //    found = ImageProcessor.MatchTemplate(frame, template, mask);
+                //lblFound.Content = found.ToString();
 
                 image1.Width = frame.Width;
                 image1.Height = frame.Height;
@@ -108,8 +103,6 @@ namespace CameraEmguCV
             if (currentFrame != null)
                 image1.Source = Utils.ToBitmapSource(currentFrame);
         }
-
-
         #endregion
 
         #region GUI Events
@@ -154,15 +147,10 @@ namespace CameraEmguCV
                     var item = (ComboBoxItem)cadranDefinition.CadranType.SelectedItem;
                     var content = (string)item.Content;
                    
-                    
-
                     //Adaugare in treeview
                     treeItemTest.Header = cadranDefinition.CadranName.Text;
                     treeItemTest.Items.Add(content);
                     tree.Items.Add(treeItemTest);
-
-
-
                 }
 
             }
@@ -189,33 +177,27 @@ namespace CameraEmguCV
                     Image<Bgr, byte> currentFrame = capture.QueryFrame().ToImage<Bgr, byte>();
                     Mat img = currentFrame.Mat;
                     Mat warp = ImageProcessor.WarpPerspective(img, Utils.GetPoints(markers));
+                    selectedScreen = warp;
                     image2.Source = Utils.ToBitmapSource(warp.ToImage<Bgr, byte>());
                     ResetMarkers();
-
-                   
 
                     selection = true;
                 }
             }
         }
 
-      
-
         private void MainCanvas_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (add_markers)
             {
-
                 if (wasClick == false)
                 {
-                        mainCanvas.Children.Remove(lastEllipse);
+                    mainCanvas.Children.Remove(lastEllipse);
                     markers.Remove(lastPoint);
-
                     num_of_clicks--;
                     wasClick = true;
                 }
             }
-
         }
 
         private void ResetMarkers()
@@ -224,7 +206,6 @@ namespace CameraEmguCV
             {
                 mainCanvas.Children.Remove(c);
             }
-
         }
         //Generarea elipselor pe canvas si adaugarea lor intr-o lista de elipse pentru stergerea lor ulterioara
         private void AddEllipse(System.Windows.Shapes.Ellipse ellipse)
@@ -237,48 +218,48 @@ namespace CameraEmguCV
 
             allEllipses.Add(ellipse);
             lastEllipse = ellipse;
-
         }
 
         private void ResetAll()
         {
-                ResetMarkers();
-                markers.Clear();
-                second_markers.Clear();
-                num_of_clicks = 0;
-                num_of_clicks_second_markers = 0;
-                add_markers = false;
-                selection = false;
-                wasClick = false;
-                btnAddMarkers.Background = Brushes.LightGray;
+            ResetMarkers();
+            markers.Clear();
+            second_markers.Clear();
+            num_of_clicks = 0;
+            num_of_clicks_second_markers = 0;
+            add_markers = false;
+            selection = false;
+            wasClick = false;
+            btnAddMarkers.Background = Brushes.LightGray;
             image1.Width = capture.Width;
             image1.Height = capture.Height;
             mainCanvas.Width = capture.Width;
             mainCanvas.Height = capture.Height;
+            selectedScreen = null;
         }
 
-            private void BtnShowImage_Click(object sender, RoutedEventArgs e)
+        private void BtnShowImage_Click(object sender, RoutedEventArgs e)
         {
     
-            Mat img = null;
-            Mat mask = null;
-            Mat result = null;
-            try
-            {
-                img = CvInvoke.Imread("warp_save.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
-                mask = CvInvoke.Imread("template_mask.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("A handled exception just occurred: " + ex.Message, "Exception Sample", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
+            //Mat img = null;
+            //Mat mask = null;
+            //Mat result = null;
+            //try
+            //{
+            //    img = CvInvoke.Imread("warp_save.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
+            //    mask = CvInvoke.Imread("template_mask.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show("A handled exception just occurred: " + ex.Message, "Exception Sample", MessageBoxButton.OK, MessageBoxImage.Warning);
+            //}
 
-            if (mask != null && img != null)
-            {
-                result = ImageProcessor.ApplyMask(img, mask);
-                CvInvoke.Imwrite("template.jpg", result);
-                image2.Source = Utils.ToBitmapSource(result.ToImage<Bgr, byte>());
-            }
+            //if (mask != null && img != null)
+            //{
+            //    result = ImageProcessor.ApplyMask(img, mask);
+            //    CvInvoke.Imwrite("template.jpg", result);
+            //    image2.Source = Utils.ToBitmapSource(result.ToImage<Bgr, byte>());
+            //}
         }
 
         private void BtnAddMarkers_Click(object sender, RoutedEventArgs e)
@@ -289,12 +270,9 @@ namespace CameraEmguCV
                 btnAddMarkers.Background = Brushes.Pink;
             }
             else
-            {
-               
+            { 
                 add_markers = false;
                 btnAddMarkers.Background = Brushes.LightGray;
-
-
             }
         }
 
@@ -317,10 +295,6 @@ namespace CameraEmguCV
         {
             capture = new Capture(cbxCameraDevices.SelectedIndex);
         }
-
-
-     
     }
     #endregion
-
 }

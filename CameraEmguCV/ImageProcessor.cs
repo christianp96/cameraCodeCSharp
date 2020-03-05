@@ -60,7 +60,7 @@ namespace CameraEmguCV
         public static Mat AddLines(LineSegment2D[] lines, double ratio)
         {
             //double r = 1.298;
-            Mat output = new Mat(new System.Drawing.Size(200, (int)(200 / ratio)), Emgu.CV.CvEnum.DepthType.Cv8U, 3);
+            Mat output = new Mat(new System.Drawing.Size(400, (int)(400 / ratio)), Emgu.CV.CvEnum.DepthType.Cv8U, 3);
             output.SetTo(new MCvScalar(0));
 
             MCvScalar color = new MCvScalar(255, 255, 255);

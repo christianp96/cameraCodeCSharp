@@ -22,51 +22,86 @@ namespace CameraEmguCV
 
         private void BtnHough_Click(object sender, RoutedEventArgs e)
         {
-            Mat img = CvInvoke.Imread("test_save.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
-            if (parent.markers.Count == 4)
-                img = ImageProcessor.WarpPerspective(img, Utils.GetPoints(parent.markers));
-            img = ImageProcessor.ApplyBlur(img, 0, 3);
+            if(parent.selectedScreen != null)
+            {
+                Mat img = parent.selectedScreen;//CvInvoke.Imread("test_save.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
+                if (parent.markers.Count == 4)
+                    img = ImageProcessor.WarpPerspective(img, Utils.GetPoints(parent.markers));
+                img = ImageProcessor.ApplyBlur(img, 0, 3);
 
-            img = ImageProcessor.CannyEdgeDetection(img, lowThreshold, highThreshold);
-            img = ImageProcessor.ApplyDilation(img, 3);
-            img = ImageProcessor.ApplyErosion(img, 3);
+                img = ImageProcessor.CannyEdgeDetection(img, lowThreshold, highThreshold);
+                img = ImageProcessor.ApplyDilation(img, 3);
+                img = ImageProcessor.ApplyErosion(img, 3);
 
-            LineSegment2D[] lines = ImageProcessor.HoughLines(img, rho, houghThreshold, minLineLength, maxLineGap);
+                LineSegment2D[] lines = ImageProcessor.HoughLines(img, rho, houghThreshold, minLineLength, maxLineGap);
+                if(lines.Length !=0)
+                {
+                    Mat output = ImageProcessor.AddLines(lines, Utils.GetRatioOfSelectedArea(Utils.GetPoints(parent.markers)));
+                    CvInvoke.Imwrite("template_mask.jpg", output);
+                    parent.image2.Source = Utils.ToBitmapSource(output.ToImage<Bgr, byte>());
+                }
+                else
+                    MessageBox.Show("Couldn't find any lines with the specified parameters");
 
-            Mat output = ImageProcessor.AddLines(lines, Utils.GetRatioOfSelectedArea(Utils.GetPoints(parent.markers)));
-            CvInvoke.Imwrite("template_mask.jpg", output);
-            parent.image2.Source = Utils.ToBitmapSource(output.ToImage<Bgr, byte>());
+            }
+            else
+            {
+                MessageBox.Show("You didn't put any markers on the screen! ", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            
 
         }
 
         private void BtnSingleLines_Click(object sender, RoutedEventArgs e)
         {
-            Mat img = CvInvoke.Imread("test_save.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
-            if (parent.markers.Count == 4)
-                img = ImageProcessor.WarpPerspective(img, Utils.GetPoints(parent.markers));
-            img = ImageProcessor.ApplyBlur(img, 0, 3);
-            img = ImageProcessor.CannyEdgeDetection(img, lowThreshold, highThreshold);
-            img = ImageProcessor.ApplyDilation(img, 3);
-            img = ImageProcessor.ApplyErosion(img, 3);
+            if(parent.selectedScreen != null)
+            {
+                Mat img = parent.selectedScreen;//CvInvoke.Imread("test_save.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
+                if (parent.markers.Count == 4)
+                    img = ImageProcessor.WarpPerspective(img, Utils.GetPoints(parent.markers));
+                img = ImageProcessor.ApplyBlur(img, 0, 3);
+                img = ImageProcessor.CannyEdgeDetection(img, lowThreshold, highThreshold);
+                img = ImageProcessor.ApplyDilation(img, 3);
+                img = ImageProcessor.ApplyErosion(img, 3);
 
-            LineSegment2D[] lines = ImageProcessor.HoughLines(img, rho, houghThreshold, minLineLength, maxLineGap);
-
-            LineSegment2D[] singleLines = Utils.GetSingleLinesFromHoughLines(lines, 20);//KMeans(lines, 5);
-            Mat output = ImageProcessor.AddLines(singleLines, Utils.GetRatioOfSelectedArea(Utils.GetPoints(parent.markers)));
-            CvInvoke.Imwrite("template_mask.jpg", output);
-            parent.image2.Source = Utils.ToBitmapSource(output.ToImage<Bgr, byte>());
+                LineSegment2D[] lines = ImageProcessor.HoughLines(img, rho, houghThreshold, minLineLength, maxLineGap);
+                LineSegment2D[] singleLines = Utils.GetSingleLinesFromHoughLines(lines, 20);//KMeans(lines, 5);
+                if(singleLines != null)
+                {
+                    Mat output = ImageProcessor.AddLines(singleLines, Utils.GetRatioOfSelectedArea(Utils.GetPoints(parent.markers)));
+                    CvInvoke.Imwrite("template_mask.jpg", output);
+                    parent.image2.Source = Utils.ToBitmapSource(output.ToImage<Bgr, byte>());
+                }
+                else
+                {
+                    MessageBox.Show("Couldn't find any lines with the specified parameters");
+                }  
+            }
+            else
+            {
+                MessageBox.Show("You didn't put any markers on the screen! ", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            
         }
 
 
         private void BtnWarp_Click(object sender, RoutedEventArgs e)
         {
-            Mat img = CvInvoke.Imread("test_save.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
+            if(parent.selectedScreen != null)
+            {
+                Mat img = parent.selectedScreen;//CvInvoke.Imread("test_save.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
 
-            if (parent.markers.Count == 4)
-                img = ImageProcessor.WarpPerspective(img, Utils.GetPoints(parent.markers));
-            img = ImageProcessor.ApplyBlur(img, 0, 3);
-            img = ImageProcessor.CannyEdgeDetection(img, lowThreshold, highThreshold);
-            parent.image2.Source = Utils.ToBitmapSource(img.ToImage<Bgr, byte>());
+                if (parent.markers.Count == 4)
+                    img = ImageProcessor.WarpPerspective(img, Utils.GetPoints(parent.markers));
+                img = ImageProcessor.ApplyBlur(img, 0, 3);
+                img = ImageProcessor.CannyEdgeDetection(img, lowThreshold, highThreshold);
+                parent.image2.Source = Utils.ToBitmapSource(img.ToImage<Bgr, byte>());
+            }
+            else
+            {
+                MessageBox.Show("You didn't put any markers on the screen! ", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+           
 
         }
 

@@ -27,22 +27,28 @@ namespace CameraEmguCV
 
         public static LineSegment2D[] GetSingleLinesFromHoughLines(LineSegment2D[] lines, double threshold)
         {
-            LineSegment2D[] singleLines = new LineSegment2D[lines.Length];
-
-            lines = SortSegmentsByYIntercept(lines);
-            int count = 0;
-            singleLines[0] = lines[0];
-
-            for (int i = 0; i < lines.Length; i++)
+            if (lines.Length != 0)
             {
-                double y_intercept = GetYIntercept(lines[i]);
-                if (Math.Abs(GetYIntercept(singleLines[count]) - y_intercept) >= threshold)
-                    singleLines[++count] = lines[i];
-                else if (lines[i].Length >= singleLines[count].Length)
-                    singleLines[count] = lines[i];
-            }
+                LineSegment2D[] singleLines = new LineSegment2D[lines.Length];
 
-            return singleLines;
+                lines = SortSegmentsByYIntercept(lines);
+                int count = 0;
+                singleLines[0] = lines[0];
+
+                for (int i = 0; i < lines.Length; i++)
+                {
+                    double y_intercept = GetYIntercept(lines[i]);
+                    if (Math.Abs(GetYIntercept(singleLines[count]) - y_intercept) >= threshold)
+                        singleLines[++count] = lines[i];
+                    else if (lines[i].Length >= singleLines[count].Length)
+                        singleLines[count] = lines[i];
+                }
+
+                return singleLines;
+            }
+            else
+                return null;
+            
         }
 
         public static double GetMaxWidthOfSelectedArea(System.Drawing.PointF[] points)
