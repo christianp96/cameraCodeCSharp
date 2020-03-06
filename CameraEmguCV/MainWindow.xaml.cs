@@ -301,6 +301,8 @@ namespace CameraEmguCV
         {
             capture = new Capture(cbxCameraDevices.SelectedIndex);
         }
+
+      
     }
     #endregion
 }

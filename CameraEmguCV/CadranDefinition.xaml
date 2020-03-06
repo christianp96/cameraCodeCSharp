@@ -20,7 +20,7 @@
             <ComboBoxItem >AlfaNumeric</ComboBoxItem>
         </ComboBox>
       
-        <Button x:Name="btn_Accept" Content="Accept" Grid.Column="2" HorizontalAlignment="Left" Margin="235,139,0,0" VerticalAlignment="Top" Width="74" Click="Btn_Accept_Click"/>
+        <Button x:Name="btn_Accept" Content="Accept" Grid.Column="2" HorizontalAlignment="Left" Margin="235,127,0,0" VerticalAlignment="Top" Width="74" Click="Btn_Accept_Click"/>
 
     </Grid>
 </Window>
