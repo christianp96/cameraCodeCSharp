@@ -45,7 +45,7 @@
                     <ListViewItem Padding="1">
                         <StackPanel Orientation="Horizontal" MouseDown="btnDebugWindow_Click">
                             <materialDesign:PackIcon Kind="Build" Margin="15" Foreground="White"/>
-                            <TextBlock Text="Debug Mode" VerticalAlignment="Center" Foreground="White"/>
+                            <TextBlock Text="Define template" VerticalAlignment="Center" Foreground="White"/>
                         </StackPanel>
                     </ListViewItem>
                     <ListViewItem Padding="1">
