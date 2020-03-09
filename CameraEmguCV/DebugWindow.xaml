@@ -39,15 +39,17 @@
         </DockPanel>
         <Button x:Name="btnWarp" Content="Warp perspective" Margin="249,12,387.6,376" Click="BtnWarp_Click" />
         <Button x:Name="btnSingleLines" Content="SingleLines" Margin="431,12,204.6,376" Click="BtnSingleLines_Click"/>
-        <Button x:Name="btnDefineTemplate" Content="Define template" Margin="616,12,20.6,376" Click="BtnDefineTemplate_Click"/>
+        <Button x:Name="btnPreviewTemplate" Content="Preview Template" Margin="616,12,20.6,376" Click="BtnPreviewTemplate_Click"/>
         <Canvas Width="200" Height="200" Name="secondaryCanvas" Margin="266,151,327.6,69">
             <Image Name="tempImage" Stretch="Uniform" Width="200" Height="200" />
         </Canvas>
         <Canvas Width="200" Height="200" x:Name="secondaryCanvas_Copy" Margin="547,151,46.6,69">
             <Image x:Name="templateMask" Stretch="Uniform" Width="200" Height="200" />
         </Canvas>
-        <Label Content="Template" HorizontalAlignment="Left" Margin="334,115,0,281"/>
+        <Label Content="Template" HorizontalAlignment="Left" Margin="334,115,0,0" VerticalAlignment="Top"/>
         <Label Content="Template mask" HorizontalAlignment="Left" Margin="616,115,0,0" VerticalAlignment="Top"/>
+        <Button Name="btnSaveTemplate" Content="Save template" HorizontalAlignment="Left" Margin="287,378,0,0" VerticalAlignment="Top" Width="145" Click="BtnSaveTemplate_Click" Visibility="Hidden"/>
+        <TextBox Name="txtTemplateName" HorizontalAlignment="Left" Height="23" Margin="431,387,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Visibility="Hidden"/>
 
     </Grid>
 </Window>
