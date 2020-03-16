@@ -7,60 +7,57 @@
         mc:Ignorable="d"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF"
-        fw:AcrylicWindow.Enabled="True" Height="650" FontSize="15" Width="1540" Loaded="Window_Loaded" WindowStyle="None" WindowStartupLocation="CenterScreen" Visibility="Visible" ResizeMode="NoResize">
-    <Grid Height="650" VerticalAlignment="Top" Margin="0,0,-8,-21">
+        fw:AcrylicWindow.Enabled="True" Height="513" FontSize="15" Width="1215" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen" Visibility="Visible" ResizeMode="NoResize" Opacity="0.995" Icon="icon.png" >
+       
+    <Grid Height="513" VerticalAlignment="Top" Margin="0,0,-8,-21">
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="350"></ColumnDefinition>
+            <ColumnDefinition Width="250"></ColumnDefinition>
             <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0" fw:PointerTracker.Enabled="True" Background="#01FFFFFF">
             <StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <Button Foreground="White" Background="{x:Null}" BorderBrush="{x:Null}">
-                        <materialDesign:PackIcon Kind="ArrowLeft"></materialDesign:PackIcon>
-                    </Button>
-                    <TextBlock Text="Menu" FontSize="12" Margin="10" VerticalAlignment="Center" />
-                </StackPanel>
-                <ListViewItem Padding="0">
-                    <StackPanel Orientation="Horizontal">
-                        <materialDesign:PackIcon Kind="Home" Margin="15"/>
-                        <TextBlock Text="Home" VerticalAlignment="Center"/>
-                    </StackPanel>
-                </ListViewItem>
+                
+                
                 <TextBlock Text="Options"  Margin="15" FontWeight="DemiBold"/>
                 <ListView FontSize="15" >
-                    <ListViewItem Padding="1">
-                        <StackPanel Orientation="Horizontal" MouseDown="BtnShowImage_Click">
-                            <materialDesign:PackIcon Kind="Image" Margin="15" Foreground="White"/>
-                            <TextBlock Text="Show image" VerticalAlignment="Center" Foreground="White"/>
-                        </StackPanel>
-                    </ListViewItem>
-                    <ListViewItem x:Name="btn_AddMarkers" Padding="1" MouseDown="BtnAddMarkers_Click">
-                        <StackPanel Orientation="Horizontal" MouseDown="BtnAddMarkers_Click">
-                            <materialDesign:PackIcon Kind="ControlPoint" Margin="15" Foreground="White"/>
-                            <TextBlock Text="Add Markers" VerticalAlignment="Center" Foreground="White"/>
-                        </StackPanel>
+
+                    <ListViewItem x:Name="btn_AddMarkers" Padding="1">
+                        <Button  Background="{x:Null}" BorderBrush="{x:Null}" BorderThickness="0" Click="BtnAddMarkers_Click" Width="248" Margin="0,10,0,10">
+                            <StackPanel Orientation="Horizontal" Width="230">
+                                <materialDesign:PackIcon Margin="0,0,15,0" Kind="ControlPoint" Height="20" Foreground="White"/>
+                                <TextBlock Text="Add Markers" VerticalAlignment="Center" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
                     </ListViewItem>
                     <ListViewItem Padding="1">
-                        <StackPanel Orientation="Horizontal" MouseDown="btnDebugWindow_Click">
-                            <materialDesign:PackIcon Kind="Build" Margin="15" Foreground="White"/>
-                            <TextBlock Text="Define template" VerticalAlignment="Center" Foreground="White"/>
-                        </StackPanel>
+                        <Button  Background="{x:Null}" BorderBrush="{x:Null}" BorderThickness="0" Click="btnDebugWindow_Click" Width="248" Margin="0,10,0,10">
+                            <StackPanel Orientation="Horizontal" Width="230">
+                                <materialDesign:PackIcon Margin="0,0,15,0" Kind="Build" Height="20" Foreground="White"/>
+                                <TextBlock Text="Define template" VerticalAlignment="Center" Foreground="White" />
+                            </StackPanel>
+                        </Button>
+
+
                     </ListViewItem>
                     <ListViewItem Padding="1">
-                        <StackPanel Orientation="Horizontal" MouseDown="BtnReset_Click">
-                            <materialDesign:PackIcon Kind="SettingsBackupRestore" Margin="15" Foreground="White"/>
-                            <TextBlock Text="Reset" VerticalAlignment="Center" Foreground="White"/>
-                        </StackPanel>
+                        <Button  Background="{x:Null}" BorderBrush="{x:Null}" BorderThickness="0" Click="BtnReset_Click" Width="248" Margin="0,10,0,10">
+                            <StackPanel Orientation="Horizontal" Width="230">
+                                <materialDesign:PackIcon Margin="0,0,15,0" Kind="SettingsBackupRestore" Height="20" Foreground="White"/>
+                                <TextBlock Text="Reset" VerticalAlignment="Center" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
                     </ListViewItem>
                 </ListView>
 
             </StackPanel>
         </Grid>
 
-        <Grid Grid.Column="1" Background="White">
-            <TreeView HorizontalAlignment="Left" Height="221" Margin="844,396,0,0" VerticalAlignment="Top" Width="287" x:Name="tree">
+        <Grid Grid.Column="1" Background="Black">
+
+            <TreeView HorizontalAlignment="Left" Height="398" Margin="654,59,0,0" VerticalAlignment="Top" Width="287" x:Name="tree" BorderBrush="DarkGray" BorderThickness="1" >
 
                 <TreeView.Resources>
                     <Style TargetType="{x:Type TreeViewItem}">
@@ -68,7 +65,7 @@
                             <Setter.Value>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock VerticalAlignment="Center" Text="{Binding}"/>
+                                        <TextBlock VerticalAlignment="Center" Text="{Binding}" Foreground="White"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </Setter.Value>
@@ -76,24 +73,24 @@
                     </Style>
                 </TreeView.Resources>
             </TreeView>
+            <Label Content="Type of dial" HorizontalAlignment="Left" Margin="654,26,0,0" VerticalAlignment="Top" Width="287" Foreground="White"/>
 
         </Grid>
 
 
-        <Canvas Name="mainCanvas" Panel.ZIndex="1"    Width="640" Height="360" VerticalAlignment="Top"  HorizontalAlignment="Left" Margin="44,10,0,0" Grid.Column="1"  >
+        <Canvas Name="mainCanvas" Panel.ZIndex="1"    Width="640" Height="360" VerticalAlignment="Top"  HorizontalAlignment="Left" Grid.Column="1"  >
             <Image  Name="image1"  Height="360" Width="640" Panel.ZIndex="0" MouseLeftButtonDown="MainCanvas_MouseLeftButtonDown" MouseRightButtonDown="MainCanvas_MouseRightButtonDown"   />
         </Canvas>
-        <Canvas Width="458" Name="secondaryCanvas" Margin="713,10,162,289" Grid.Column="1">
+        <!--<Canvas Width="458" Name="secondaryCanvas" Margin="713,10,162,289" Grid.Column="1">
             <Image Name="image2" Stretch="Uniform" Width="458" Height="350" />
-        </Canvas>
+        </Canvas>-->
         <!--<Button Name="btnShowImage" Content="Show image" Margin="97,576,961,36" Click="BtnShowImage_Click" Background="LightGray" Height="Auto" Grid.Column="1"/>
         <Button Name="btnAddMarkers" Content="Add Markers" Margin="68,347,142,269" Click="BtnAddMarkers_Click" Background="LightGray" Height="Auto"/>
         <Button Name="btnReset" Content="RESET!"  Margin="68,420,142,198"   Click="BtnReset_Click" Background="LightGray"/>-->
         <Button Name="btnAddMarkers" Content="Add Markers" Margin="-267,578,477,38" Click="BtnAddMarkers_Click" Background="LightGray" Height="Auto"/>
-        <Image HorizontalAlignment="Left" Height="122" Margin="467,479,0,0" VerticalAlignment="Top" Width="262" Name="image3" Grid.Column="1"/>
-        <ComboBox Name="cbxCameraDevices"  HorizontalAlignment="Left" Margin="10,359,0,0" VerticalAlignment="Top" Width="140" SelectionChanged="CbxCameraDevices_SelectionChanged"/>
+        <!--<Image HorizontalAlignment="Left" Height="122" Margin="467,479,0,0" VerticalAlignment="Top" Width="262" Name="image3" Grid.Column="1"/>-->
+        <ComboBox Name="cbxCameraDevices"  HorizontalAlignment="Left" Margin="54,328,0,0" VerticalAlignment="Top" Width="140" SelectionChanged="CbxCameraDevices_SelectionChanged" Background="LightGray"/>
         <!--<Button x:Name="btnDebugWindow" Content="Debug Mode"  Margin="68,479,142,130"   Click="btnDebugWindow_Click" Background="LightGray" Height="Auto"/>-->
-        <Label Content="Template found: " HorizontalAlignment="Left" Margin="44,412,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.198,0.266" Grid.Column="1" Height="44"/>
-        <Label Name="lblFound" Content="" HorizontalAlignment="Left" Margin="188,412,0,0" VerticalAlignment="Top" Height="26" Grid.Column="1" Width="68" RenderTransformOrigin="0.529,0.654"/>
+
     </Grid>
 </Window>

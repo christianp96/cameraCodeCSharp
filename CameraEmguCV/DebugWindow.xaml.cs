@@ -59,6 +59,8 @@ namespace CameraEmguCV
                     templateMask.Source = Utils.ToBitmapSource(mask);
                     txtTemplateName.Visibility = Visibility.Visible;
                     btnSaveTemplate.Visibility = Visibility.Visible;
+
+                    
                 }
                 else
                     MessageBox.Show("Couldn't find any lines with the specified parameters");
@@ -88,7 +90,7 @@ namespace CameraEmguCV
                 {
                     Mat output = ImageProcessor.AddLines(singleLines, Utils.GetRatioOfSelectedArea(Utils.GetPoints(parent.markers)));
                     CvInvoke.Imwrite("template_mask.jpg", output);
-                    parent.image2.Source = Utils.ToBitmapSource(output.ToImage<Bgr, byte>());
+                    //parent.image2.Source = Utils.ToBitmapSource(output.ToImage<Bgr, byte>());
                 }
                 else
                 {
@@ -108,7 +110,7 @@ namespace CameraEmguCV
                 Mat img = parent.selectedScreen;//CvInvoke.Imread("test_save.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);         
                 img = ImageProcessor.ApplyBlur(img, 0, 3);
                 img = ImageProcessor.CannyEdgeDetection(img, lowThreshold, highThreshold);
-                parent.image2.Source = Utils.ToBitmapSource(img.ToImage<Bgr, byte>());
+                //parent.image2.Source = Utils.ToBitmapSource(img.ToImage<Bgr, byte>());
             }
             else
             {

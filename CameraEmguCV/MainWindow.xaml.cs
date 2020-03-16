@@ -137,6 +137,7 @@ namespace CameraEmguCV
                 if (num_of_clicks_second_markers == 4)
                 {
 
+                    num_of_clicks_second_markers = 0;
                     TreeViewItem treeItemTest = new TreeViewItem();
                     Image<Bgr, byte> currentFrame = capture.QueryFrame().ToImage<Bgr, byte>();
                     Mat frame = currentFrame.Mat;
@@ -145,7 +146,7 @@ namespace CameraEmguCV
                     Mat img = currentFrame.Mat; 
                     CvInvoke.Resize(img, img, new System.Drawing.Size((int)image1.Width,(int) image1.Height));
                     Mat warp = ImageProcessor.WarpPerspective(img, Utils.GetPoints(second_markers));
-                    image3.Source = Utils.ToBitmapSource(warp.ToImage<Bgr, byte>());
+                    //image3.Source = Utils.ToBitmapSource(warp.ToImage<Bgr, byte>());
                     ResetMarkers();
                     try { cadranDefinition = new CadranDefinition(); cadranDefinition.Owner = GetWindow(this); cadranDefinition.ShowDialog(); }
                     catch (Exception ex)
@@ -160,6 +161,8 @@ namespace CameraEmguCV
                     treeItemTest.Header = cadranDefinition.CadranName.Text;
                     treeItemTest.Items.Add(content);
                     tree.Items.Add(treeItemTest);
+
+                    second_markers.Clear();
                 }
 
             }
@@ -187,9 +190,9 @@ namespace CameraEmguCV
                     Mat img = currentFrame.Mat;
                     Mat warp = ImageProcessor.WarpPerspective(img, Utils.GetPoints(markers));
                     selectedScreen = warp;
-                    image2.Source = Utils.ToBitmapSource(warp.ToImage<Bgr, byte>());
+                    //image2.Source = Utils.ToBitmapSource(warp.ToImage<Bgr, byte>());
                     ResetMarkers();
-
+                    
                     selection = true;
                 }
             }
@@ -242,6 +245,8 @@ namespace CameraEmguCV
             btnAddMarkers.Background = Brushes.LightGray;
             SetImageAndCanvasSize(capture.Height, capture.Width);
             selectedScreen = null;
+            tree.Items.Clear();
+            
         }
 
         private void BtnShowImage_Click(object sender, RoutedEventArgs e)
