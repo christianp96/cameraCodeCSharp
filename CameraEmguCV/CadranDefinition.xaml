@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CameraEmguCV"
         mc:Ignorable="d"
-        Title="Definire Cadran" Height="200" Width="400">
+        Title="Definire Cadran" Height="200" Width="335.165" ResizeMode="NoResize" Icon="icon.png" WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -13,14 +13,14 @@
             <ColumnDefinition Width="48*"/>
         </Grid.ColumnDefinitions>
         <TextBox Text="" x:Name="CadranName" HorizontalAlignment="Left" Height="24" Margin="10,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="103"  Grid.Column="1" Grid.ColumnSpan="2"/>
-        <Label Content="Denumire Cadran" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
-        <Label Content="Tip Cadran" Grid.Column="2" HorizontalAlignment="Left" Margin="208,10,0,0" VerticalAlignment="Top" Width="101"/>
-        <ComboBox x:Name="CadranType" Grid.Column="2" HorizontalAlignment="Left" Margin="189,40,0,0" VerticalAlignment="Top" Width="120" >
+        <Label Content="Name of the dial" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+        <Label Content="Type of the dial" Grid.Column="2" HorizontalAlignment="Left" Margin="140,10,0,0" VerticalAlignment="Top" Width="101"/>
+        <ComboBox x:Name="CadranType" Grid.Column="2" HorizontalAlignment="Left" Margin="140,40,0,0" VerticalAlignment="Top" Width="120" >
             <ComboBoxItem >Numeric</ComboBoxItem>
             <ComboBoxItem >AlfaNumeric</ComboBoxItem>
         </ComboBox>
       
-        <Button x:Name="btn_Accept" Content="Accept" Grid.Column="2" HorizontalAlignment="Left" Margin="235,127,0,0" VerticalAlignment="Top" Width="74" Click="Btn_Accept_Click"/>
+        <Button x:Name="btn_Accept" Content="Accept" Grid.Column="2" HorizontalAlignment="Left" Margin="186,107,0,0" VerticalAlignment="Top" Width="74" Click="Btn_Accept_Click" Background="LightGray"/>
 
     </Grid>
 </Window>
