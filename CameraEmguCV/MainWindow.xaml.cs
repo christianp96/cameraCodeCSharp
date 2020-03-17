@@ -306,6 +306,27 @@ namespace CameraEmguCV
             capture = new Capture(cbxCameraDevices.SelectedIndex);
         }
 
+        private void BtnLoadImage_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
+            openFileDialog.Multiselect = false;
+            openFileDialog.Filter = "JPG Files(*.jpg)|*.jpg| PNG Files(*.png)|*.png";
+            openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            if (openFileDialog.ShowDialog() == true)
+            {
+                string imagePath = openFileDialog.FileName;
+                capture = null;
+                loadedImage = CvInvoke.Imread(imagePath, 0);
+                CvInvoke.Resize(loadedImage, loadedImage, new System.Drawing.Size(640, 360), interpolation: Inter.Linear);
+                image1.Source = Utils.ToBitmapSource(loadedImage);
+                SetImageAndCanvasSize(loadedImage.Height, loadedImage.Width);
+                //CvInvoke.Imshow("bla", new Image<Bgr,byte>(imgg));
+                //Utils.ToBitmapSource(imgg);
+
+            }
+
+        }
+
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
             SaveFileDialog saveDialog = new SaveFileDialog();
