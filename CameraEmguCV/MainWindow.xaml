@@ -29,8 +29,17 @@
                                 <TextBlock Text="Add Markers" VerticalAlignment="Center" Foreground="White"/>
                             </StackPanel>
                         </Button>
+                    </ListViewItem>
+                    <ListViewItem x:Name="btnLoadImage" Padding="1">
+                        <Button  Background="{x:Null}" BorderBrush="{x:Null}" BorderThickness="0" Click="BtnLoadImage_Click" Width="248" Margin="0,10,0,10">
+                            <StackPanel Orientation="Horizontal" Width="230">
+                                <materialDesign:PackIcon Margin="0,0,15,0" Kind="FileUpload" Height="20" Foreground="White"/>
+                                <TextBlock Text="Load Image" VerticalAlignment="Center" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
 
                     </ListViewItem>
+
                     <ListViewItem Padding="1">
                         <Button  Background="{x:Null}" BorderBrush="{x:Null}" BorderThickness="0" Click="btnDebugWindow_Click" Width="248" Margin="0,10,0,10">
                             <StackPanel Orientation="Horizontal" Width="230">
