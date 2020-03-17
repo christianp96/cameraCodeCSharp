@@ -11,9 +11,9 @@ using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using Emgu.CV;
 using DirectShowLib;
-
-
-
+using System.Windows.Forms;
+using System.Text;
+using System.Runtime.Serialization.Json;
 
 namespace CameraEmguCV
 {
@@ -34,10 +34,9 @@ namespace CameraEmguCV
         public Mat selectedScreen = null;
         DebugWindow debugWindow = null;
         CadranDefinition cadranDefinition = null;
+        Screen currentScreen = new Screen("defaultScreenName");
 
      
-
-
         public MainWindow()
         {
             InitializeComponent();
@@ -151,7 +150,7 @@ namespace CameraEmguCV
                     try { cadranDefinition = new CadranDefinition(); cadranDefinition.Owner = GetWindow(this); cadranDefinition.ShowDialog(); }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("A handled exception just occurred: " + ex.Message, "Exception Sample", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        System.Windows.MessageBox.Show("A handled exception just occurred: " + ex.Message, "Exception Sample", MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
                     //Doar de test, voi sterge dupa gasirea unei solutii mai bune
                     var item = (ComboBoxItem)cadranDefinition.CadranType.SelectedItem;
@@ -297,7 +296,7 @@ namespace CameraEmguCV
             try { debugWindow = new DebugWindow(); debugWindow.Owner = GetWindow(this); debugWindow.Show(); }
             catch (Exception ex) 
             {
-                MessageBox.Show("A handled exception just occurred: " + ex.Message, "Exception Sample", MessageBoxButton.OK, MessageBoxImage.Warning);
+                System.Windows.MessageBox.Show("A handled exception just occurred: " + ex.Message, "Exception Sample", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
             
         }
@@ -307,7 +306,40 @@ namespace CameraEmguCV
             capture = new Capture(cbxCameraDevices.SelectedIndex);
         }
 
-      
+        private void btnSave_Click(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog saveDialog = new SaveFileDialog();
+            saveDialog.Filter = "Json|*.json";
+            saveDialog.Title = "Save the Display Definition";
+            saveDialog.ShowDialog();
+
+            if(saveDialog.FileName !=  "")
+            {
+                System.IO.FileStream fs = (System.IO.FileStream)saveDialog.OpenFile();
+
+                DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(Screen));
+                js.WriteObject(fs, currentScreen);
+
+            }
+        }
+
+        private void btnLoad_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openDialog = new OpenFileDialog();
+            openDialog.Title = "Load the Display Definition";
+            openDialog.ShowDialog();
+            openDialog.Filter = "Json|*.json";
+
+            if (openDialog.FileName != "")
+            {
+                System.IO.FileStream fs = (System.IO.FileStream)openDialog.OpenFile();
+
+                DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(Screen));
+                currentScreen = (Screen)js.ReadObject(fs);
+            }
+        }
+
+
     }
     #endregion
 }

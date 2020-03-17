@@ -50,6 +50,25 @@
                         </Button>
 
                     </ListViewItem>
+                    <ListViewItem Padding="1">
+                        <Button  Background="{x:Null}" BorderBrush="{x:Null}" BorderThickness="0" Click="btnSave_Click" Width="248" Margin="0,10,0,10">
+                            <StackPanel Orientation="Horizontal" Width="230">
+                                <materialDesign:PackIcon Margin="0,0,15,0" Kind="SettingsBackupRestore" Height="20" Foreground="White"/>
+                                <TextBlock Text="Save" VerticalAlignment="Center" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
+                    </ListViewItem>
+                    <ListViewItem Padding="1">
+                        <Button  Background="{x:Null}" BorderBrush="{x:Null}" BorderThickness="0" Click="btnLoad_Click" Width="248" Margin="0,10,0,10">
+                            <StackPanel Orientation="Horizontal" Width="230">
+                                <materialDesign:PackIcon Margin="0,0,15,0" Kind="SettingsBackupRestore" Height="20" Foreground="White"/>
+                                <TextBlock Text="Load" VerticalAlignment="Center" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
+                    </ListViewItem>
+                    
                 </ListView>
 
             </StackPanel>
