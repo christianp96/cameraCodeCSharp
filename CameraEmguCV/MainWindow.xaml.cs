@@ -32,6 +32,7 @@ namespace CameraEmguCV
         private List<Point> second_markers = new List<Point>();
         private bool selection = false;
         public Mat selectedScreen = null;
+        private Mat loadedImage = null;
         DebugWindow debugWindow = null;
         CadranDefinition cadranDefinition = null;
         Screen currentScreen = new Screen("defaultScreenName");
@@ -57,12 +58,23 @@ namespace CameraEmguCV
 
         void timer_Tick(object sender, EventArgs e)
         {
-            Image<Bgr, byte> currentFrame = capture.QueryFrame().ToImage<Bgr, byte>();
-
+            Image<Bgr, byte> currentFrame = null;
+            if (capture != null)
+             currentFrame = capture.QueryFrame().ToImage<Bgr, byte>();
+            else if (capture == null)
+            {
+                currentFrame = loadedImage.ToImage<Bgr, byte>();
+            }
             if(num_of_clicks == 4)
             {
+                
                 Mat frame = currentFrame.Mat;
                 frame = ImageProcessor.WarpPerspective(frame, Utils.GetPoints(markers));
+
+                    SetImageAndCanvasSize(frame.Height, frame.Width);
+                    currentFrame = frame.ToImage<Bgr, byte>();
+              
+               
                 //CvInvoke.Imwrite("warp_frame.jpg", frame);
                 //frame = CvInvoke.Imread("warp_frame.jpg", LoadImageType.Grayscale);
                 //Mat template = null, mask = null;
@@ -81,13 +93,13 @@ namespace CameraEmguCV
                 //if (mask != null && template != null)
                 //    found = ImageProcessor.MatchTemplate(frame, template, mask);
                 //lblFound.Content = found.ToString();
-                SetImageAndCanvasSize(frame.Height, frame.Width);
+               
                 //image1.Width = frame.Width;
                 //image1.Height = frame.Height;
                 //mainCanvas.Height = frame.Height;
                 //mainCanvas.Width = frame.Width;
 
-                currentFrame = frame.ToImage<Bgr, byte>(); 
+                
             }
             
             if (currentFrame != null)
@@ -138,7 +150,7 @@ namespace CameraEmguCV
 
                     num_of_clicks_second_markers = 0;
                     TreeViewItem treeItemTest = new TreeViewItem();
-                    Image<Bgr, byte> currentFrame = capture.QueryFrame().ToImage<Bgr, byte>();
+                    Image<Bgr, byte> currentFrame = GetCurrentImage();//capture.QueryFrame().ToImage<Bgr, byte>();
                     Mat frame = currentFrame.Mat;
                     frame = ImageProcessor.WarpPerspective(frame, Utils.GetPoints(markers));
                     currentFrame = frame.ToImage<Bgr, byte>();
@@ -185,7 +197,7 @@ namespace CameraEmguCV
 
                 if (num_of_clicks == 4)
                 {
-                    Image<Bgr, byte> currentFrame = capture.QueryFrame().ToImage<Bgr, byte>();
+                    Image<Bgr, byte> currentFrame = GetCurrentImage();//capture.QueryFrame().ToImage<Bgr, byte>();
                     Mat img = currentFrame.Mat;
                     Mat warp = ImageProcessor.WarpPerspective(img, Utils.GetPoints(markers));
                     selectedScreen = warp;
@@ -242,9 +254,12 @@ namespace CameraEmguCV
             selection = false;
             wasClick = false;
             btnAddMarkers.Background = Brushes.LightGray;
+            if (capture == null)
+                capture = new Capture(0);
             SetImageAndCanvasSize(capture.Height, capture.Width);
             selectedScreen = null;
             tree.Items.Clear();
+            
             
         }
 
@@ -270,6 +285,14 @@ namespace CameraEmguCV
             //    CvInvoke.Imwrite("template.jpg", result);
             //    image2.Source = Utils.ToBitmapSource(result.ToImage<Bgr, byte>());
             //}
+        }
+
+        private Image<Bgr,byte> GetCurrentImage()
+        {
+            ImageSource image = image1.Source;
+            BitmapSource bmp = (BitmapSource)image;
+            System.Drawing.Bitmap imgg = Utils.BitmapFromSource(bmp);
+            return new Image<Bgr, byte>(imgg);
         }
 
         private void BtnAddMarkers_Click(object sender, RoutedEventArgs e)
@@ -317,12 +340,12 @@ namespace CameraEmguCV
                 string imagePath = openFileDialog.FileName;
                 capture = null;
                 loadedImage = CvInvoke.Imread(imagePath, 0);
-                CvInvoke.Resize(loadedImage, loadedImage, new System.Drawing.Size(640, 360), interpolation: Inter.Linear);
+                CvInvoke.Resize(loadedImage, loadedImage, new System.Drawing.Size(640, 360),interpolation:Inter.Linear);
                 image1.Source = Utils.ToBitmapSource(loadedImage);
                 SetImageAndCanvasSize(loadedImage.Height, loadedImage.Width);
                 //CvInvoke.Imshow("bla", new Image<Bgr,byte>(imgg));
                 //Utils.ToBitmapSource(imgg);
-
+                    
             }
 
         }

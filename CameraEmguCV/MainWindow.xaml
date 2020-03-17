@@ -29,8 +29,17 @@
                                 <TextBlock Text="Add Markers" VerticalAlignment="Center" Foreground="White"/>
                             </StackPanel>
                         </Button>
+                    </ListViewItem>
+                    <ListViewItem x:Name="btnLoadImage" Padding="1">
+                        <Button  Background="{x:Null}" BorderBrush="{x:Null}" BorderThickness="0" Click="BtnLoadImage_Click" Width="248" Margin="0,10,0,10">
+                            <StackPanel Orientation="Horizontal" Width="230">
+                                <materialDesign:PackIcon Margin="0,0,15,0" Kind="FileUpload" Height="20" Foreground="White"/>
+                                <TextBlock Text="Load Image" VerticalAlignment="Center" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
 
                     </ListViewItem>
+
                     <ListViewItem Padding="1">
                         <Button  Background="{x:Null}" BorderBrush="{x:Null}" BorderThickness="0" Click="btnDebugWindow_Click" Width="248" Margin="0,10,0,10">
                             <StackPanel Orientation="Horizontal" Width="230">
@@ -53,8 +62,8 @@
                     <ListViewItem Padding="1">
                         <Button  Background="{x:Null}" BorderBrush="{x:Null}" BorderThickness="0" Click="btnSave_Click" Width="248" Margin="0,10,0,10">
                             <StackPanel Orientation="Horizontal" Width="230">
-                                <materialDesign:PackIcon Margin="0,0,15,0" Kind="SettingsBackupRestore" Height="20" Foreground="White"/>
-                                <TextBlock Text="Save" VerticalAlignment="Center" Foreground="White"/>
+                                <materialDesign:PackIcon Margin="0,0,15,0" Kind="FileDownload" Height="20" Foreground="White"/>
+                                <TextBlock Text="Save Screen" VerticalAlignment="Center" Foreground="White"/>
                             </StackPanel>
                         </Button>
 
@@ -62,8 +71,8 @@
                     <ListViewItem Padding="1">
                         <Button  Background="{x:Null}" BorderBrush="{x:Null}" BorderThickness="0" Click="btnLoad_Click" Width="248" Margin="0,10,0,10">
                             <StackPanel Orientation="Horizontal" Width="230">
-                                <materialDesign:PackIcon Margin="0,0,15,0" Kind="SettingsBackupRestore" Height="20" Foreground="White"/>
-                                <TextBlock Text="Load" VerticalAlignment="Center" Foreground="White"/>
+                                <materialDesign:PackIcon Margin="0,0,15,0" Kind="FileUpload" Height="20" Foreground="White"/>
+                                <TextBlock Text="Load Screen" VerticalAlignment="Center" Foreground="White"/>
                             </StackPanel>
                         </Button>
 
@@ -108,7 +117,7 @@
         <Button Name="btnReset" Content="RESET!"  Margin="68,420,142,198"   Click="BtnReset_Click" Background="LightGray"/>-->
         <Button Name="btnAddMarkers" Content="Add Markers" Margin="-267,578,477,38" Click="BtnAddMarkers_Click" Background="LightGray" Height="Auto"/>
         <!--<Image HorizontalAlignment="Left" Height="122" Margin="467,479,0,0" VerticalAlignment="Top" Width="262" Name="image3" Grid.Column="1"/>-->
-        <ComboBox Name="cbxCameraDevices"  HorizontalAlignment="Left" Margin="54,328,0,0" VerticalAlignment="Top" Width="140" SelectionChanged="CbxCameraDevices_SelectionChanged" Background="LightGray"/>
+        <ComboBox Name="cbxCameraDevices"  HorizontalAlignment="Left" Margin="55,420,0,0" VerticalAlignment="Top" Width="140" SelectionChanged="CbxCameraDevices_SelectionChanged" Background="LightGray"/>
         <!--<Button x:Name="btnDebugWindow" Content="Debug Mode"  Margin="68,479,142,130"   Click="btnDebugWindow_Click" Background="LightGray" Height="Auto"/>-->
 
     </Grid>
