@@ -23,21 +23,17 @@ namespace CameraEmguCV
         DispatcherTimer timer;
         private bool add_markers = false;
         private int num_of_clicks = 0;
-        public  List<Point> markers = new List<Point>();
+        public List<Point> markers = null;
         private Point lastPoint = new Point();
         private System.Windows.Shapes.Ellipse lastEllipse = new System.Windows.Shapes.Ellipse();
         private List<System.Windows.Shapes.Ellipse> allEllipses = new List<System.Windows.Shapes.Ellipse>();
         private bool wasClick = false;
-        private int num_of_clicks_second_markers = 0;
-        private List<Point> second_markers = new List<Point>();
-        private bool selection = false;
         public Mat selectedScreen = null;
         private Mat loadedImage = null;
         DebugWindow debugWindow = null;
         CadranDefinition cadranDefinition = null;
-        Screen currentScreen = new Screen("defaultScreenName");
+        Screen currentScreen = null;//new Screen("defaultScreenName");
 
-     
         public MainWindow()
         {
             InitializeComponent();
@@ -52,8 +48,7 @@ namespace CameraEmguCV
             timer = new DispatcherTimer();
             timer.Tick += new EventHandler(timer_Tick);
             timer.Interval = new TimeSpan(0, 0, 0, 0, 1);
-            timer.Start();
-            
+            timer.Start();     
         }
 
         void timer_Tick(object sender, EventArgs e)
@@ -65,41 +60,15 @@ namespace CameraEmguCV
             {
                 currentFrame = loadedImage.ToImage<Bgr, byte>();
             }
-            if(num_of_clicks == 4)
+            if(currentScreen != null)
             {
                 
                 Mat frame = currentFrame.Mat;
-                frame = ImageProcessor.WarpPerspective(frame, Utils.GetPoints(markers));
+                frame = ImageProcessor.WarpPerspective(frame, Utils.GetPoints(currentScreen.coordinates));
 
                     SetImageAndCanvasSize(frame.Height, frame.Width);
                     currentFrame = frame.ToImage<Bgr, byte>();
-              
-               
-                //CvInvoke.Imwrite("warp_frame.jpg", frame);
-                //frame = CvInvoke.Imread("warp_frame.jpg", LoadImageType.Grayscale);
-                //Mat template = null, mask = null;
-                //bool found = false;
-
-                //try
-                //{
-                //    template = CvInvoke.Imread("template.jpg", LoadImageType.Grayscale);
-                //    mask = CvInvoke.Imread("template_mask.jpg", LoadImageType.Grayscale);
-
-                //} catch(Exception ex)
-                //{
-                //    MessageBox.Show("A handled exception just occurred: " + ex.Message, "Exception Sample", MessageBoxButton.OK, MessageBoxImage.Warning);
-                //}
-
-                //if (mask != null && template != null)
-                //    found = ImageProcessor.MatchTemplate(frame, template, mask);
-                //lblFound.Content = found.ToString();
-               
-                //image1.Width = frame.Width;
-                //image1.Height = frame.Height;
-                //mainCanvas.Height = frame.Height;
-                //mainCanvas.Width = frame.Width;
-
-                
+             
             }
             
             if (currentFrame != null)
@@ -128,36 +97,54 @@ namespace CameraEmguCV
         }
         private void MainCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (add_markers == true && selection == true)
+
+            if (add_markers == true && currentScreen == null)
             {
-                if (num_of_clicks_second_markers < 4)
+                
+                if (num_of_clicks < 4)
                 {
                     System.Windows.Shapes.Ellipse ellipse = new System.Windows.Shapes.Ellipse();
                     AddEllipse(ellipse);
-
                     Point point = new Point(Mouse.GetPosition(image1).X, Mouse.GetPosition(image1).Y);
-
                     Canvas.SetLeft(ellipse, point.X);
                     Canvas.SetTop(ellipse, point.Y);
-                    
-                    second_markers.Add(point);
-                    num_of_clicks_second_markers++;
-
+                    markers.Add(point);
+                    num_of_clicks++;
                 }
 
-                if (num_of_clicks_second_markers == 4)
+                if (num_of_clicks == 4)
                 {
-
-                    num_of_clicks_second_markers = 0;
+                    currentScreen = new Screen("selectedScreen");
+                    currentScreen.coordinates = markers;
+                    Image<Bgr, byte> currentFrame = GetCurrentImage();
+                    Mat img = currentFrame.Mat;
+                    Mat warp = ImageProcessor.WarpPerspective(img, Utils.GetPoints(currentScreen.coordinates));
+                    btnAddDialMarkers.IsEnabled = true;
+                    btn_AddMarkers.IsEnabled = false;
+                    add_markers = false;
+                    ResetMarkers();
+                    markers = null;
+                    num_of_clicks = 0;
+                }
+            }
+            else if (add_markers)
+            {
+                if (num_of_clicks < 4)
+                {
+                    System.Windows.Shapes.Ellipse ellipse = new System.Windows.Shapes.Ellipse();
+                    AddEllipse(ellipse);
+                    Point point = new Point(Mouse.GetPosition(image1).X, Mouse.GetPosition(image1).Y);
+                    Canvas.SetLeft(ellipse, point.X);
+                    Canvas.SetTop(ellipse, point.Y);
+                    markers.Add(point);
+                    num_of_clicks++;
+                }
+                if (num_of_clicks == 4)
+                {
                     TreeViewItem treeItemTest = new TreeViewItem();
-                    Image<Bgr, byte> currentFrame = GetCurrentImage();//capture.QueryFrame().ToImage<Bgr, byte>();
-                    Mat frame = currentFrame.Mat;
-                    frame = ImageProcessor.WarpPerspective(frame, Utils.GetPoints(markers));
-                    currentFrame = frame.ToImage<Bgr, byte>();
-                    Mat img = currentFrame.Mat; 
-                    CvInvoke.Resize(img, img, new System.Drawing.Size((int)image1.Width,(int) image1.Height));
-                    Mat warp = ImageProcessor.WarpPerspective(img, Utils.GetPoints(second_markers));
-                    //image3.Source = Utils.ToBitmapSource(warp.ToImage<Bgr, byte>());
+                    Image<Bgr, byte> currentFrame = GetCurrentImage();
+                    Mat img = currentFrame.Mat;
+                    Mat warp = ImageProcessor.WarpPerspective(img, Utils.GetPoints(markers));      
                     ResetMarkers();
                     try { cadranDefinition = new CadranDefinition(); cadranDefinition.Owner = GetWindow(this); cadranDefinition.ShowDialog(); }
                     catch (Exception ex)
@@ -167,44 +154,13 @@ namespace CameraEmguCV
                     //Doar de test, voi sterge dupa gasirea unei solutii mai bune
                     var item = (ComboBoxItem)cadranDefinition.CadranType.SelectedItem;
                     var content = (string)item.Content;
-                   
+                    currentScreen.dials.Add(new Dial(cadranDefinition.CadranName.Text, cadranDefinition.CadranType.Text));
+                    num_of_clicks = 0;
+                    markers.Clear();
                     //Adaugare in treeview
                     treeItemTest.Header = cadranDefinition.CadranName.Text;
                     treeItemTest.Items.Add(content);
                     tree.Items.Add(treeItemTest);
-
-                    second_markers.Clear();
-                }
-
-            }
-                else if(add_markers)
-            {
-                if (num_of_clicks < 4)
-                {
-                    System.Windows.Shapes.Ellipse ellipse = new System.Windows.Shapes.Ellipse();
-
-                    AddEllipse(ellipse);
-
-                    Point point = new Point(Mouse.GetPosition(image1).X, Mouse.GetPosition(image1).Y);
-
-                    Canvas.SetLeft(ellipse, point.X);
-                    Canvas.SetTop(ellipse, point.Y);
-                    markers.Add(point);
-                    lastPoint = point;
-                    num_of_clicks++;
-                    wasClick = false;
-                }
-
-                if (num_of_clicks == 4)
-                {
-                    Image<Bgr, byte> currentFrame = GetCurrentImage();//capture.QueryFrame().ToImage<Bgr, byte>();
-                    Mat img = currentFrame.Mat;
-                    Mat warp = ImageProcessor.WarpPerspective(img, Utils.GetPoints(markers));
-                    selectedScreen = warp;
-                    //image2.Source = Utils.ToBitmapSource(warp.ToImage<Bgr, byte>());
-                    ResetMarkers();
-                    
-                    selection = true;
                 }
             }
         }
@@ -229,6 +185,7 @@ namespace CameraEmguCV
             {
                 mainCanvas.Children.Remove(c);
             }
+            
         }
         //Generarea elipselor pe canvas si adaugarea lor intr-o lista de elipse pentru stergerea lor ulterioara
         private void AddEllipse(System.Windows.Shapes.Ellipse ellipse)
@@ -247,12 +204,11 @@ namespace CameraEmguCV
         {
             ResetMarkers();
             markers.Clear();
-            second_markers.Clear();
             num_of_clicks = 0;
-            num_of_clicks_second_markers = 0;
             add_markers = false;
-            selection = false;
-            wasClick = false;
+            btn_AddMarkers.IsEnabled = true;
+            currentScreen = null;
+            btnAddDialMarkers.IsEnabled = false;
             btnAddMarkers.Background = Brushes.LightGray;
             if (capture == null)
                 capture = new Capture(0);
@@ -300,6 +256,7 @@ namespace CameraEmguCV
             if (add_markers == false)
             {
                 add_markers = true;
+                markers = new List<Point>();
                 btnAddMarkers.Background = Brushes.Pink;
             }
             else

@@ -74,7 +74,7 @@ namespace CameraEmguCV
             
         }
 
-        private void BtnSingleLines_Click(object sender, RoutedEventArgs e)
+        /*private void BtnSingleLines_Click(object sender, RoutedEventArgs e)
         {
             if(parent.selectedScreen != null)
             {
@@ -117,7 +117,7 @@ namespace CameraEmguCV
                 MessageBox.Show("You didn't put any markers on the screen! ", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
-
+        */
         private void BtnSaveTemplate_Click(object sender, RoutedEventArgs e)
         {
             if (txtTemplateName.Text != String.Empty)

@@ -25,11 +25,15 @@ namespace CameraEmguCV
         {
             InitializeComponent();
             this.parent = (MainWindow)Application.Current.MainWindow;
+            
         }
 
         private void Btn_Accept_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            if(CadranName.Text == string.Empty || CadranType.SelectedValue == null)
+                MessageBox.Show("You have to choose a name and a type for the dial! ", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+            else
+                this.Close();
         }
     }
 }
