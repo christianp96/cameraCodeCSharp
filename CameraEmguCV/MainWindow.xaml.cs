@@ -127,7 +127,7 @@ namespace CameraEmguCV
                     num_of_clicks = 0;
                 }
             }
-            else if (add_markers)
+            else  if (add_markers)
             {
                 if (num_of_clicks < 4)
                 {
@@ -219,29 +219,7 @@ namespace CameraEmguCV
             
         }
 
-        private void BtnShowImage_Click(object sender, RoutedEventArgs e)
-        {
-    
-            //Mat img = null;
-            //Mat mask = null;
-            //Mat result = null;
-            //try
-            //{
-            //    img = CvInvoke.Imread("warp_save.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
-            //    mask = CvInvoke.Imread("template_mask.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show("A handled exception just occurred: " + ex.Message, "Exception Sample", MessageBoxButton.OK, MessageBoxImage.Warning);
-            //}
-
-            //if (mask != null && img != null)
-            //{
-            //    result = ImageProcessor.ApplyMask(img, mask);
-            //    CvInvoke.Imwrite("template.jpg", result);
-            //    image2.Source = Utils.ToBitmapSource(result.ToImage<Bgr, byte>());
-            //}
-        }
+   
 
         private Image<Bgr,byte> GetCurrentImage()
         {
@@ -300,8 +278,7 @@ namespace CameraEmguCV
                 CvInvoke.Resize(loadedImage, loadedImage, new System.Drawing.Size(640, 360),interpolation:Inter.Linear);
                 image1.Source = Utils.ToBitmapSource(loadedImage);
                 SetImageAndCanvasSize(loadedImage.Height, loadedImage.Width);
-                //CvInvoke.Imshow("bla", new Image<Bgr,byte>(imgg));
-                //Utils.ToBitmapSource(imgg);
+                
                     
             }
 
@@ -340,7 +317,10 @@ namespace CameraEmguCV
             }
         }
 
+        private void ListViewItem_Selected()
+        {
 
+        }
     }
     #endregion
 }
