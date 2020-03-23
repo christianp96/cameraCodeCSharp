@@ -165,6 +165,12 @@ namespace CameraEmguCV
                     else
 
                     {
+                        //ResetMarkers();
+                        //markers.Remove(markers[markers.Count - 1]);
+                        //markers.Remove(markers[markers.Count - 2]);
+                        ////markers.Remove(markers[markers.Count - 3]);
+                        ////markers.Remove(markers[markers.Count - 4]);
+                        //num_of_clicks = 0;
                         RemoveOnePoint();
                         
                     }
@@ -177,8 +183,9 @@ namespace CameraEmguCV
             if (add_markers)
             {
 
-                RemoveOnePoint();    
-               
+                RemoveOnePoint();
+                
+
             }
         }
 
