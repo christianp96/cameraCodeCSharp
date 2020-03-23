@@ -48,8 +48,9 @@
         </Canvas>
         <Label Content="Template" HorizontalAlignment="Left" Margin="334,115,0,0" VerticalAlignment="Top"/>
         <Label Content="Template mask" HorizontalAlignment="Left" Margin="616,115,0,0" VerticalAlignment="Top"/>
-        <Button Name="btnSaveTemplate" Content="Save template" HorizontalAlignment="Left" Margin="287,378,0,0" VerticalAlignment="Top" Width="145" Click="BtnSaveTemplate_Click" Visibility="Hidden"/>
+        <Button Name="btnSaveTemplate" Content="Save template" HorizontalAlignment="Left" Margin="585,378,0,0" VerticalAlignment="Top" Width="145" Click="BtnSaveTemplate_Click" Visibility="Hidden"/>
         <TextBox Name="txtTemplateName" HorizontalAlignment="Left" Height="23" Margin="431,387,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Visibility="Hidden"/>
+        <Label Name="lblTemplateName" Content="Template name" HorizontalAlignment="Left" Margin="334,386,0,0" VerticalAlignment="Top" Visibility="Hidden"/>
 
     </Grid>
 </Window>

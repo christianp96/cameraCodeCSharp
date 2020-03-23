@@ -32,7 +32,7 @@ namespace CameraEmguCV
         private Mat loadedImage = null;
         DebugWindow debugWindow = null;
         CadranDefinition cadranDefinition = null;
-        Screen currentScreen = null;//new Screen("defaultScreenName");
+        internal Screen currentScreen = null;//new Screen("defaultScreenName");
 
         public MainWindow()
         {
@@ -119,11 +119,11 @@ namespace CameraEmguCV
                     Image<Bgr, byte> currentFrame = GetCurrentImage();
                     Mat img = currentFrame.Mat;
                     Mat warp = ImageProcessor.WarpPerspective(img, Utils.GetPoints(currentScreen.coordinates));
+                    selectedScreen = warp;
                     btnAddDialMarkers.IsEnabled = true;
                     btn_AddMarkers.IsEnabled = false;
                     add_markers = false;
                     ResetMarkers();
-                    markers = null;
                     num_of_clicks = 0;
                 }
             }
@@ -205,7 +205,8 @@ namespace CameraEmguCV
         private void ResetAll()
         {
             ResetMarkers();
-            markers.Clear();
+            if(markers!= null)
+                markers.Clear();
             num_of_clicks = 0;
             add_markers = false;
             btn_AddMarkers.IsEnabled = true;
@@ -239,11 +240,11 @@ namespace CameraEmguCV
                 markers = new List<Point>();
                 btnAddMarkers.Background = Brushes.Pink;
             }
-            else
+           /* else
             { 
                 add_markers = false;
                 btnAddMarkers.Background = Brushes.LightGray;
-            }
+            }*/
         }
 
         private void BtnReset_Click(object sender, RoutedEventArgs e)

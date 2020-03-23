@@ -13,7 +13,7 @@ namespace CameraEmguCV
         private String name { get; set; }
 
         [DataMember]
-        private String templatePath { get; set; }
+        public String templatePath { get; set; }
 
         [DataMember]
         public List<Point> coordinates { get; set; }

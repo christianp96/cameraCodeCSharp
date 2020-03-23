@@ -16,6 +16,8 @@ namespace CameraEmguCV
         public int lowThreshold = 30, highThreshold = 210, minLineLength = 90, maxLineGap = 50, houghThreshold = 50;
         MainWindow parent;
         TemplateImage t = TemplateImage.Instance;
+        string templateDir = "template_dir";
+
 
         public DebugWindow()
         {
@@ -31,12 +33,15 @@ namespace CameraEmguCV
             initMat.SetTo(new MCvScalar(128,128,128));
             tempImage.Source = Utils.ToBitmapSource(initMat.ToImage<Bgr,byte>());
             templateMask.Source = Utils.ToBitmapSource(initMat.ToImage<Bgr, byte>());
+            lblTemplateName.Visibility = Visibility.Hidden;
+            txtTemplateName.Visibility = Visibility.Hidden;
+            btnSaveTemplate.Visibility = Visibility.Hidden;
         }
 
 
         private void BtnPreviewTemplate_Click(object sender, RoutedEventArgs e)
         {
-            if(parent.selectedScreen != null)
+            if(parent.currentScreen != null)
             {
                 
                 Mat img = parent.selectedScreen;//CvInvoke.Imread("test_save.jpg", Emgu.CV.CvEnum.LoadImageType.Grayscale);
@@ -52,11 +57,12 @@ namespace CameraEmguCV
                 LineSegment2D[] singleLines = Utils.GetSingleLinesFromHoughLines(lines, 20);
                 if(singleLines!= null)
                 {
-                    Mat mask = ImageProcessor.AddLines(singleLines, Utils.GetRatioOfSelectedArea(Utils.GetPoints(parent.markers)));
+                    Mat mask = ImageProcessor.AddLines(singleLines, Utils.GetRatioOfSelectedArea(Utils.GetPoints(parent.currentScreen.coordinates)));
                     Mat templateImage = ImageProcessor.ApplyMask(warp, mask);
                     t.SetTemplateImageAndMask(templateImage.ToImage<Bgr, byte>(), mask.ToImage<Bgr, byte>());
                     tempImage.Source = Utils.ToBitmapSource(templateImage);
                     templateMask.Source = Utils.ToBitmapSource(mask);
+                    lblTemplateName.Visibility = Visibility.Visible;
                     txtTemplateName.Visibility = Visibility.Visible;
                     btnSaveTemplate.Visibility = Visibility.Visible;
 
@@ -67,7 +73,7 @@ namespace CameraEmguCV
             }
             else
             {
-                MessageBox.Show("You didn't put any markers on the screen! ", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("You didn't select any screen! ", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
            
 
@@ -120,6 +126,7 @@ namespace CameraEmguCV
         */
         private void BtnSaveTemplate_Click(object sender, RoutedEventArgs e)
         {
+
             if (txtTemplateName.Text != String.Empty)
                 if (t.Image != null && t.Mask != null)
                 {         
@@ -130,6 +137,7 @@ namespace CameraEmguCV
                         if (result == MessageBoxResult.Yes)
                         {                
                             t.SaveTemplate(txtTemplateName.Text);
+                            parent.currentScreen.templatePath = templateDir +"\\"+ txtTemplateName.Text+".jpg";
                             t.SetTemplateImageAndMask(null, null);
                             txtTemplateName.Clear();
                             InitImages();
@@ -138,6 +146,7 @@ namespace CameraEmguCV
                     else
                     {
                         t.SaveTemplate(txtTemplateName.Text);
+                        parent.currentScreen.templatePath = templateDir +"\\" +txtTemplateName.Text + ".jpg";
                         t.SetTemplateImageAndMask(null, null);
                         txtTemplateName.Clear();
                         InitImages();
@@ -154,9 +163,9 @@ namespace CameraEmguCV
         private bool CheckExisting(string templateName)
         {
             bool ok = true;
-            string[] fileEntries = Directory.GetFiles("template_dir");
+            string[] fileEntries = Directory.GetFiles(templateDir);
             foreach (string fileName in fileEntries)
-                if (fileName == "template_dir\\" + templateName + ".jpg")
+                if (fileName == templateDir+"\\" + templateName + ".jpg")
                     ok = false;
 
             return ok;
