@@ -18,10 +18,10 @@ namespace CameraEmguCV
     /// <summary>
     /// Interaction logic for Window1.xaml
     /// </summary>
-    public partial class CadranDefinition : Window
+    public partial class DialDefinition : Window
     {
         MainWindow parent;
-        public CadranDefinition(Emgu.CV.Mat dial)
+        public DialDefinition(Emgu.CV.Mat dial)
         {
             InitializeComponent();
             this.parent = (MainWindow)Application.Current.MainWindow;

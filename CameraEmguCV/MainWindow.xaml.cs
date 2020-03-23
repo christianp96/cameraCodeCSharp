@@ -29,7 +29,7 @@ namespace CameraEmguCV
         public Mat selectedScreen = null;
         private Mat loadedImage = null;
         DebugWindow debugWindow = null;
-        CadranDefinition cadranDefinition = null;
+        DialDefinition cadranDefinition = null;
         internal Screen currentScreen = null;//new Screen("defaultScreenName");
 
         public MainWindow()
@@ -144,7 +144,7 @@ namespace CameraEmguCV
                     Mat img = currentFrame.Mat;
                     Mat warp = ImageProcessor.WarpPerspective(img, Utils.GetPoints(markers));      
                     
-                    try { cadranDefinition = new CadranDefinition(warp); cadranDefinition.Owner = GetWindow(this); cadranDefinition.ShowDialog(); }
+                    try { cadranDefinition = new DialDefinition(warp); cadranDefinition.Owner = GetWindow(this); cadranDefinition.ShowDialog(); }
                     catch (Exception ex)
                     {
                         System.Windows.MessageBox.Show("A handled exception just occurred: " + ex.Message, "Exception Sample", MessageBoxButton.OK, MessageBoxImage.Warning);
