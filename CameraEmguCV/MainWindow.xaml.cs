@@ -152,6 +152,8 @@ namespace CameraEmguCV
                         System.Windows.MessageBox.Show("A handled exception just occurred: " + ex.Message, "Exception Sample", MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
                     //Doar de test, voi sterge dupa gasirea unei solutii mai bune
+
+                    // Pentru Beni - > de schimbat aici logica
                     var item = (ComboBoxItem)cadranDefinition.CadranType.SelectedItem;
                     var content = (string)item.Content;
                     currentScreen.dials.Add(new Dial(cadranDefinition.CadranName.Text, cadranDefinition.CadranType.Text,markers));
@@ -314,6 +316,7 @@ namespace CameraEmguCV
 
                 DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(Screen));
                 currentScreen = (Screen)js.ReadObject(fs);
+                
             }
         }
 
