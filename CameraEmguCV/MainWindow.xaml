@@ -100,7 +100,7 @@
                             <Setter.Value>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock VerticalAlignment="Center" Text="{Binding}" Foreground="White"/>
+                                        <TextBlock VerticalAlignment="Center" Text="{Binding}" Foreground="Black"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </Setter.Value>
@@ -108,7 +108,7 @@
                     </Style>
                 </TreeView.Resources>
             </TreeView>
-            <Label Content="Type of dial" HorizontalAlignment="Left" Margin="654,26,0,0" VerticalAlignment="Top" Width="287" Foreground="White"/>
+            <Label Content="Type of dial" HorizontalAlignment="Left" Margin="654,26,0,0" VerticalAlignment="Top" Width="287" Foreground="Black"/>
 
         </Grid>
 
