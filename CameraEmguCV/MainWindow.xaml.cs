@@ -146,7 +146,7 @@ namespace CameraEmguCV
                     Mat img = currentFrame.Mat;
                     Mat warp = ImageProcessor.WarpPerspective(img, Utils.GetPoints(markers));      
                     ResetMarkers();
-                    try { cadranDefinition = new CadranDefinition(); cadranDefinition.Owner = GetWindow(this); cadranDefinition.ShowDialog(); }
+                    try { cadranDefinition = new CadranDefinition(warp); cadranDefinition.Owner = GetWindow(this); cadranDefinition.ShowDialog(); }
                     catch (Exception ex)
                     {
                         System.Windows.MessageBox.Show("A handled exception just occurred: " + ex.Message, "Exception Sample", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -154,7 +154,7 @@ namespace CameraEmguCV
                     //Doar de test, voi sterge dupa gasirea unei solutii mai bune
                     var item = (ComboBoxItem)cadranDefinition.CadranType.SelectedItem;
                     var content = (string)item.Content;
-                    currentScreen.dials.Add(new Dial(cadranDefinition.CadranName.Text, cadranDefinition.CadranType.Text));
+                    currentScreen.dials.Add(new Dial(cadranDefinition.CadranName.Text, cadranDefinition.CadranType.Text,markers));
                     num_of_clicks = 0;
                     markers.Clear();
                     //Adaugare in treeview

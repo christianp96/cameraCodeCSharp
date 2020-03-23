@@ -23,5 +23,13 @@ namespace CameraEmguCV
             this.type = type;
             coordinates = new List<Point>();
         }
+
+        public Dial(String name, String type, List<Point> coordinates)
+        {
+            this.name = name;
+            this.type = type;
+            this.coordinates = new List<Point>();
+            this.coordinates.AddRange(coordinates);
+        }
     }
 }
