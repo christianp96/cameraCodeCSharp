@@ -24,10 +24,8 @@ namespace CameraEmguCV
         private bool add_markers = false;
         private int num_of_clicks = 0;
         public List<Point> markers = null;
-        private Point lastPoint = new Point();
         private System.Windows.Shapes.Ellipse lastEllipse = new System.Windows.Shapes.Ellipse();
         private List<System.Windows.Shapes.Ellipse> allEllipses = new List<System.Windows.Shapes.Ellipse>();
-        private bool wasClick = false;
         public Mat selectedScreen = null;
         private Mat loadedImage = null;
         DebugWindow debugWindow = null;
@@ -53,7 +51,7 @@ namespace CameraEmguCV
 
         void timer_Tick(object sender, EventArgs e)
         {
-            Image<Bgr, byte> currentFrame = null;
+            Image<Bgr, byte> currentFrame = null ;
             if (capture != null)
              currentFrame = capture.QueryFrame().ToImage<Bgr, byte>();
             else if (capture == null)
@@ -145,24 +143,31 @@ namespace CameraEmguCV
                     Image<Bgr, byte> currentFrame = GetCurrentImage();
                     Mat img = currentFrame.Mat;
                     Mat warp = ImageProcessor.WarpPerspective(img, Utils.GetPoints(markers));      
-                    ResetMarkers();
+                    
                     try { cadranDefinition = new CadranDefinition(warp); cadranDefinition.Owner = GetWindow(this); cadranDefinition.ShowDialog(); }
                     catch (Exception ex)
                     {
                         System.Windows.MessageBox.Show("A handled exception just occurred: " + ex.Message, "Exception Sample", MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
-                    //Doar de test, voi sterge dupa gasirea unei solutii mai bune
 
-                    // Pentru Beni - > de schimbat aici logica
-                    var item = (ComboBoxItem)cadranDefinition.CadranType.SelectedItem;
-                    var content = (string)item.Content;
-                    currentScreen.dials.Add(new Dial(cadranDefinition.CadranName.Text, cadranDefinition.CadranType.Text,markers));
-                    num_of_clicks = 0;
-                    markers.Clear();
-                    //Adaugare in treeview
-                    treeItemTest.Header = cadranDefinition.CadranName.Text;
-                    treeItemTest.Items.Add(content);
-                    tree.Items.Add(treeItemTest);
+                    //Checks the value transmited from the dial definition window that the values are not null 
+                    if (cadranDefinition.CadranName.Text != "" && cadranDefinition.CadranType.Text != "")
+                    {
+                        
+                        ResetMarkers();
+                        Dial dial = new Dial(cadranDefinition.CadranName.Text, cadranDefinition.CadranType.Text, markers);
+                        currentScreen.dials.Add(dial);
+                        num_of_clicks = 0;
+                        markers.Clear();
+                        //Add elements in the treeview
+                        AddTreeView(dial);
+                    }
+                    else
+
+                    {
+                        RemoveOnePoint();
+                        
+                    }
                 }
             }
         }
@@ -171,81 +176,13 @@ namespace CameraEmguCV
         {
             if (add_markers)
             {
-                if (wasClick == false)
-                {
-                    mainCanvas.Children.Remove(lastEllipse);
-                    markers.Remove(lastPoint);
-                    num_of_clicks--;
-                    wasClick = true;
-                }
+
+                RemoveOnePoint();    
+               
             }
         }
 
-        private void ResetMarkers()
-        {
-            foreach (System.Windows.Shapes.Ellipse c in allEllipses)
-            {
-                mainCanvas.Children.Remove(c);
-            }
-            
-        }
-        //Generarea elipselor pe canvas si adaugarea lor intr-o lista de elipse pentru stergerea lor ulterioara
-        private void AddEllipse(System.Windows.Shapes.Ellipse ellipse)
-        {
-            ellipse.Stroke = new SolidColorBrush(Colors.Orange);
-            ellipse.StrokeThickness = 2;
-            ellipse.Width = 5;
-            ellipse.Fill = new SolidColorBrush(Colors.Orange);
-            mainCanvas.Children.Add(ellipse);
-
-            allEllipses.Add(ellipse);
-            lastEllipse = ellipse;
-        }
-
-        private void ResetAll()
-        {
-            ResetMarkers();
-            if(markers!= null)
-                markers.Clear();
-            num_of_clicks = 0;
-            add_markers = false;
-            btn_AddMarkers.IsEnabled = true;
-            currentScreen = null;
-            btnAddDialMarkers.IsEnabled = false;
-            btnAddMarkers.Background = Brushes.LightGray;
-            if (capture == null)
-                capture = new Capture(0);
-            SetImageAndCanvasSize(capture.Height, capture.Width);
-            selectedScreen = null;
-            tree.Items.Clear();
-            
-            
-        }
-
-   
-
-        private Image<Bgr,byte> GetCurrentImage()
-        {
-            ImageSource image = image1.Source;
-            BitmapSource bmp = (BitmapSource)image;
-            System.Drawing.Bitmap imgg = Utils.BitmapFromSource(bmp);
-            return new Image<Bgr, byte>(imgg);
-        }
-
-        private void BtnAddMarkers_Click(object sender, RoutedEventArgs e)
-        {
-            if (add_markers == false)
-            {
-                add_markers = true;
-                markers = new List<Point>();
-                btnAddMarkers.Background = Brushes.Pink;
-            }
-           /* else
-            { 
-                add_markers = false;
-                btnAddMarkers.Background = Brushes.LightGray;
-            }*/
-        }
+    
 
         private void BtnReset_Click(object sender, RoutedEventArgs e)
         {
@@ -306,6 +243,7 @@ namespace CameraEmguCV
 
         private void btnLoad_Click(object sender, RoutedEventArgs e)
         {
+            ResetAll();
             OpenFileDialog openDialog = new OpenFileDialog();
             openDialog.Title = "Load the Display Definition";
             openDialog.ShowDialog();
@@ -317,8 +255,95 @@ namespace CameraEmguCV
 
                 DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(Screen));
                 currentScreen = (Screen)js.ReadObject(fs);
-                
+
+                currentScreen.dials.ForEach(dial => { AddTreeView(dial); } );
+
+
             }
+        }
+        private void ResetMarkers()
+        {
+            foreach (System.Windows.Shapes.Ellipse c in allEllipses)
+            {
+                mainCanvas.Children.Remove(c);
+            }
+
+        }
+        //Generarea elipselor pe canvas si adaugarea lor intr-o lista de elipse pentru stergerea lor ulterioara
+        private void AddEllipse(System.Windows.Shapes.Ellipse ellipse)
+        {
+            ellipse.Stroke = new SolidColorBrush(Colors.Orange);
+            ellipse.StrokeThickness = 2;
+            ellipse.Width = 5;
+            ellipse.Fill = new SolidColorBrush(Colors.Orange);
+            mainCanvas.Children.Add(ellipse);
+
+            allEllipses.Add(ellipse);
+            lastEllipse = ellipse;
+        }
+
+        private void ResetAll()
+        {
+            ResetMarkers();
+            if (markers != null)
+                markers.Clear();
+            num_of_clicks = 0;
+            add_markers = false;
+            btn_AddMarkers.IsEnabled = true;
+            currentScreen = null;
+            btnAddDialMarkers.IsEnabled = false;
+            btnAddMarkers.Background = Brushes.LightGray;
+            if (capture == null)
+                capture = new Capture(0);
+            SetImageAndCanvasSize(capture.Height, capture.Width);
+            selectedScreen = null;
+            tree.Items.Clear();
+
+
+        }
+
+
+
+        private Image<Bgr, byte> GetCurrentImage()
+        {
+            ImageSource image = image1.Source;
+            BitmapSource bmp = (BitmapSource)image;
+            System.Drawing.Bitmap imgg = Utils.BitmapFromSource(bmp);
+            return new Image<Bgr, byte>(imgg);
+        }
+
+        private void BtnAddMarkers_Click(object sender, RoutedEventArgs e)
+        {
+            if (add_markers == false)
+            {
+                add_markers = true;
+                markers = new List<Point>();
+                btnAddMarkers.Background = Brushes.Pink;
+            }
+            /* else
+             { 
+                 add_markers = false;
+                 btnAddMarkers.Background = Brushes.LightGray;
+             }*/
+        }
+
+        private void AddTreeView(Dial dial)
+        {
+            TreeViewItem treeItemTest = new TreeViewItem();
+            treeItemTest.Header = dial.Name;
+            treeItemTest.Items.Add(dial.Type);
+            tree.Items.Add(treeItemTest);
+      
+
+
+        }
+
+        private void RemoveOnePoint()
+        {
+            mainCanvas.Children.Remove(lastEllipse);
+            markers.Remove(markers[markers.Count - 1]);
+            num_of_clicks--;
+
         }
 
         private void ListViewItem_Selected()

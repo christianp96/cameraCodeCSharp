@@ -8,11 +8,23 @@ namespace CameraEmguCV
     [DataContract]
     class Dial
     {
-        [DataMember]
-        private String name { get; set; }
+
 
         [DataMember]
-        private String type { get; set; }
+        private String name;
+
+        public String Name
+        {
+            get { return name; }
+        }
+
+        [DataMember]
+        private String type;
+        
+        public String Type
+        {
+            get { return type; }
+        }
 
         [DataMember]
         public  List<Point> coordinates { get; set; }

@@ -33,7 +33,7 @@ namespace CameraEmguCV
 
         private void Btn_Accept_Click(object sender, RoutedEventArgs e)
         {
-            if(CadranName.Text == string.Empty || CadranType.SelectedValue == null)
+            if (CadranName.Text == string.Empty || CadranType.SelectedValue == null)
                 MessageBox.Show("You have to choose a name and a type for the dial! ", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
             else
                 this.Close();
@@ -41,11 +41,11 @@ namespace CameraEmguCV
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
-            if (CadranName.Text == string.Empty || CadranType.SelectedValue == null)
-            {
-                MessageBox.Show("You have to choose a name and a type for the dial! ", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
-                e.Cancel = true;
-            }
+            //if (CadranName.Text == string.Empty || CadranType.SelectedValue == null)
+            //{
+            //    MessageBox.Show("You have to choose a name and a type for the dial! ", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+            //this.Close();
+            //}
                 
         }
     }
