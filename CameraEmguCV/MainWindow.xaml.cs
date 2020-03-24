@@ -165,14 +165,11 @@ namespace CameraEmguCV
                     else
 
                     {
-                        //ResetMarkers();
-                        //markers.Remove(markers[markers.Count - 1]);
-                        //markers.Remove(markers[markers.Count - 2]);
-                        ////markers.Remove(markers[markers.Count - 3]);
-                        ////markers.Remove(markers[markers.Count - 4]);
-                        //num_of_clicks = 0;
-                        RemoveOnePoint();
-                        
+                        ResetMarkers();
+                        //Nu sunt sigur daca e ok ca am apelat markers.Clear aici, te rog verifica sa vezi daca e ok.
+                        markers.Clear();              
+                        num_of_clicks = 0;
+               
                     }
                 }
             }
