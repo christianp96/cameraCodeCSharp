@@ -186,7 +186,7 @@ namespace CameraEmguCV
         public static string GetTesseractResult(System.Drawing.Bitmap image)
         {
             string result = "";
-            string tesseractPath = "C:/Users/Chris/source/repos/AForgeWPF/tessdata";
+            string tesseractPath = "../../tessdata";
             string tesseractLanguage = "eng";
             using (var engine = new TesseractEngine(tesseractPath, tesseractLanguage, EngineMode.TesseractOnly))
             {

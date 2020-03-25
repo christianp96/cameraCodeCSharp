@@ -356,7 +356,12 @@ namespace CameraEmguCV
         }
 
         private void BtnRunTests_Click(object sender, RoutedEventArgs e)
-        {   
+        {
+            //test filename-- Tesseract Works
+            string fileName = "C:/Users/Chris/source/repos/AForgeWPF/AForgeWPF/bin/Debug/test_tess.jpg";
+            Mat img = CvInvoke.Imread(fileName, Emgu.CV.CvEnum.LoadImageType.Color);
+
+            string result = Utils.GetTesseractResult(img.Bitmap);
             /*List<Dial> dials = currentScreen.dials;
 
             foreach(Dial dial in dials)
