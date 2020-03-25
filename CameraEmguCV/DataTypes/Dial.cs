@@ -27,19 +27,29 @@ namespace CameraEmguCV
         }
 
         [DataMember]
+        private String expectedValue;
+        
+        public String ExpectedValue
+        {
+            get { return expectedValue; }
+        }
+
+        [DataMember]
         public  List<Point> coordinates { get; set; }
 
-        public Dial(String name, String type)
+        public Dial(String name, String type, String expectedValue)
         {
             this.name = name;
             this.type = type;
+            this.expectedValue = expectedValue;
             coordinates = new List<Point>();
         }
 
-        public Dial(String name, String type, List<Point> coordinates)
+        public Dial(String name, String type,String expectedValue, List<Point> coordinates)
         {
             this.name = name;
             this.type = type;
+            this.expectedValue = expectedValue;
             this.coordinates = new List<Point>();
             this.coordinates.AddRange(coordinates);
         }

@@ -39,14 +39,8 @@ namespace CameraEmguCV
                 this.Close();
         }
 
-        private void Window_Closing(object sender, CancelEventArgs e)
-        {
-            //if (CadranName.Text == string.Empty || CadranType.SelectedValue == null)
-            //{
-            //    MessageBox.Show("You have to choose a name and a type for the dial! ", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
-            //this.Close();
-            //}
-                
-        }
+        
+
+      
     }
 }

@@ -29,7 +29,7 @@ namespace CameraEmguCV
         public Mat selectedScreen = null;
         private Mat loadedImage = null;
         DebugWindow debugWindow = null;
-        DialDefinition cadranDefinition = null;
+        DialDefinition dialDefinition = null;
         internal Screen currentScreen = null;//new Screen("defaultScreenName");
 
         public MainWindow()
@@ -144,18 +144,18 @@ namespace CameraEmguCV
                     Mat img = currentFrame.Mat;
                     Mat warp = ImageProcessor.WarpPerspective(img, Utils.GetPoints(markers));      
                     
-                    try { cadranDefinition = new DialDefinition(warp); cadranDefinition.Owner = GetWindow(this); cadranDefinition.ShowDialog(); }
+                    try { dialDefinition = new DialDefinition(warp); dialDefinition.Owner = GetWindow(this); dialDefinition.ShowDialog(); }
                     catch (Exception ex)
                     {
                         System.Windows.MessageBox.Show("A handled exception just occurred: " + ex.Message, "Exception Sample", MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
 
                     //Checks the value transmited from the dial definition window that the values are not null 
-                    if (cadranDefinition.CadranName.Text != "" && cadranDefinition.CadranType.Text != "")
+                    if (dialDefinition.CadranName.Text != "" && dialDefinition.CadranType.Text != "")
                     {
                         
                         ResetMarkers();
-                        Dial dial = new Dial(cadranDefinition.CadranName.Text, cadranDefinition.CadranType.Text, markers);
+                        Dial dial = new Dial(dialDefinition.CadranName.Text, dialDefinition.CadranType.Text,dialDefinition.ExpectedValue.Text , markers);
                         currentScreen.dials.Add(dial);
                         num_of_clicks = 0;
                         markers.Clear();
@@ -331,11 +331,27 @@ namespace CameraEmguCV
              }*/
         }
 
+        private void BtnRunTests_Click(object sender, RoutedEventArgs e)
+        {
+            //test filename-- Tesseract Works
+            string fileName = "C:/Users/Chris/source/repos/AForgeWPF/AForgeWPF/bin/Debug/test_tess.jpg";
+            Mat img = CvInvoke.Imread(fileName, Emgu.CV.CvEnum.LoadImageType.Color);
+
+            string result = Utils.GetTesseractResult(img.Bitmap);
+            /*List<Dial> dials = currentScreen.dials;
+
+            foreach(Dial dial in dials)
+            {
+                   
+            }*/
+        }
+
         private void AddTreeView(Dial dial)
         {
             TreeViewItem treeItemTest = new TreeViewItem();
             treeItemTest.Header = dial.Name;
             treeItemTest.Items.Add(dial.Type);
+            treeItemTest.Items.Add(dial.ExpectedValue);
             tree.Items.Add(treeItemTest);
       
 
@@ -355,20 +371,7 @@ namespace CameraEmguCV
 
         }
 
-        private void BtnRunTests_Click(object sender, RoutedEventArgs e)
-        {
-            //test filename-- Tesseract Works
-            string fileName = "C:/Users/Chris/source/repos/AForgeWPF/AForgeWPF/bin/Debug/test_tess.jpg";
-            Mat img = CvInvoke.Imread(fileName, Emgu.CV.CvEnum.LoadImageType.Color);
-
-            string result = Utils.GetTesseractResult(img.Bitmap);
-            /*List<Dial> dials = currentScreen.dials;
-
-            foreach(Dial dial in dials)
-            {
-                   
-            }*/
-        }
+        
     }
     #endregion
 }

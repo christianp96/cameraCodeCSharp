@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CameraEmguCV"
         mc:Ignorable="d"
-        Title="Definire Cadran" Height="200" Width="335.165" ResizeMode="NoResize" Icon="icon.png" WindowStartupLocation="CenterScreen" Closing="Window_Closing">
+        Title="Definire Cadran" Height="300" Width="335.165" ResizeMode="NoResize" Icon="icon.png" WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -20,10 +20,12 @@
             <ComboBoxItem >AlfaNumeric</ComboBoxItem>
         </ComboBox>
 
-        <Button x:Name="btn_Accept" Content="Accept" Grid.Column="2" HorizontalAlignment="Left" Margin="178.8,136,0,0" VerticalAlignment="Top" Width="74" Click="Btn_Accept_Click" Background="LightGray" Height="24"/>
+        <Button x:Name="btn_Accept" Content="Accept" Grid.Column="2" HorizontalAlignment="Left" Margin="179,237,0,0" VerticalAlignment="Top" Width="74" Click="Btn_Accept_Click" Background="LightGray" Height="24"/>
         <Canvas Grid.ColumnSpan="2" Grid.Column="1" HorizontalAlignment="Left" Height="150" Margin="4.4,10,0,0" VerticalAlignment="Top" Width="150">
             <Image Name="dialImage" Height="150" Width="150" Stretch="Uniform"/>
         </Canvas>
+        <TextBox Grid.Column="2" x:Name="ExpectedValue" HorizontalAlignment="Left" Height="23" Margin="155,181,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" />
+        <Label Content="Expected Value" Grid.Column="2" HorizontalAlignment="Left" Margin="155,143,0,0" VerticalAlignment="Top" Width="103"/>
 
     </Grid>
 </Window>
