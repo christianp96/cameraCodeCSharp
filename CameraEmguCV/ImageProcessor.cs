@@ -104,6 +104,19 @@ namespace CameraEmguCV
             return output;
         }
 
+        public static Mat PreprocessImageForTesseract(Mat img)
+        {
+            Mat output = new Mat(img.Size, DepthType.Cv8U, 1);
+            CvInvoke.CvtColor(img, img, ColorConversion.Bgr2Gray);
+            CvInvoke.GaussianBlur(img, img, new System.Drawing.Size(3, 3), 0);
+            //CvInvoke.AdaptiveThreshold(img, output, 255, AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 11,2);
+            CvInvoke.Threshold(img, output, 0, 255, ThresholdType.Otsu);
+            //CvInvoke.Resize(output, output, new System.Drawing.Size(100, 100), interpolation: Inter.Linear);
+            //CvInvoke.Invert()
+
+            return output;
+        }
+
         public static bool MatchTemplate(Mat img, Mat template, Mat mask)
         {
             bool found = false;

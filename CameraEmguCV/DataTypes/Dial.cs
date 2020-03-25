@@ -34,6 +34,13 @@ namespace CameraEmguCV
             get { return expectedValue; }
         }
 
+
+        //private String identifiedValue;
+
+        //public String IdentifiedValue
+        //{
+        //    set { identifiedValue = value; }
+        //}
         [DataMember]
         public  List<Point> coordinates { get; set; }
 

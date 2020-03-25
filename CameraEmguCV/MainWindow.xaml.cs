@@ -86,6 +86,18 @@ namespace CameraEmguCV
 
         #region GUI Events
 
+        private void UpdateTreeViewItem(Dial dial, string tesseractResult)
+        {
+            TreeViewItem item = new TreeViewItem();
+            item.Header = dial.Name;
+            item.Items.Add(dial.Type);
+            item.Items.Add(dial.ExpectedValue);
+            item.Items.Add(tesseractResult);
+            tree.Items.Add(item);
+           
+
+        }
+
         private void SetImageAndCanvasSize(double height, double width)
         {
             image1.Height = height;
@@ -140,9 +152,9 @@ namespace CameraEmguCV
                 if (num_of_clicks == 4)
                 {
                     TreeViewItem treeItemTest = new TreeViewItem();
-                    Image<Bgr, byte> currentFrame = GetCurrentImage();
-                    Mat img = currentFrame.Mat;
-                    Mat warp = ImageProcessor.WarpPerspective(img, Utils.GetPoints(markers));      
+                    /*Image<Bgr, byte> currentFrame = GetCurrentImage();
+                    Mat img = currentFrame.Mat;*/
+                    Mat warp = ImageProcessor.WarpPerspective(selectedScreen, Utils.GetPoints(markers));      
                     
                     try { dialDefinition = new DialDefinition(warp); dialDefinition.Owner = GetWindow(this); dialDefinition.ShowDialog(); }
                     catch (Exception ex)
@@ -152,8 +164,7 @@ namespace CameraEmguCV
 
                     //Checks the value transmited from the dial definition window that the values are not null 
                     if (dialDefinition.CadranName.Text != "" && dialDefinition.CadranType.Text != "")
-                    {
-                        
+                    { 
                         ResetMarkers();
                         Dial dial = new Dial(dialDefinition.CadranName.Text, dialDefinition.CadranType.Text,dialDefinition.ExpectedValue.Text , markers);
                         currentScreen.dials.Add(dial);
@@ -163,13 +174,10 @@ namespace CameraEmguCV
                         AddTreeView(dial);
                     }
                     else
-
                     {
-                        ResetMarkers();
-                        //Nu sunt sigur daca e ok ca am apelat markers.Clear aici, te rog verifica sa vezi daca e ok.
+                        ResetMarkers();        
                         markers.Clear();              
-                        num_of_clicks = 0;
-               
+                        num_of_clicks = 0;             
                     }
                 }
             }
@@ -179,10 +187,7 @@ namespace CameraEmguCV
         {
             if (add_markers)
             {
-
                 RemoveOnePoint();
-                
-
             }
         }
 
@@ -218,14 +223,11 @@ namespace CameraEmguCV
             {
                 string imagePath = openFileDialog.FileName;
                 capture = null;
-                loadedImage = CvInvoke.Imread(imagePath, 0);
+                loadedImage = CvInvoke.Imread(imagePath, LoadImageType.Color);
                 CvInvoke.Resize(loadedImage, loadedImage, new System.Drawing.Size(640, 360),interpolation:Inter.Linear);
                 image1.Source = Utils.ToBitmapSource(loadedImage);
-                SetImageAndCanvasSize(loadedImage.Height, loadedImage.Width);
-                
-                    
+                SetImageAndCanvasSize(loadedImage.Height, loadedImage.Width);    
             }
-
         }
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
@@ -259,7 +261,7 @@ namespace CameraEmguCV
 
                 DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(Screen));
                 currentScreen = (Screen)js.ReadObject(fs);
-
+                selectedScreen = ImageProcessor.WarpPerspective(GetCurrentImage().Mat, Utils.GetPoints(currentScreen.coordinates));
                 currentScreen.dials.ForEach(dial => { AddTreeView(dial); } );
 
 
@@ -302,11 +304,7 @@ namespace CameraEmguCV
             SetImageAndCanvasSize(capture.Height, capture.Width);
             selectedScreen = null;
             tree.Items.Clear();
-
-
         }
-
-
 
         private Image<Bgr, byte> GetCurrentImage()
         {
@@ -334,16 +332,36 @@ namespace CameraEmguCV
         private void BtnRunTests_Click(object sender, RoutedEventArgs e)
         {
             //test filename-- Tesseract Works
-            string fileName = "C:/Users/Chris/source/repos/AForgeWPF/AForgeWPF/bin/Debug/test_tess.jpg";
-            Mat img = CvInvoke.Imread(fileName, Emgu.CV.CvEnum.LoadImageType.Color);
+            //string fileName = "C:/Users/Chris/source/repos/AForgeWPF/AForgeWPF/bin/Debug/test_tess.jpg";
+            //Mat img = CvInvoke.Imread(fileName, Emgu.CV.CvEnum.LoadImageType.Color);
 
-            string result = Utils.GetTesseractResult(img.Bitmap);
-            /*List<Dial> dials = currentScreen.dials;
+            //string result = Utils.GetTesseractResult(img.Bitmap);
 
-            foreach(Dial dial in dials)
+            if (currentScreen != null)
             {
-                   
-            }*/
+                List<Dial> dials = currentScreen.dials;
+
+                if (dials.Count != 0)
+                {
+                    tree.Items.Clear();
+                    foreach (Dial dial in dials)
+                    {
+                        Mat image = ImageProcessor.WarpPerspective(selectedScreen, Utils.GetPoints(dial.coordinates));
+                        Mat binaryImage = ImageProcessor.PreprocessImageForTesseract(image);
+                        CvInvoke.Imshow(dial.Name, binaryImage);
+                        String tessResult = Utils.GetTesseractResult(image.Bitmap);
+                        if (tessResult == "")
+                            tessResult = "Tesseract couldn't get any result";
+                        UpdateTreeViewItem(dial,tessResult);
+                    }
+
+                }
+                else System.Windows.MessageBox.Show("This screen has no dial defined","Info",MessageBoxButton.OK,MessageBoxImage.Information);
+
+            }
+            else
+                System.Windows.MessageBox.Show("You have to define or load a screen", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+            
         }
 
         private void AddTreeView(Dial dial)
