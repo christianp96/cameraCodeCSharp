@@ -67,6 +67,15 @@
 
                     </ListViewItem>
                     <ListViewItem Padding="1">
+                        <Button  Name="btnRunTests" Background="{x:Null}" BorderBrush="{x:Null}" BorderThickness="0" Click="BtnRunTests_Click" Width="248" Margin="0,10,0,10">
+                            <StackPanel Orientation="Horizontal" Width="230">
+                                <materialDesign:PackIcon Margin="0,0,15,0" Kind="Run" Height="20" Foreground="White"/>
+                                <TextBlock Text="Run Tests" VerticalAlignment="Center" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
+                    </ListViewItem>
+                    <ListViewItem Padding="1">
                         <Button  Background="{x:Null}" BorderBrush="{x:Null}" BorderThickness="0" Click="btnSave_Click" Width="248" Margin="0,10,0,10">
                             <StackPanel Orientation="Horizontal" Width="230">
                                 <materialDesign:PackIcon Margin="0,0,15,0" Kind="FileDownload" Height="20" Foreground="White"/>
@@ -117,7 +126,7 @@
             <Image  Name="image1"  Height="360" Width="640" Panel.ZIndex="0" MouseLeftButtonDown="MainCanvas_MouseLeftButtonDown" MouseRightButtonDown="MainCanvas_MouseRightButtonDown"   />
         </Canvas>
         <Button Name="btnAddMarkers" Content="Add Markers" Margin="-267,578,477,38" Click="BtnAddMarkers_Click" Background="LightGray" Height="Auto"/>
-        <ComboBox Name="cbxCameraDevices"  HorizontalAlignment="Left" Margin="55,444,0,0" VerticalAlignment="Top" Width="140" SelectionChanged="CbxCameraDevices_SelectionChanged" Background="LightGray"/>
+        <ComboBox Name="cbxCameraDevices"  HorizontalAlignment="Left" Margin="55,488,0,0" VerticalAlignment="Top" Width="140" SelectionChanged="CbxCameraDevices_SelectionChanged" Background="LightGray"/>
       
     </Grid>
 </Window>

@@ -7,6 +7,7 @@ using Emgu.CV.Structure;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using System.Runtime.InteropServices;
+using Tesseract;
 
 namespace CameraEmguCV
 {
@@ -180,6 +181,24 @@ namespace CameraEmguCV
                 bitmap = new System.Drawing.Bitmap(outStream);
             }
             return bitmap;
+        }
+
+        public static string GetTesseractResult(System.Drawing.Bitmap image)
+        {
+            string result = "";
+            string tesseractPath = "C:/Users/Chris/source/repos/AForgeWPF/tessdata";
+            string tesseractLanguage = "eng";
+            using (var engine = new TesseractEngine(tesseractPath, tesseractLanguage, EngineMode.TesseractOnly))
+            {
+                using (var pix = PixConverter.ToPix(image))
+                {
+                    using (var page = engine.Process(pix))
+                    { 
+                        result = page.GetText();
+                    }
+                }
+            }
+            return result;
         }
 
     }

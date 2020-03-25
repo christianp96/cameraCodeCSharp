@@ -354,6 +354,16 @@ namespace CameraEmguCV
         {
 
         }
+
+        private void BtnRunTests_Click(object sender, RoutedEventArgs e)
+        {   
+            /*List<Dial> dials = currentScreen.dials;
+
+            foreach(Dial dial in dials)
+            {
+                   
+            }*/
+        }
     }
     #endregion
 }
