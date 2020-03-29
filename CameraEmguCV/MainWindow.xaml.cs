@@ -349,7 +349,7 @@ namespace CameraEmguCV
                         Mat image = ImageProcessor.WarpPerspective(selectedScreen, Utils.GetPoints(dial.coordinates));
                         Mat binaryImage = ImageProcessor.PreprocessImageForTesseract(image);
                         CvInvoke.Imshow(dial.Name, binaryImage);
-                        String tessResult = Utils.GetTesseractResult(image.Bitmap);
+                        String tessResult = Utils.GetTesseractResult(binaryImage.Bitmap);
                         if (tessResult == "")
                             tessResult = "Tesseract couldn't get any result";
                         UpdateTreeViewItem(dial,tessResult);

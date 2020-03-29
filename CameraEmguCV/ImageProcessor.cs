@@ -106,14 +106,27 @@ namespace CameraEmguCV
 
         public static Mat PreprocessImageForTesseract(Mat img)
         {
-            Mat output = new Mat(img.Size, DepthType.Cv8U, 1);
+            int scalePercent = 18;
+            int newWidth = (int)img.Width * scalePercent / 100;
+            int newHeight = (int)img.Height * scalePercent / 100;
+            CvInvoke.Resize(img, img, new System.Drawing.Size(newWidth, newHeight), interpolation: Inter.Area);
+            img = ImageProcessor.ApplyBlur(img, 0, 3);
+            Mat output = new Mat(img.Size, DepthType.Cv8U, 3);
             CvInvoke.CvtColor(img, img, ColorConversion.Bgr2Gray);
-            CvInvoke.GaussianBlur(img, img, new System.Drawing.Size(3, 3), 0);
-            //CvInvoke.AdaptiveThreshold(img, output, 255, AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 11,2);
-            CvInvoke.Threshold(img, output, 0, 255, ThresholdType.Otsu);
-            //CvInvoke.Resize(output, output, new System.Drawing.Size(100, 100), interpolation: Inter.Linear);
+            //CvInvoke.EqualizeHist(img, img);
+            CvInvoke.BitwiseNot(img, img);
+            //img = ImageProcessor.CannyEdgeDetection(img, 20, 20);
+            //img = ImageProcessor.ApplyErosion(img, 3);
+            //CvInvoke.GaussianBlur(img, img, new System.Drawing.Size(3, 3), 0);
+            CvInvoke.AdaptiveThreshold(img, img, 255, AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 11, 2);
+            CvInvoke.Threshold(img, output, 0, 255, ThresholdType.Otsu);//double ret =
+            //output = ImageProcessor.ApplyErosion(output, 3); 
+            //CvInvoke.Threshold(output, output, ret, 255, ThresholdType.Binary);
+            var kernel = CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Rectangle, new System.Drawing.Size(2, 2), new System.Drawing.Point(-1, -1));
+            CvInvoke.Dilate(output, output, kernel, new System.Drawing.Point(-1, -1), 2, Emgu.CV.CvEnum.BorderType.Constant, default(MCvScalar));
+            //output = ImageProcessor.ApplyDilation(output, 7);
             //CvInvoke.Invert()
-
+            
             return output;
         }
 
