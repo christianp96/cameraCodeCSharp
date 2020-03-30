@@ -253,8 +253,6 @@ namespace CameraEmguCV
                 currentScreen = (Screen)js.ReadObject(fs);
                 selectedScreen = ImageProcessor.WarpPerspective(GetCurrentImage().Mat, Utils.GetPoints(currentScreen.coordinates));
                 currentScreen.dials.ForEach(dial => { AddTreeView(dial); } );
-
-
             }
         }
         private void ResetMarkers()
@@ -321,12 +319,6 @@ namespace CameraEmguCV
 
         private void BtnRunTests_Click(object sender, RoutedEventArgs e)
         {
-            //test filename-- Tesseract Works
-            //string fileName = "C:/Users/Chris/source/repos/AForgeWPF/AForgeWPF/bin/Debug/test_tess.jpg";
-            //Mat img = CvInvoke.Imread(fileName, Emgu.CV.CvEnum.LoadImageType.Color);
-
-            //string result = Utils.GetTesseractResult(img.Bitmap);
-
             if (currentScreen != null)
             {
                 List<Dial> dials = currentScreen.dials;
@@ -337,14 +329,12 @@ namespace CameraEmguCV
                     foreach (Dial dial in dials)
                     {
                         Mat image = ImageProcessor.WarpPerspective(selectedScreen, Utils.GetPoints(dial.coordinates));
-                        Mat binaryImage = ImageProcessor.PreprocessImageForTesseract(image);
-                        CvInvoke.Imshow(dial.Name, binaryImage);
+                        Mat binaryImage = ImageProcessor.PreprocessImageForTesseract(image);       
                         String tessResult = Utils.GetTesseractResult(binaryImage.Bitmap);
                         if (tessResult == "")
                             tessResult = "Tesseract couldn't get any result";
-                        
-                       
-                        UpdateTreeViewItem(dial, "Run Value: " +  tessResult);
+
+                        UpdateTreeViewItem(dial, "Run Value: " +  tessResult.TrimEnd('\r','\n'));
                     }
 
                 }
@@ -360,30 +350,21 @@ namespace CameraEmguCV
         {
             TreeViewItem treeItemTest = new TreeViewItem();
 
-            
-            
-                treeItemTest.Header = "Name of dial: " + dial.Name;
-                treeItemTest.Items.Add("Type of dial: " + dial.Type);
-                treeItemTest.Items.Add("Expected value: " + dial.ExpectedValue);
-                tree.Items.Add(treeItemTest);
-            
-
-
+            treeItemTest.Header = "Name of dial: " + dial.Name;
+            treeItemTest.Items.Add("Type of dial: " + dial.Type);
+            treeItemTest.Items.Add("Expected value: " + dial.ExpectedValue);
+            tree.Items.Add(treeItemTest);
         }
 
         private void UpdateTreeViewItem(Dial dial, string tesseractResult)
         {
             TreeViewItem treeItemTest = new TreeViewItem();
 
-
-
             treeItemTest.Header = "Name of dial: " + dial.Name;
             treeItemTest.Items.Add("Type of dial: " + dial.Type);
             treeItemTest.Items.Add("Expected value: " + dial.ExpectedValue);
             treeItemTest.Items.Add(tesseractResult);
             tree.Items.Add(treeItemTest);
-
-
         }
 
         private void RemoveOnePoint()

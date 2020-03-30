@@ -10,32 +10,32 @@
         <DockPanel VerticalAlignment="Center" Margin="13,100,581.6,288" Height="32">
             <Label Content="rho" DockPanel.Dock="Left"/>
             <TextBox Text="{Binding Value, ElementName=slRho, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" TextAlignment="Right" Width="40"/>
-            <Slider Maximum="20" TickPlacement="BottomRight" TickFrequency="0.1" IsSnapToTickEnabled="True" x:Name="slRho" ValueChanged="SlRho_ValueChanged"/>
+            <Slider Value="0.4"  Maximum="20" TickPlacement="BottomRight" TickFrequency="0.1" IsSnapToTickEnabled="True" x:Name="slRho" ValueChanged="SlRho_ValueChanged"/>
         </DockPanel>
         <DockPanel VerticalAlignment="Center" Margin="12,12,581.6,378" Height="30">
             <Label Content="lowThreshold" DockPanel.Dock="Left"/>
             <TextBox Text="{Binding Value, ElementName=slLowThresh, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" TextAlignment="Right" Width="40"/>
-            <Slider Maximum="400" TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="True" x:Name="slLowThresh" ValueChanged="SlLowThresh_ValueChanged"/>
+            <Slider Value="0" Maximum="400" TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="True" x:Name="slLowThresh" ValueChanged="SlLowThresh_ValueChanged"/>
         </DockPanel>
         <DockPanel VerticalAlignment="Center" Margin="12,60,581.6,328" Height="32">
             <Label Content="highThreshold" DockPanel.Dock="Left"/>
             <TextBox Text="{Binding Value, ElementName=slHighThresh, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" TextAlignment="Right" Width="40"/>
-            <Slider Maximum="400" TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="True" x:Name="slHighThresh" ValueChanged="SlHighThresh_ValueChanged"/>
+            <Slider Value="80" Maximum="400" TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="True" x:Name="slHighThresh" ValueChanged="SlHighThresh_ValueChanged"/>
         </DockPanel>
         <DockPanel VerticalAlignment="Center" Margin="12,186,581.6,204" Height="30">
             <Label Content="minLineLength" DockPanel.Dock="Left"/>
             <TextBox Text="{Binding Value, ElementName=slMinLineLength, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" TextAlignment="Right" Width="40"/>
-            <Slider Maximum="400" TickPlacement="BottomRight" TickFrequency="5" IsSnapToTickEnabled="True" x:Name="slMinLineLength" ValueChanged="SlMinLineLength_ValueChanged"/>
+            <Slider Value="100" Maximum="400" TickPlacement="BottomRight" TickFrequency="5" IsSnapToTickEnabled="True" x:Name="slMinLineLength" ValueChanged="SlMinLineLength_ValueChanged"/>
         </DockPanel>
         <DockPanel VerticalAlignment="Center" Margin="12,222,581.6,168" Height="30">
             <Label Content="maxGap" DockPanel.Dock="Left"/>
             <TextBox Text="{Binding Value, ElementName=slMaxLineGap, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" TextAlignment="Right" Width="40"/>
-            <Slider Maximum="100" TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="True" x:Name="slMaxLineGap" ValueChanged="SlMaxLineGap_ValueChanged"/>
+            <Slider Value="80" Maximum="100" TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="True" x:Name="slMaxLineGap" ValueChanged="SlMaxLineGap_ValueChanged"/>
         </DockPanel>
         <DockPanel VerticalAlignment="Center" Margin="13,142,581.6,246" Height="32">
             <Label Content="houghThreshold" DockPanel.Dock="Left"/>
             <TextBox Text="{Binding Value, ElementName=slHoughThresh, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" TextAlignment="Right" Width="40"/>
-            <Slider Maximum="100" TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="True" x:Name="slHoughThresh" ValueChanged="SlHoughThresh_ValueChanged"/>
+            <Slider Value="75" Maximum="100" TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="True" x:Name="slHoughThresh" ValueChanged="SlHoughThresh_ValueChanged"/>
         </DockPanel>
         <!--<Button x:Name="btnWarp" Content="Warp perspective" Margin="249,12,387.6,376" Click="BtnWarp_Click" />
         <Button x:Name="btnSingleLines" Content="SingleLines" Margin="431,12,204.6,376" Click="BtnSingleLines_Click"/>-->
@@ -49,8 +49,8 @@
         <Label Content="Template" HorizontalAlignment="Left" Margin="334,115,0,0" VerticalAlignment="Top"/>
         <Label Content="Template mask" HorizontalAlignment="Left" Margin="616,115,0,0" VerticalAlignment="Top"/>
         <Button Name="btnSaveTemplate" Content="Save template" HorizontalAlignment="Left" Margin="585,378,0,0" VerticalAlignment="Top" Width="145" Click="BtnSaveTemplate_Click" Visibility="Hidden"/>
-        <TextBox Name="txtTemplateName" HorizontalAlignment="Left" Height="23" Margin="431,387,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Visibility="Hidden"/>
-        <Label Name="lblTemplateName" Content="Template name" HorizontalAlignment="Left" Margin="334,386,0,0" VerticalAlignment="Top" Visibility="Hidden"/>
+        <!--<TextBox Name="txtTemplateName" HorizontalAlignment="Left" Height="23" Margin="431,387,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Visibility="Hidden"/>
+        <Label Name="lblTemplateName" Content="Template name" HorizontalAlignment="Left" Margin="334,386,0,0" VerticalAlignment="Top" Visibility="Hidden"/>-->
 
     </Grid>
 </Window>
