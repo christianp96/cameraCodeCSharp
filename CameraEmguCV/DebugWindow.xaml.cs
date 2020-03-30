@@ -12,8 +12,8 @@ namespace CameraEmguCV
     /// </summary>
     public partial class DebugWindow : Window
     {
-        public double rho = 0.5;
-        public int lowThreshold = 30, highThreshold = 210, minLineLength = 90, maxLineGap = 50, houghThreshold = 50;
+        public double rho = 0.4;
+        public int lowThreshold = 0, highThreshold = 80, minLineLength = 100, maxLineGap = 80, houghThreshold = 75;
         MainWindow parent;
         TemplateImage t = TemplateImage.Instance;
         string templateDir = "template_dir";
