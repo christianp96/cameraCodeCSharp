@@ -1,0 +1,1 @@
+{"coordinates":[{"_x":196,"_y":48},{"_x":438,"_y":40},{"_x":179,"_y":300},{"_x":451,"_y":311}],"dials":[{"coordinates":[{"_x":89,"_y":4},{"_x":164,"_y":10},{"_x":86,"_y":74},{"_x":159,"_y":73}],"expectedValue":"0.0","name":"e1","type":"Numeric"}],"name":"selectedScreen","templatePath":null}
