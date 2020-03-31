@@ -94,6 +94,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Alert.xaml.cs">
+      <DependentUpon>Alert.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DataTypes\Dial.cs" />
     <Compile Include="DataTypes\Screen.cs" />
     <Compile Include="DebugWindow.xaml.cs">
@@ -104,6 +107,10 @@
     <Compile Include="DialDefinition.xaml.cs">
       <DependentUpon>DialDefinition.xaml</DependentUpon>
     </Compile>
+    <Page Include="Alert.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="DebugWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

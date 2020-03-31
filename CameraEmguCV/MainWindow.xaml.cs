@@ -334,7 +334,18 @@ namespace CameraEmguCV
                         if (tessResult == "")
                             tessResult = "Tesseract couldn't get any result";
 
-                        UpdateTreeViewItem(dial, "Run Value: " +  tessResult.TrimEnd('\r','\n'));
+                        if (tessResult.TrimEnd('\r', '\n') == dial.ExpectedValue)
+                        {
+                            System.Windows.Forms.MessageBox.Show("The run was a succes", "Run test", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                            UpdateTreeViewItem(dial, "Run Value: " + tessResult.TrimEnd('\r', '\n'),"The values are the same");
+                        }
+                        else
+                        {
+                            System.Windows.Forms.MessageBox.Show("The run failed", "Run test", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                            UpdateTreeViewItem(dial, "Run Value: " + tessResult.TrimEnd('\r', '\n'), "The values are not the same");
+                        }
                     }
 
                 }
@@ -356,7 +367,7 @@ namespace CameraEmguCV
             tree.Items.Add(treeItemTest);
         }
 
-        private void UpdateTreeViewItem(Dial dial, string tesseractResult)
+        private void UpdateTreeViewItem(Dial dial, string tesseractResult, string comparationResult)
         {
             TreeViewItem treeItemTest = new TreeViewItem();
 
@@ -364,6 +375,7 @@ namespace CameraEmguCV
             treeItemTest.Items.Add("Type of dial: " + dial.Type);
             treeItemTest.Items.Add("Expected value: " + dial.ExpectedValue);
             treeItemTest.Items.Add(tesseractResult);
+            treeItemTest.Items.Add(comparationResult);
             tree.Items.Add(treeItemTest);
         }
 
