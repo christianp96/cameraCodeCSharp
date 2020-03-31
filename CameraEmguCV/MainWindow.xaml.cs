@@ -319,6 +319,7 @@ namespace CameraEmguCV
 
         private void BtnRunTests_Click(object sender, RoutedEventArgs e)
         {
+            bool success = true;
             if (currentScreen != null)
             {
                 List<Dial> dials = currentScreen.dials;
@@ -336,16 +337,24 @@ namespace CameraEmguCV
 
                         if (tessResult.TrimEnd('\r', '\n') == dial.ExpectedValue)
                         {
-                            System.Windows.Forms.MessageBox.Show("The run was a success", "Run test", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
                             UpdateTreeViewItem(dial, "Run Value: " + tessResult.TrimEnd('\r', '\n'),"The values are the same");
                         }
                         else
                         {
-                            System.Windows.Forms.MessageBox.Show("The run failed", "Run test", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
+                            success = false;
                             UpdateTreeViewItem(dial, "Run Value: " + tessResult.TrimEnd('\r', '\n'), "The values are not the same");
                         }
+                    }
+
+                    if ( success == true)
+                        {
+                        System.Windows.Forms.MessageBox.Show("The run was a success", "Run test", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+
+                    }
+                    else
+                    {
+                        System.Windows.Forms.MessageBox.Show("One or more runs have failed", "Run test", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
 
                 }
