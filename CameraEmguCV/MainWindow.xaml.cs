@@ -336,7 +336,7 @@ namespace CameraEmguCV
 
                         if (tessResult.TrimEnd('\r', '\n') == dial.ExpectedValue)
                         {
-                            System.Windows.Forms.MessageBox.Show("The run was a succes", "Run test", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            System.Windows.Forms.MessageBox.Show("The run was a success", "Run test", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                             UpdateTreeViewItem(dial, "Run Value: " + tessResult.TrimEnd('\r', '\n'),"The values are the same");
                         }
