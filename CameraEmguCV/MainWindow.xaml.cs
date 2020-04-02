@@ -31,7 +31,7 @@ namespace CameraEmguCV
         DebugWindow debugWindow = null;
         DialDefinition dialDefinition = null;
         internal Screen currentScreen = null;//new Screen("defaultScreenName");
-
+        public TemplateImage template = TemplateImage.Instance;
         public MainWindow()
         {
             InitializeComponent();
@@ -230,9 +230,12 @@ namespace CameraEmguCV
             if(saveDialog.FileName !=  "")
             {
                 System.IO.FileStream fs = (System.IO.FileStream)saveDialog.OpenFile();
-
+                string path = saveDialog.FileName.Split('.')[0];
+                currentScreen.templatePath = path;
+                currentScreen.SaveTemplate();
                 DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(Screen));
                 js.WriteObject(fs, currentScreen);
+
 
             }
         }
@@ -242,16 +245,19 @@ namespace CameraEmguCV
             ResetAll();
             OpenFileDialog openDialog = new OpenFileDialog();
             openDialog.Title = "Load the Display Definition";
-            openDialog.ShowDialog();
             openDialog.Filter = "Json|*.json";
+            openDialog.ShowDialog();
+           
 
             if (openDialog.FileName != "")
             {
                 System.IO.FileStream fs = (System.IO.FileStream)openDialog.OpenFile();
-
                 DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(Screen));
                 currentScreen = (Screen)js.ReadObject(fs);
                 selectedScreen = ImageProcessor.WarpPerspective(GetCurrentImage().Mat, Utils.GetPoints(currentScreen.coordinates));
+                string path = openDialog.FileName.Split('.')[0];
+                currentScreen.LoadTemplate();
+
                 currentScreen.dials.ForEach(dial => { AddTreeView(dial); } );
             }
         }
@@ -292,6 +298,7 @@ namespace CameraEmguCV
             SetImageAndCanvasSize(capture.Height, capture.Width);
             selectedScreen = null;
             tree.Items.Clear();
+            template = null;
         }
 
         private Image<Bgr, byte> GetCurrentImage()

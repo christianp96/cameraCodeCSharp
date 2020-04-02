@@ -31,10 +31,10 @@ namespace CameraEmguCV
             this.mask = mask;
         }
 
-        public void SaveTemplate(string templateName)
+        public void SaveTemplate(string templatePath)
         {
-            CvInvoke.Imwrite("template_dir/" + templateName + ".jpg", this.image);
-            CvInvoke.Imwrite("template_dir/" + templateName + "_mask.jpg", this.mask);
+            CvInvoke.Imwrite(templatePath + ".jpg", this.image);
+            CvInvoke.Imwrite(templatePath + "_mask.jpg", this.mask);
         }
 
         public Image<Bgr, byte> Image { get { return this.image; } }

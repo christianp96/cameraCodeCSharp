@@ -12,50 +12,36 @@ namespace CameraEmguCV
         [DataMember(Order = 1)]
         private String name { get; set; }
 
-        /*[DataMember]
-        public String templatePath { get; set; }*/
-
-        [DataMember(Order = 2)]
-        public List<Point> coordinates { get; set; }
+        [DataMember(Order = 2)] 
+        public String templatePath { get; set; }
 
         [DataMember(Order = 3)]
-        public List<Dial> dials { get; set; }
+        public List<Point> coordinates { get; set; }
 
         [DataMember(Order = 4)]
-        public byte[] TemplateImage { get; set; }
+        public List<Dial> dials { get; set; }
 
-        [DataMember(Order = 7)]
-        public byte[] TemplateMask { get; set; }
-        
-        [DataMember(Order = 5)]
-        public int TemplateWidth { get; set; }
+        public Emgu.CV.Mat TemplateImage { get; set; }
 
-        [DataMember(Order = 6)]
-        public int TemplateHeight { get; set; }
-
-        public Emgu.CV.Image<Emgu.CV.Structure.Bgr,byte> GetTemplateImage()
-        {   
-            Emgu.CV.Image<Emgu.CV.Structure.Bgr,byte> image = new Emgu.CV.Image<Emgu.CV.Structure.Bgr, byte>(TemplateWidth,TemplateHeight);
-            if (TemplateImage != null)
-                image.Bytes = TemplateImage;
-            return image;
-        }
-
-        public Emgu.CV.Image<Emgu.CV.Structure.Bgr, byte> GetTemplateMask()
-        {
-            Emgu.CV.Image<Emgu.CV.Structure.Bgr, byte> image = new Emgu.CV.Image<Emgu.CV.Structure.Bgr, byte>(TemplateWidth, TemplateHeight);
-           if(TemplateMask!=null)
-                image.Bytes = TemplateMask;
-            return image;
-        }
-
+        public Emgu.CV.Mat TemplateMask { get; set; }
+       
         public Screen(String name)
         {
             this.name = name;
             dials = new List<Dial>();
             coordinates = new List<Point>();
-            
         }
 
+        public void SaveTemplate()
+        {
+            Emgu.CV.CvInvoke.Imwrite(templatePath + ".jpg", this.TemplateImage);
+            Emgu.CV.CvInvoke.Imwrite(templatePath + "_mask.jpg", this.TemplateMask);
+        }
+
+        public void LoadTemplate()
+        {
+            TemplateImage = Emgu.CV.CvInvoke.Imread(templatePath + ".jpg", Emgu.CV.CvEnum.LoadImageType.Color);
+            TemplateMask = Emgu.CV.CvInvoke.Imread(templatePath + "_mask.jpg", Emgu.CV.CvEnum.LoadImageType.Color);
+        }
     }
 }

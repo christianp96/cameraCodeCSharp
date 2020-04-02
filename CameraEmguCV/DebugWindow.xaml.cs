@@ -15,7 +15,6 @@ namespace CameraEmguCV
         public double rho = 0.4;
         public int lowThreshold = 0, highThreshold = 80, minLineLength = 100, maxLineGap = 80, houghThreshold = 75;
         MainWindow parent;
-        TemplateImage t = TemplateImage.Instance;
         string templateDir = "template_dir";
 
 
@@ -25,7 +24,6 @@ namespace CameraEmguCV
             this.parent = (MainWindow)Application.Current.MainWindow;
             InitImages();
         }
-
 
         private void InitImages()
         {
@@ -58,8 +56,8 @@ namespace CameraEmguCV
                 if (singleLines != null)
                 {
                     Mat mask = ImageProcessor.AddLines(singleLines, Utils.GetRatioOfSelectedArea(Utils.GetPoints(parent.currentScreen.coordinates)));
-                    Mat templateImage = ImageProcessor.ApplyMask(warp, mask);
-                    t.SetTemplateImageAndMask(templateImage.ToImage<Bgr, byte>(), mask.ToImage<Bgr, byte>());
+                    Mat templateImage = ImageProcessor.ApplyMask(warp, mask);       
+                    parent.template.SetTemplateImageAndMask(templateImage.ToImage<Bgr, byte>(), mask.ToImage<Bgr, byte>());
                     tempImage.Source = Utils.ToBitmapSource(templateImage);
                     templateMask.Source = Utils.ToBitmapSource(mask);
                     //lblTemplateName.Visibility = Visibility.Visible;
@@ -76,17 +74,13 @@ namespace CameraEmguCV
             {
                 MessageBox.Show("You didn't select any screen! ", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
-           
         }
 
         private void BtnSaveTemplate_Click(object sender, RoutedEventArgs e)
         {
-            parent.currentScreen.TemplateImage = t.Image.Bytes;
-            parent.currentScreen.TemplateHeight = t.Image.Height;
-            parent.currentScreen.TemplateWidth = t.Image.Width;
-            parent.currentScreen.TemplateMask = t.Mask.Bytes;    
+            parent.currentScreen.TemplateImage = parent.template.Image.Mat;
+            parent.currentScreen.TemplateMask = parent.template.Mask.Mat;    
             InitImages();
-          
         }
 
         private void SlRho_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
