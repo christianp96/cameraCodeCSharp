@@ -104,6 +104,103 @@ namespace CameraEmguCV
             return output;
         }
 
+        public static Mat OtsuBinarization(Mat img)
+        {
+            Mat otsu = new Mat(img.Size, Emgu.CV.CvEnum.DepthType.Cv8U, 1);
+            CvInvoke.Threshold(img, otsu, 0, 255, ThresholdType.Otsu);
+
+            return otsu;
+        }
+
+        public static int[] GetVerticalProfileOfImage(Mat img)
+        {
+
+            Mat otsu = OtsuBinarization(img);
+            Image<Gray, byte> imgg = otsu.ToImage<Gray, byte>();
+            int[] values = new int[imgg.Cols];
+
+            for (int i = 0; i < imgg.Cols; i++)
+            {
+                int sum = 0;
+
+                for (int j = 0; j < imgg.Rows; j++)
+                    sum += imgg.Data[j, i, 0];
+                values[i] = sum;
+            }
+
+            return values;
+        }
+        
+        public static int[] GetHorizontalProfileOfImage(Mat img)
+        {
+
+            Mat otsu = OtsuBinarization(img);
+            Image<Gray, byte> imgg = otsu.ToImage<Gray, byte>();
+            int[] values = new int[imgg.Rows];
+
+            for (int i = 0; i < imgg.Rows; i++)
+            {
+                int sum = 0;
+
+                for (int j = 0; j < imgg.Cols; j++)
+                    sum += imgg.Data[i, j, 0];
+                values[i] = sum;
+            }
+
+            return values;
+        }
+
+        public static int GetMax(int[] values)
+        {
+            return values.Max();
+        }
+
+        public static LineSegment2D[] GetVerticalLines(Mat img)
+        {
+            LineSegment2D[] lines = new LineSegment2D[100];
+            int count = 0;
+            int[] verticalProfile = GetVerticalProfileOfImage(img);
+            int length = GetHorizontalProfileOfImage(img).Length;
+
+
+            int maxValue = ImageProcessor.GetMax(verticalProfile);
+
+            for (int i = 0; i < verticalProfile.Length; i++)
+            {
+                if (Math.Abs(maxValue - verticalProfile[i]) < 1500)
+                    lines[count++] = new LineSegment2D(new System.Drawing.Point(i, 0), new System.Drawing.Point(i, length));
+            }
+
+            return lines;
+        }
+
+        public static LineSegment2D[] GetHorizontalLines(Mat img)
+        {
+            LineSegment2D[] lines = new LineSegment2D[100];
+            int count = 0;
+            int[] horizontalProfile = GetHorizontalProfileOfImage(img);
+            int length = GetVerticalProfileOfImage(img).Length;
+            int maxValue = GetMax(horizontalProfile);
+
+            for (int i = 0; i < horizontalProfile.Length; i++)
+            {
+                if (Math.Abs(maxValue - horizontalProfile[i]) < 1500)
+                    lines[count++] = new LineSegment2D(new System.Drawing.Point(0, i), new System.Drawing.Point(length, i));
+            }
+
+            return lines;
+        }
+
+        public static LineSegment2D[] GetAllLines(Mat img)
+        {
+            LineSegment2D[] lines = new LineSegment2D[200];
+            LineSegment2D[] verticalLines = GetVerticalLines(img);
+            verticalLines.CopyTo(lines, 0);
+            LineSegment2D[] horizontalLines = GetHorizontalLines(img);
+            horizontalLines.CopyTo(lines, verticalLines.Count());
+            return lines;
+        }
+
         public static Mat PreprocessImageForTesseract(Mat img)
         {
             int scalePercent = 18;
