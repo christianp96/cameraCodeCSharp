@@ -292,7 +292,7 @@ namespace CameraEmguCV
             btn_AddMarkers.IsEnabled = true;
             currentScreen = null;
             btnAddDialMarkers.IsEnabled = false;
-            btnAddMarkers.Background = Brushes.LightGray;
+          
             if (capture == null)
                 capture = new Capture(0);
             SetImageAndCanvasSize(capture.Height, capture.Width);
@@ -315,7 +315,7 @@ namespace CameraEmguCV
             {
                 add_markers = true;
                 markers = new List<Point>();
-                btnAddMarkers.Background = Brushes.Pink;
+                
             }
             /* else
              { 

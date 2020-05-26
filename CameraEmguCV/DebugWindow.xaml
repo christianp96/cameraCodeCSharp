@@ -7,6 +7,8 @@
         mc:Ignorable="d"
         Title="DebugWindow" Height="450" Width="800">
     <Grid>
+       
+       
         <DockPanel VerticalAlignment="Center" Margin="13,100,581.6,288" Height="32">
             <Label Content="rho" DockPanel.Dock="Left"/>
             <TextBox Text="{Binding Value, ElementName=slRho, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" TextAlignment="Right" Width="40"/>
@@ -37,8 +39,10 @@
             <TextBox Text="{Binding Value, ElementName=slHoughThresh, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" TextAlignment="Right" Width="40"/>
             <Slider Value="75" Maximum="100" TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="True" x:Name="slHoughThresh" ValueChanged="SlHoughThresh_ValueChanged"/>
         </DockPanel>
+       
         <!--<Button x:Name="btnWarp" Content="Warp perspective" Margin="249,12,387.6,376" Click="BtnWarp_Click" />
         <Button x:Name="btnSingleLines" Content="SingleLines" Margin="431,12,204.6,376" Click="BtnSingleLines_Click"/>-->
+       
         <Button x:Name="btnPreviewTemplate" Content="Preview Template" Margin="266,10,370.6,378" Click="BtnPreviewTemplate_Click"/>
         <Canvas Width="200" Height="200" Name="secondaryCanvas" Margin="266,151,327.6,69">
             <Image Name="tempImage" Stretch="Uniform" Width="200" Height="200" />
@@ -51,6 +55,6 @@
         <Button Name="btnSaveTemplate" Content="Save template" HorizontalAlignment="Left" Margin="585,378,0,0" VerticalAlignment="Top" Width="145" Click="BtnSaveTemplate_Click" Visibility="Hidden"/>
         <!--<TextBox Name="txtTemplateName" HorizontalAlignment="Left" Height="23" Margin="431,387,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Visibility="Hidden"/>
         <Label Name="lblTemplateName" Content="Template name" HorizontalAlignment="Left" Margin="334,386,0,0" VerticalAlignment="Top" Visibility="Hidden"/>-->
-
+        
     </Grid>
 </Window>
